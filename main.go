@@ -3,13 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"homieclips/api"
+	db "homieclips/db/models"
+	"homieclips/util"
+	"log"
+
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"homieclips/app"
-	"homieclips/util"
-	"log"
 )
 
 func main() {
@@ -30,7 +32,11 @@ func main() {
 		log.Fatalf("ran into error connecting to minio: %s\n", err)
 	}
 
-	mainApp := app.New(&config, dbClient, minioClient)
+	models := db.New(dbClient, config.DbName)
+
+	mainApp := api.NewServer(config, models, minioClient)
+
+	mainApp.Start(config.HttpServerAddress)
 }
 
 func setupMinio(config *util.Config) (*minio.Client, error) {
