@@ -17,11 +17,15 @@ type Server struct {
 }
 
 func NewServer(config util.Config, models *db.Models, minioClient *minio.Client) *Server {
-	return &Server{
+	server := &Server{
 		config:      config,
 		models:      models,
 		minioClient: minioClient,
 	}
+
+	server.SetupRouter()
+
+	return server
 }
 
 func (server *Server) SetupRouter() {
