@@ -39,7 +39,10 @@ func main() {
 
 	mainApp := api.NewServer(config, models, queries)
 
-	mainApp.Start(":8080")
+	err = mainApp.Start(":8080")
+	if err != nil {
+		return
+	}
 }
 
 func setupMinio(config *util.Config) (*minio.Client, error) {

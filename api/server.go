@@ -35,6 +35,7 @@ func (server *Server) SetupRouter() {
 
 	server.createUploadRoute(public)
 	server.createStreamRoute(public)
+	server.createClipsRoute(public)
 
 	server.router = router
 }

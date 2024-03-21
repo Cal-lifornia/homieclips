@@ -13,5 +13,5 @@ func (server *Server) createStreamRoute(group *gin.RouterGroup) {
 func (server *Server) streamRecording(ctx *gin.Context) {
 	objectName := ctx.Param("object_name")
 
-	server.queries.GetFile(ctx, objectName)
+	server.queries.StreamClip(ctx, objectName)
 }

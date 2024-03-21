@@ -10,7 +10,7 @@ import (
 	"github.com/minio/minio-go/v7"
 )
 
-func (queries *Queries) GetFile(ctx *gin.Context, objectName string) {
+func (queries *Queries) StreamClip(ctx *gin.Context, objectName string) {
 	object, err := queries.client.GetObject(
 		ctx,
 		queries.config.BucketName,

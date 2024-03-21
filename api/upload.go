@@ -48,7 +48,7 @@ func (server *Server) uploadRecording(ctx *gin.Context) {
 			return
 		}
 	}
-	recording := db.Recording{
+	recording := db.Clip{
 		ObjectName:   objectName.String(),
 		FriendlyName: friendlyName,
 		GameName:     gameName,
@@ -56,7 +56,7 @@ func (server *Server) uploadRecording(ctx *gin.Context) {
 		UpdatedAt:    time.Now(),
 	}
 
-	result, err := server.models.CreateRecording(recording)
+	result, err := server.models.CreateClip(recording)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 		return
