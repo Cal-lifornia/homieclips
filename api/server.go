@@ -2,25 +2,25 @@ package api
 
 import (
 	db "homieclips/db/models"
+	"homieclips/storage"
 	"homieclips/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/minio/minio-go/v7"
 )
 
 type Server struct {
-	config      util.Config
-	models      *db.Models
-	minioClient *minio.Client
-	router      *gin.Engine
+	config  util.Config
+	models  *db.Models
+	queries *storage.Queries
+	router  *gin.Engine
 }
 
-func NewServer(config util.Config, models *db.Models, minioClient *minio.Client) *Server {
+func NewServer(config util.Config, models *db.Models, queries *storage.Queries) *Server {
 	server := &Server{
-		config:      config,
-		models:      models,
-		minioClient: minioClient,
+		config:  config,
+		models:  models,
+		queries: queries,
 	}
 
 	server.SetupRouter()
@@ -33,7 +33,9 @@ func (server *Server) SetupRouter() {
 	public := router.Group("/api")
 	public.GET("ping", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "pong"}) })
 
-	server.createRecordingsRoutes(public)
+	server.createUploadRoute(public)
+	server.createStreamRoute(public)
+	server.createRecordingsRoutes()
 
 	server.router = router
 }

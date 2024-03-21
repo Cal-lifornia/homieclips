@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"homieclips/api"
 	db "homieclips/db/models"
+	"homieclips/storage"
 	"homieclips/util"
 	"log"
 
@@ -34,7 +35,9 @@ func main() {
 
 	models := db.New(dbClient, config.DbName)
 
-	mainApp := api.NewServer(config, models, minioClient)
+	queries := storage.New(minioClient, config)
+
+	mainApp := api.NewServer(config, models, queries)
 
 	mainApp.Start(":8080")
 }

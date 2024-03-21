@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	db "homieclips/db/models"
 	"net/http"
@@ -9,16 +8,23 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/minio/minio-go/v7"
 )
 
-func (server *Server) createRecordingsRoutes(group *gin.RouterGroup) {
-	recordings := group.Group("/recordings")
+func (server *Server) createUploadRoute(group *gin.RouterGroup) {
+	recordings := group.Group("/upload")
 
-	recordings.POST("", server.UploadRecording)
+	recordings.POST("", server.uploadRecording)
 }
 
-func (server *Server) UploadRecording(ctx *gin.Context) {
+type uploadResponse struct {
+	UploadComplete bool `json:"upload_complete,omitempty"`
+}
+
+func (server *Server) uploadRecording(ctx *gin.Context) {
+	var response = uploadResponse{
+		UploadComplete: false,
+	}
+
 	friendlyName := ctx.PostForm("friendly_name")
 	gameName := ctx.PostForm("game_name")
 	form, err := ctx.MultipartForm()
@@ -36,26 +42,10 @@ func (server *Server) UploadRecording(ctx *gin.Context) {
 	files := form.File["files"]
 
 	for _, file := range files {
-		fileOpen, err := file.Open()
-		contentType := file.Header["Content-Type"][0]
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		server.queries.UploadRecording(ctx, objectName.String(), file, &response.UploadComplete)
+		if ctx.IsAborted() {
 			return
 		}
-
-		uploadInfo, err := server.minioClient.PutObject(
-			context.TODO(),
-			server.config.BucketName,
-			objectName.String(),
-			fileOpen,
-			file.Size,
-			minio.PutObjectOptions{ContentType: contentType},
-		)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, errorResponse(err))
-			return
-		}
-		fmt.Println("file uploaded successfully: ", uploadInfo)
 	}
 	recording := db.Recording{
 		ObjectName:   objectName.String(),
@@ -73,5 +63,5 @@ func (server *Server) UploadRecording(ctx *gin.Context) {
 
 	fmt.Println(result.InsertedID)
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "created record with id"})
+	ctx.JSON(http.StatusOK, response)
 }
