@@ -17,6 +17,6 @@ func New(mongoClient *mongo.Client, dbName string) *Models {
 	return newModels
 }
 
-func (m *Models) init(dbName string) {
-	recordingsCollection = m.db.Database(dbName).Collection("recordings")
+func (models *Models) init(dbName string) {
+	recordingsCollection = models.db.Database(dbName).Collection("recordings")
 }

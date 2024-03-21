@@ -36,7 +36,7 @@ func main() {
 
 	mainApp := api.NewServer(config, models, minioClient)
 
-	mainApp.Start(config.HttpServerAddress)
+	mainApp.Start(":8080")
 }
 
 func setupMinio(config *util.Config) (*minio.Client, error) {

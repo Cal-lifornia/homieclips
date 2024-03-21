@@ -26,9 +26,10 @@ func NewServer(config util.Config, models *db.Models, minioClient *minio.Client)
 
 func (server *Server) SetupRouter() {
 	router := gin.Default()
-
 	public := router.Group("/api")
 	public.GET("ping", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "pong"}) })
+
+	server.createRecordingsRoutes(public)
 
 	server.router = router
 }
@@ -37,12 +38,8 @@ func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
 
-func errorResponse(err error) failureMessage {
-	return failureMessage{
-		ErrorMessage: err.Error(),
+func errorResponse(err error) gin.H {
+	return gin.H{
+		"message": err.Error(),
 	}
-}
-
-type failureMessage struct {
-	ErrorMessage string `json:"error" example:"error message"`
 }
