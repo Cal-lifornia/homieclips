@@ -7,6 +7,7 @@ type Models struct {
 }
 
 var clipsCollection *mongo.Collection
+var gamesCollection *mongo.Collection
 
 func New(mongoClient *mongo.Client, dbName string) *Models {
 	newModels := &Models{
@@ -19,4 +20,5 @@ func New(mongoClient *mongo.Client, dbName string) *Models {
 
 func (models *Models) init(dbName string) {
 	clipsCollection = models.db.Database(dbName).Collection("clips")
+	gamesCollection = models.db.Database(dbName).Collection("games")
 }

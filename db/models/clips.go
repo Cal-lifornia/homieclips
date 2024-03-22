@@ -42,7 +42,7 @@ func (models *Models) GetClips() ([]Clip, error) {
 
 func (models *Models) GetClip(objectName string) (Clip, error) {
 	var clip Clip
-	filter := bson.D{{"object_name", objectName}}
+	filter := bson.D{{Key: "object_name", Value: objectName}}
 	err := clipsCollection.FindOne(context.TODO(), filter).Decode(&clip)
 	if err != nil {
 		return Clip{}, err
@@ -52,7 +52,7 @@ func (models *Models) GetClip(objectName string) (Clip, error) {
 }
 
 func (models *Models) DeleteClip(objectName string) error {
-	filter := bson.D{{"object_name", objectName}}
+	filter := bson.D{{Key: "object_name", Value: objectName}}
 	_, err := clipsCollection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return err
