@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	db "homieclips/db/models"
-	"homieclips/util"
 	"net/http"
 	"time"
 
@@ -30,13 +29,13 @@ func (server *Server) uploadRecording(ctx *gin.Context) {
 	gameName := ctx.PostForm("game_name")
 	form, err := ctx.MultipartForm()
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	objectName, err := uuid.NewV7()
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
@@ -58,7 +57,7 @@ func (server *Server) uploadRecording(ctx *gin.Context) {
 
 	result, err := server.models.CreateClip(recording)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
