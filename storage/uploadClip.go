@@ -9,7 +9,7 @@ import (
 	"github.com/minio/minio-go/v7"
 )
 
-func (queries *Queries) UploadRecording(ctx *gin.Context, objectName string, file *multipart.FileHeader, uploadComplete *bool) {
+func (queries *Queries) UploadClip(ctx *gin.Context, objectName string, file *multipart.FileHeader, uploadComplete *bool) {
 	contentType := file.Header["Content-Type"][0]
 	openFile, err := file.Open()
 	if err != nil {
@@ -20,7 +20,7 @@ func (queries *Queries) UploadRecording(ctx *gin.Context, objectName string, fil
 	uploadInfo, err := queries.client.PutObject(
 		ctx,
 		queries.config.BucketName,
-		objectName,
+		"uploaded/"+objectName,
 		openFile,
 		file.Size,
 		minio.PutObjectOptions{ContentType: contentType},

@@ -42,7 +42,7 @@ func (server *Server) uploadRecording(ctx *gin.Context) {
 	files := form.File["files"]
 
 	for _, file := range files {
-		server.queries.UploadRecording(ctx, objectName.String(), file, &response.UploadComplete)
+		server.queries.UploadClip(ctx, objectName.String(), file, &response.UploadComplete)
 		if ctx.IsAborted() {
 			return
 		}

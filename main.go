@@ -39,7 +39,7 @@ func main() {
 
 	mainApp := api.NewServer(config, models, queries)
 
-	err = mainApp.Start(":8080")
+	err = mainApp.Start("localhost:8080")
 	if err != nil {
 		return
 	}
