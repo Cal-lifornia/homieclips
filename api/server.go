@@ -30,12 +30,15 @@ func NewServer(config util.Config, models *db.Models, queries *storage.Queries) 
 
 func (server *Server) SetupRouter() {
 	router := gin.Default()
-	public := router.Group("/api")
-	public.GET("ping", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "pong"}) })
 
-	server.createUploadRoute(public)
-	server.createStreamRoute(public)
-	server.createClipsRoute(public)
+	router.Static("/assets", "assets")
+
+	api := router.Group("/api")
+	api.GET("ping", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "pong"}) })
+
+	server.createUploadRoute(api)
+	server.createStreamRoute(api)
+	server.createClipsRoute(api)
 
 	server.router = router
 }
