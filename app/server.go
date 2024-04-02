@@ -4,7 +4,6 @@ import (
 	"encoding/gob"
 	"homieclips/app/authenticator"
 	"homieclips/app/frontend"
-	"homieclips/components"
 	db "homieclips/db/models"
 	"homieclips/storage"
 	"homieclips/util"
@@ -58,22 +57,20 @@ func (server *Server) SetupRouter() {
 	gob.Register(map[string]interface{}{})
 
 	store := cookie.NewStore([]byte("secret"))
-	router.Use(sessions.Sessions("auth-session", store))
+	baseUrl := router.Group("/")
+	baseUrl.Use(sessions.Sessions("auth-session", store))
 
-	router.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "", components.LoginPage())
-	})
+	baseUrl.GET("/login", server.auth.Login)
+	baseUrl.GET("/callback", server.auth.Callback)
+	baseUrl.GET("/user", authenticator.IsAuthenticated(), frontend.User)
+	baseUrl.GET("/logout", server.LogOut)
 
-	router.Static("/assets", "assets")
+	frontend.CreateRootRoutes(baseUrl)
+	baseUrl.Static("/assets", "assets")
 
-	router.GET("/login", server.auth.Login)
-	router.GET("/callback", server.auth.Callback)
-	router.GET("/user", authenticator.IsAuthenticated(), frontend.User)
-	router.GET("/logout", server.LogOut)
+	api := baseUrl.Group("/api")
 
-	api := router.Group("/api")
-
-	api.Use(authenticator.IsAuthenticated())
+	//api.Use(authenticator.IsAuthenticated())
 
 	api.Any("/storage/*proxyPath", server.proxy)
 

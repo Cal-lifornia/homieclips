@@ -1,9 +1,13 @@
 package util
 
-import "github.com/gin-gonic/gin"
-
-func ErrorResponse(err error) gin.H {
-	return gin.H{
-		"message": err.Error(),
+func ErrorResponse(err error) Response {
+	return Response{
+		Err: err.Error(),
 	}
+}
+
+type Response struct {
+	Results any    `json:"results,omitempty"`
+	Count   int    `json:"count,omitempty"`
+	Err     string `json:"error,omitempty"`
 }

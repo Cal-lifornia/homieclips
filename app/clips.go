@@ -21,7 +21,12 @@ func (server *Server) getClips(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 	}
 
-	ctx.JSON(http.StatusOK, clips)
+	//ctx.JSON(http.StatusOK, clips)
+
+	ctx.JSON(http.StatusOK, util.Response{
+		Results: clips,
+		Count:   len(clips),
+	})
 }
 
 func (server *Server) getClip(ctx *gin.Context) {

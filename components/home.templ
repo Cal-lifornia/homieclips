@@ -1,0 +1,18 @@
+package components
+
+templ Home() {
+    <div
+    hx-get="/api/clips"
+    hx-trigger="load"
+    hx-target="this"
+    mustache-template="clips">
+    </div>
+    <template id="clips">
+        <div class="grid text-center">
+            { `{{#results }}` }
+                <div class="g-col">{ `{{friendly_name}}` }</div>
+            { `{{/results}}` }
+        </div>
+
+    </template>
+}
