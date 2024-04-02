@@ -1,7 +1,8 @@
-package app
+package api
 
 import (
 	"fmt"
+	"homieclips/app"
 	db "homieclips/db/models"
 	"homieclips/util"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (server *Server) createUploadRoute(group *gin.RouterGroup) {
+func (server *app.Server) createUploadRoute(group *gin.RouterGroup) {
 	upload := group.Group("/upload")
 
 	upload.POST("", server.uploadRecording)
@@ -21,7 +22,7 @@ type uploadResponse struct {
 	UploadComplete bool `json:"upload_complete,omitempty"`
 }
 
-func (server *Server) uploadRecording(ctx *gin.Context) {
+func (server *app.Server) uploadRecording(ctx *gin.Context) {
 	var response = uploadResponse{
 		UploadComplete: false,
 	}
@@ -43,7 +44,7 @@ func (server *Server) uploadRecording(ctx *gin.Context) {
 	files := form.File["files"]
 
 	for _, file := range files {
-		server.queries.UploadClip(ctx, objectName.String(), file, &response.UploadComplete)
+		server.storage.UploadClip(ctx, objectName.String(), file, &response.UploadComplete)
 		if ctx.IsAborted() {
 			return
 		}

@@ -1,12 +1,13 @@
-package app
+package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"homieclips/app"
 	"net/http"
 	"net/url"
 )
 
-func (server *Server) LogOut(ctx *gin.Context) {
+func (server *app.Server) LogOut(ctx *gin.Context) {
 	logoutUrl, err := url.Parse("https://" + server.config.Auth0Domain + "/v2/logout")
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
