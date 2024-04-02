@@ -42,9 +42,9 @@ func main() {
 
 	models := db.New(dbClient, config.DbName)
 
-	queries := storage.New(minioClient, config)
+	storageClient := storage.New(minioClient, config)
 
-	mainApp := app.NewServer(config, models, queries)
+	mainApp := app.NewServer(config, models, storageClient)
 
 	err = mainApp.Start("localhost:8080")
 	if err != nil {

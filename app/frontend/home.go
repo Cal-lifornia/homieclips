@@ -2,17 +2,25 @@ package frontend
 
 import (
 	"github.com/gin-gonic/gin"
+	"homieclips/app/authenticator"
 	"homieclips/components"
 	"net/http"
 )
 
-func CreateRootRoutes(rg *gin.RouterGroup) {
-	rg.GET("", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "", components.Layout(components.Home()))
+func (frontend *Frontend) createAuthRoutes(rg *gin.RouterGroup) {
+	auth := rg.Group("")
 
-	})
-	rg.GET("/signin", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "", components.LoginPage())
-	})
+	auth.GET("", authenticator.IsAuthenticated(), frontend.homePage)
+	auth.GET("/user", authenticator.IsAuthenticated(), frontend.userPage)
 
+}
+
+func (frontend *Frontend) homePage(ctx *gin.Context) {
+	clips, err := frontend.models.GetClips()
+	if err != nil {
+		ctx.HTML(http.StatusFailedDependency, "", components.Page(components.Error(err)))
+		return
+	}
+
+	ctx.HTML(http.StatusOK, "", components.Page(components.Home(clips)))
 }

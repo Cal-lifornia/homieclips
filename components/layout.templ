@@ -9,9 +9,7 @@ templ Header() {
 		<link href="/assets/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet"></link>
  		<script src="/assets/bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
 		<script src="/assets/js/htmx.min.js"></script>
-		<script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/client-side-templates.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-		<script src="https://unpkg.com/mustache@latest"></script>
 		<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
 	</head>
 }
@@ -29,10 +27,10 @@ templ NavBar() {
 }
 
 templ LoginPage() {
-	@Layout(Login())
+	@Page(Login())
 }
 
-templ Layout(contents templ.Component) {
+templ Page(contents templ.Component) {
 	<html data-bs-theme="dark" lang="">
 		@Header()
 		<body id="contents" hx-ext="client-side-templates">

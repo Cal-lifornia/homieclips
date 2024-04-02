@@ -1,7 +1,6 @@
 package api
 
 import (
-	"homieclips/app"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -10,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *app.Server) proxy(ctx *gin.Context) {
-	remoteUrl, err := url.Parse("https://" + server.config.MinioURL)
+func (api *Api) proxy(ctx *gin.Context) {
+	remoteUrl, err := url.Parse("https://" + api.config.MinioURL)
 	if err != nil {
 		log.Fatalf("failed to connect reverse proxy: %s", err)
 	}

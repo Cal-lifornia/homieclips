@@ -1,23 +1,22 @@
 package api
 
 import (
-	"homieclips/app"
 	"homieclips/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (server *app.Server) createClipsRoute(group *gin.RouterGroup) {
+func (api *Api) createClipsRoute(group *gin.RouterGroup) {
 	clips := group.Group("/clips")
 
-	clips.GET("", server.getClips)
-	clips.GET(":object_name", server.getClip)
-	clips.DELETE(":object_name", server.deleteClip)
+	clips.GET("", api.getClips)
+	clips.GET(":object_name", api.getClip)
+	clips.DELETE(":object_name", api.deleteClip)
 }
 
-func (server *app.Server) getClips(ctx *gin.Context) {
-	clips, err := server.models.GetClips()
+func (api *Api) getClips(ctx *gin.Context) {
+	clips, err := api.models.GetClips()
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 	}
@@ -28,9 +27,9 @@ func (server *app.Server) getClips(ctx *gin.Context) {
 	})
 }
 
-func (server *app.Server) getClip(ctx *gin.Context) {
+func (api *Api) getClip(ctx *gin.Context) {
 	objectName := ctx.Param("object_name")
-	clip, err := server.models.GetClip(objectName)
+	clip, err := api.models.GetClip(objectName)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 	}
@@ -38,9 +37,9 @@ func (server *app.Server) getClip(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, clip)
 }
 
-func (server *app.Server) deleteClip(ctx *gin.Context) {
+func (api *Api) deleteClip(ctx *gin.Context) {
 	objectName := ctx.Param("object_name")
-	err := server.models.DeleteClip(objectName)
+	err := api.models.DeleteClip(objectName)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 	}

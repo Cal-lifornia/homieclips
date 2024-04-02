@@ -2,13 +2,12 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"homieclips/app"
 	"net/http"
 	"net/url"
 )
 
-func (server *app.Server) LogOut(ctx *gin.Context) {
-	logoutUrl, err := url.Parse("https://" + server.config.Auth0Domain + "/v2/logout")
+func (api *Api) logOut(ctx *gin.Context) {
+	logoutUrl, err := url.Parse("https://" + api.config.Auth0Domain + "/v2/logout")
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
@@ -27,7 +26,7 @@ func (server *app.Server) LogOut(ctx *gin.Context) {
 
 	parameters := url.Values{}
 	parameters.Add("returnTo", returnTo.String())
-	parameters.Add("client_id", server.config.Auth0ClientID)
+	parameters.Add("client_id", api.config.Auth0ClientID)
 	logoutUrl.RawQuery = parameters.Encode()
 
 	ctx.Redirect(http.StatusTemporaryRedirect, logoutUrl.String())

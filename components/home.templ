@@ -1,18 +1,13 @@
 package components
 
-templ Home() {
-    <div
-    hx-get="/api/clips"
-    hx-trigger="load"
-    hx-target="this"
-    mustache-template="clips">
-    </div>
-    <template id="clips">
-        <div class="grid text-center">
-            { `{{#results }}` }
-                <div class="g-col">{ `{{friendly_name}}` }</div>
-            { `{{/results}}` }
-        </div>
+import "homieclips/db/models"
 
-    </template>
+templ Home(clips []db.Clip) {
+    <div id="clips">
+        <div class="grid text-center">
+        for _, clip := range clips {
+            <div class="g-col">{clip.FriendlyName}</div>
+        }
+        </div>
+    </div>
 }

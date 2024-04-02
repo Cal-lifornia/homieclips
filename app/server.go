@@ -2,14 +2,13 @@ package app
 
 import (
 	"encoding/gob"
+	"homieclips/app/api"
 	"homieclips/app/authenticator"
 	"homieclips/app/frontend"
 	db "homieclips/db/models"
 	"homieclips/storage"
 	"homieclips/util"
-	"homieclips/util/gintemplrenderer"
 	"log"
-	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -19,16 +18,16 @@ import (
 type Server struct {
 	config  util.Config
 	models  *db.Models
-	queries *storage.Queries
+	storage *storage.Storage
 	router  *gin.Engine
 	auth    *authenticator.Authenticator
 }
 
-func NewServer(config util.Config, models *db.Models, queries *storage.Queries) *Server {
+func NewServer(config util.Config, models *db.Models, storage *storage.Storage) *Server {
 	server := &Server{
 		config:  config,
 		models:  models,
-		queries: queries,
+		storage: storage,
 	}
 
 	server.SetupRouter()
@@ -46,9 +45,6 @@ func (server *Server) SetupRouter() {
 		log.Fatalf("failed to setup authenticator: %s\n", err)
 	}
 
-	ginHtmlRenderer := router.HTMLRender
-
-	router.HTMLRender = &gintemplrenderer.HTMLTemplRenderer{FallbackHtmlRenderer: ginHtmlRenderer}
 	err = router.SetTrustedProxies(nil)
 	if err != nil {
 		log.Fatalf("failed to unset proxy: %s\n", err)
@@ -57,30 +53,19 @@ func (server *Server) SetupRouter() {
 	gob.Register(map[string]interface{}{})
 
 	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("auth-session", store))
 	baseUrl := router.Group("/")
-	baseUrl.Use(sessions.Sessions("auth-session", store))
 
 	baseUrl.GET("/login", server.auth.Login)
 	baseUrl.GET("/callback", server.auth.Callback)
-	baseUrl.GET("/user", authenticator.IsAuthenticated(), frontend.User)
-	baseUrl.GET("/logout", server.LogOut)
 
-	frontend.CreateRootRoutes(baseUrl)
+	frontend.Init(router, server.models)
 	baseUrl.Static("/assets", "assets")
 
-	api := baseUrl.Group("/api")
-
-	//api.Use(authenticator.IsAuthenticated())
-
-	api.Any("/storage/*proxyPath", server.proxy)
-
-	api.GET("ping", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "pong"}) })
-
-	server.createUploadRoute(api)
-	server.createStreamRoute(api)
-	server.createClipsRoute(api)
+	api.Init(router, server.models, server.storage, server.config)
 
 	server.router = router
+
 }
 
 func (server *Server) Start(address string) error {

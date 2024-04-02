@@ -23,7 +23,7 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Homie Clips</title><link href=\"/assets/bootstrap-5.3.3/css/bootstrap.min.css\" rel=\"stylesheet\"><script src=\"/assets/bootstrap-5.3.3/js/bootstrap.bundle.min.js\"></script><script src=\"/assets/js/htmx.min.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.11/dist/ext/client-side-templates.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js\"></script><script src=\"https://unpkg.com/mustache@latest\"></script><link href=\"https://vjs.zencdn.net/8.10.0/video-js.css\" rel=\"stylesheet\"></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Homie Clips</title><link href=\"/assets/bootstrap-5.3.3/css/bootstrap.min.css\" rel=\"stylesheet\"><script src=\"/assets/bootstrap-5.3.3/js/bootstrap.bundle.min.js\"></script><script src=\"/assets/js/htmx.min.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js\"></script><link href=\"https://vjs.zencdn.net/8.10.0/video-js.css\" rel=\"stylesheet\"></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,7 +71,7 @@ func LoginPage() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout(Login()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Page(Login()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,7 +82,7 @@ func LoginPage() templ.Component {
 	})
 }
 
-func Layout(contents templ.Component) templ.Component {
+func Page(contents templ.Component) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {

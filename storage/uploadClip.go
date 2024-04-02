@@ -9,7 +9,7 @@ import (
 	"github.com/minio/minio-go/v7"
 )
 
-func (queries *Queries) UploadClip(ctx *gin.Context, objectName string, file *multipart.FileHeader, uploadComplete *bool) {
+func (queries *Storage) UploadClip(ctx *gin.Context, objectName string, file *multipart.FileHeader, uploadComplete *bool) {
 	contentType := file.Header["Content-Type"][0]
 	openFile, err := file.Open()
 	if err != nil {

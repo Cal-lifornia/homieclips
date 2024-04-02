@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (queries *Queries) StreamClip(ctx *gin.Context, objectName string) (*url.URL, error) {
+func (queries *Storage) StreamClip(ctx *gin.Context, objectName string) (*url.URL, error) {
 	reqParams := make(url.Values)
 	reqParams.Set("Content-Type", "video/mp4")
 	reqParams.Set("Connection", "keep-alive")
