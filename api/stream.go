@@ -8,7 +8,6 @@ import (
 
 func (server *Server) createStreamRoute(group *gin.RouterGroup) {
 	stream := group.Group("/stream")
-
 	stream.GET(":object_name", server.getClipURL)
 }
 

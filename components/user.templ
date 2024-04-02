@@ -1,0 +1,10 @@
+package components
+
+import "fmt"
+
+templ User(profile map[string]interface{}) {
+    <div>
+        <img class="avatar" src={fmt.Sprintf("%v", profile["picture"])}/>
+        <h2>Welcome {fmt.Sprintf("%v", profile["nickname"])}</h2>
+    </div>
+}

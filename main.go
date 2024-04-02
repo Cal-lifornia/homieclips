@@ -8,6 +8,7 @@ import (
 	"homieclips/storage"
 	"homieclips/util"
 	"log"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -23,15 +24,21 @@ func main() {
 
 	dbConnString := fmt.Sprintf("mongodb://%s:%s@%s", config.MongoUsername, config.MongoPass, config.DbAddress)
 
-	dbClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbConnString))
+	dbCtx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+
+	dbClient, err := mongo.Connect(dbCtx, options.Client().ApplyURI(dbConnString))
 	if err != nil {
+		cancelFunc()
 		log.Fatalf("ran into error connecting to mongo instance %s\n", err)
 	}
 
-	minioClient, err := setupMinio(&config)
+	minioClient, err := setupMinio(dbCtx, &config)
 	if err != nil {
+		cancelFunc()
 		log.Fatalf("ran into error connecting to minio: %s\n", err)
 	}
+
+	dbCtx.Done()
 
 	models := db.New(dbClient, config.DbName)
 
@@ -45,7 +52,7 @@ func main() {
 	}
 }
 
-func setupMinio(config *util.Config) (*minio.Client, error) {
+func setupMinio(ctx context.Context, config *util.Config) (*minio.Client, error) {
 	minioClient, err := minio.New(config.MinioURL, &minio.Options{
 		Creds:  credentials.NewStaticV4(config.MinioAccessKey, config.MinioSecretKey, ""),
 		Secure: true,
@@ -54,7 +61,7 @@ func setupMinio(config *util.Config) (*minio.Client, error) {
 		return nil, err
 	}
 
-	exists, errBucketExists := minioClient.BucketExists(context.TODO(), config.BucketName)
+	exists, errBucketExists := minioClient.BucketExists(ctx, config.BucketName)
 	if errBucketExists == nil && exists {
 		log.Printf("bucket exists and is ours")
 		return minioClient, nil
