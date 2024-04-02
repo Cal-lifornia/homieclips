@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Handler for our login.
+// Login Handler for our login.
 func (auth *Authenticator) Login(ctx *gin.Context) {
 	state, err := generateRandomState()
 	if err != nil {

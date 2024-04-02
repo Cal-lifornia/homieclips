@@ -1,12 +1,14 @@
-package api
+package app
 
 import (
 	"encoding/gob"
-	"homieclips/api/authenticator"
+	"homieclips/app/authenticator"
+	"homieclips/app/frontend"
 	"homieclips/components"
 	db "homieclips/db/models"
 	"homieclips/storage"
 	"homieclips/util"
+	"homieclips/util/gintemplrenderer"
 	"log"
 	"net/http"
 
@@ -45,6 +47,14 @@ func (server *Server) SetupRouter() {
 		log.Fatalf("failed to setup authenticator: %s\n", err)
 	}
 
+	ginHtmlRenderer := router.HTMLRender
+
+	router.HTMLRender = &gintemplrenderer.HTMLTemplRenderer{FallbackHtmlRenderer: ginHtmlRenderer}
+	err = router.SetTrustedProxies(nil)
+	if err != nil {
+		log.Fatalf("failed to unset proxy: %s\n", err)
+	}
+
 	gob.Register(map[string]interface{}{})
 
 	store := cookie.NewStore([]byte("secret"))
@@ -58,7 +68,8 @@ func (server *Server) SetupRouter() {
 
 	router.GET("/login", server.auth.Login)
 	router.GET("/callback", server.auth.Callback)
-	router.GET("/user", authenticator.IsAuthenticated(), server.User)
+	router.GET("/user", authenticator.IsAuthenticated(), frontend.User)
+	router.GET("/logout", server.LogOut)
 
 	api := router.Group("/api")
 
@@ -77,10 +88,4 @@ func (server *Server) SetupRouter() {
 
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
-}
-
-func errorResponse(err error) gin.H {
-	return gin.H{
-		"message": err.Error(),
-	}
 }

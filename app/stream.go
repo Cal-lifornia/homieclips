@@ -1,6 +1,7 @@
-package api
+package app
 
 import (
+	"homieclips/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +21,7 @@ func (server *Server) getClipURL(ctx *gin.Context) {
 
 	url, err := server.queries.StreamClip(ctx, objectName)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 		return
 	}
 

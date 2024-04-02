@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"homieclips/api"
+	"homieclips/app"
 	db "homieclips/db/models"
 	"homieclips/storage"
 	"homieclips/util"
@@ -44,7 +44,7 @@ func main() {
 
 	queries := storage.New(minioClient, config)
 
-	mainApp := api.NewServer(config, models, queries)
+	mainApp := app.NewServer(config, models, queries)
 
 	err = mainApp.Start("localhost:8080")
 	if err != nil {

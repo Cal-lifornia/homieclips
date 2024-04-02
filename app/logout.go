@@ -1,31 +1,10 @@
-package api
+package app
 
 import (
-	"encoding/json"
-	"fmt"
-	"homieclips/components"
-	"log"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/url"
-
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 )
-
-func (server *Server) User(ctx *gin.Context) {
-	session := sessions.Default(ctx)
-	profile := session.Get("profile")
-
-	var result map[string]interface{}
-
-	err := json.Unmarshal([]byte(fmt.Sprintf("%v", profile)), &result)
-	if err != nil {
-		log.Printf("ran into error unmarshaling profile: %s\n", err)
-		ctx.JSON(http.StatusFailedDependency, errorResponse(err))
-	}
-
-	ctx.HTML(http.StatusOK, "", components.Layout(components.User(result)))
-}
 
 func (server *Server) LogOut(ctx *gin.Context) {
 	logoutUrl, err := url.Parse("https://" + server.config.Auth0Domain + "/v2/logout")

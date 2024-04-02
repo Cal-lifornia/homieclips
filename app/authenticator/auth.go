@@ -3,10 +3,9 @@ package authenticator
 import (
 	"context"
 	"errors"
-	"homieclips/util"
-
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
+	"homieclips/util"
 )
 
 type Authenticator struct {
@@ -14,13 +13,12 @@ type Authenticator struct {
 	oauth2.Config
 }
 
-// Instantiates an new auth
+// New instantiates the *Authenticator.
 func New(config util.Config) (*Authenticator, error) {
 	provider, err := oidc.NewProvider(
 		context.Background(),
 		"https://"+config.Auth0Domain+"/",
 	)
-
 	if err != nil {
 		return nil, err
 	}

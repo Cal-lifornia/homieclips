@@ -1,4 +1,4 @@
-package api
+package app
 
 import (
 	"log"
@@ -10,7 +10,7 @@ import (
 )
 
 func (server *Server) proxy(ctx *gin.Context) {
-	remoteUrl, err := url.Parse(server.config.MinioURL)
+	remoteUrl, err := url.Parse("https://" + server.config.MinioURL)
 	if err != nil {
 		log.Fatalf("failed to connect reverse proxy: %s", err)
 	}
@@ -19,7 +19,7 @@ func (server *Server) proxy(ctx *gin.Context) {
 	proxy.Director = func(req *http.Request) {
 		req.Header = ctx.Request.Header
 		req.Host = remoteUrl.Host
-		req.URL.Scheme = remoteUrl.Scheme
+		req.URL.Scheme = "https"
 		req.URL.Host = remoteUrl.Host
 		req.URL.Path = ctx.Param("proxyPath")
 	}
