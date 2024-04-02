@@ -34,6 +34,9 @@ func (server *Server) SetupRouter() {
 	router.Static("/assets", "assets")
 
 	api := router.Group("/api")
+
+	api.Any("/storage/*proxyPath", server.proxy)
+
 	api.GET("ping", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"message": "pong"}) })
 
 	server.createUploadRoute(api)
