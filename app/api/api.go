@@ -31,9 +31,10 @@ func Init(router *gin.Engine, models *db.Models, storage *storage.Storage, confi
 
 	//routeGroup.Use(authenticator.IsAuthenticated())
 
-	routeGroup.GET("/logout", api.logOut)
+	api.router.GET("/logout", api.logOut)
 
 	api.createClipsRoute(routeGroup)
 	api.createStreamRoute(routeGroup)
 	api.createUploadRoute(routeGroup)
+	routeGroup.Any("/storage/*proxyPath", api.proxy)
 }

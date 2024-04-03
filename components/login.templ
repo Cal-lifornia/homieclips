@@ -1,8 +1,12 @@
 package components
 
-templ Login() {
+templ Login(loggedIn bool) {
     <div>
-        <h3>Login Test</h3>
-        <a href="/login">SignIn</a>
+        if loggedIn {
+            <a href="/signin"><button type="button" id="btn-logout" onclick="Cookies.remove('auth-session')">Logout</button></a>
+        } else {
+            <h3>Login Test</h3>
+            <a href="/login">SignIn</a>
+        }
     </div>
 }

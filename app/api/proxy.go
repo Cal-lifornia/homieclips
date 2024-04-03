@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -21,7 +22,8 @@ func (api *Api) proxy(ctx *gin.Context) {
 		req.Host = remoteUrl.Host
 		req.URL.Scheme = "https"
 		req.URL.Host = remoteUrl.Host
-		req.URL.Path = ctx.Param("proxyPath")
+		req.URL.Path = "homieclips/uploaded" + ctx.Param("proxyPath")
+		fmt.Println("URL PATH: ", req.URL.String())
 	}
 
 	proxy.ServeHTTP(ctx.Writer, ctx.Request)

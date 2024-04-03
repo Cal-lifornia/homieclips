@@ -1,11 +1,13 @@
 package frontend
 
 import (
-	"github.com/gin-gonic/gin"
 	"homieclips/components"
 	db "homieclips/db/models"
 	"homieclips/util/gintemplrenderer"
 	"net/http"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 type Frontend struct {
@@ -25,7 +27,14 @@ func Init(router *gin.Engine, models *db.Models) {
 
 	routerGroup := frontend.router.Group("")
 	routerGroup.GET("/signin", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "", components.LoginPage())
+		signedOut := func() bool {
+			if sessions.Default(ctx).Get("profile") == nil {
+				return false
+			}
+			return true
+		}
+
+		ctx.HTML(http.StatusOK, "", components.Page(components.Login(signedOut())))
 	})
 
 	frontend.createAuthRoutes(routerGroup)
