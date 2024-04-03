@@ -3,10 +3,12 @@ package components
 import "homieclips/db/models"
 
 templ Home(clips []db.Clip) {
-    <div id="clips">
-        <div class="grid text-center">
+    <div id="clips" class="container">
+        <div class="row row-cols-3 row-cols-sm-1 row-cols-md-3 g-4">
         for _, clip := range clips {
-            <div class="g-col">{clip.FriendlyName}</div>
+            <div class="col">            
+               @Clip(clip)
+            </div>
         }
         </div>
     </div>

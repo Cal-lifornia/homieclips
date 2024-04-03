@@ -2,13 +2,14 @@ package api
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	db "homieclips/db/models"
 	"homieclips/util"
+	"mime/multipart"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func (api *Api) createUploadRoute(group *gin.RouterGroup) {
@@ -21,17 +22,22 @@ type uploadResponse struct {
 	UploadComplete bool `json:"upload_complete,omitempty"`
 }
 
+type uploadFileForm struct {
+	FriendlyName string                `json:"friendly_name" bson:"friendly_name" form:"friendly_name" binding:"required"`
+	GameName     string                `json:"game_name" bson:"game_name" form:"game_name" binding:"required"`
+	File         *multipart.FileHeader `form:"file" binding:"required"`
+}
+
 func (api *Api) uploadRecording(ctx *gin.Context) {
 	var response = uploadResponse{
 		UploadComplete: false,
 	}
 
-	friendlyName := ctx.PostForm("friendly_name")
-	gameName := ctx.PostForm("game_name")
-	form, err := ctx.MultipartForm()
+	var form uploadFileForm
+
+	err := ctx.ShouldBind(&form)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
-		return
 	}
 
 	objectName, err := uuid.NewV7()
@@ -40,18 +46,15 @@ func (api *Api) uploadRecording(ctx *gin.Context) {
 		return
 	}
 
-	files := form.File["files"]
-
-	for _, file := range files {
-		api.storage.UploadClip(ctx, objectName.String(), file, &response.UploadComplete)
-		if ctx.IsAborted() {
-			return
-		}
+	file := form.File
+	api.storage.UploadClip(ctx, objectName.String(), file, &response.UploadComplete)
+	if ctx.IsAborted() {
+		return
 	}
 	recording := db.Clip{
 		ObjectName:   objectName.String(),
-		FriendlyName: friendlyName,
-		GameName:     gameName,
+		FriendlyName: form.FriendlyName,
+		GameName:     form.GameName,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}

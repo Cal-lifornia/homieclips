@@ -10,9 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-import "homieclips/db/models"
-
-func Home(clips []db.Clip) templ.Component {
+func UploadForm(profile Profile) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -25,25 +23,7 @@ func Home(clips []db.Clip) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"clips\" class=\"container\"><div class=\"row row-cols-3 row-cols-sm-1 row-cols-md-3 g-4\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, clip := range clips {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"col\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = Clip(clip).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"clip_upload_form\" hx-encoding=\"multipart/form-data\" hx-post=\"/api/upload\"><div class=\"mb-3\"><label for=\"friendly_name\" class=\"form-label\">Clip Name</label> <input type=\"text\" class=\"form-control\" id=\"friendly_name\" aria-describedby=\"friendly_nameHelp\"><div id=\"friendly_nameHelp\" class=\"form-text\">Name of the uploaded clip</div></div><div class=\"mb-3\"><label for=\"game_name\" class=\"form-label\">Game Name</label> <input type=\"text\" class=\"form-control\" id=\"game_name\" aria-describedby=\"game_nameHelp\"><div id=\"game_nameHelp\" class=\"form-text\">Name of the game the clip is from</div></div><div class=\"mb-3\"><input type=\"file\" id=\"file\"></div><button type=\"submit\" class=\"btn btn-primary\">Submit</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

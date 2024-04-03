@@ -1,0 +1,13 @@
+package components
+
+import "homieclips/db/models"
+
+templ Clip(clip db.Clip) {
+    <div class="card text-bg-dark">
+        <button type="button"><img src={clip.GameName} alt={clip.FriendlyName}/></button>
+        <div class="card-img-overlay">
+            <h5 class="card-title">{clip.FriendlyName}</h5>
+            <p class="card-text">{clip.CreatedAt.String()}</p>
+        </div>
+    </div>
+}
