@@ -11,7 +11,7 @@ import (
 )
 
 func (api *Api) proxy(ctx *gin.Context) {
-	remoteUrl, err := url.Parse("https://" + api.config.MinioURL)
+	remoteUrl, err := url.Parse("https://" + api.config.MinioURL + "/homieclips/uploaded")
 	if err != nil {
 		log.Fatalf("failed to connect reverse proxy: %s", err)
 	}
@@ -22,7 +22,7 @@ func (api *Api) proxy(ctx *gin.Context) {
 		req.Host = remoteUrl.Host
 		req.URL.Scheme = "https"
 		req.URL.Host = remoteUrl.Host
-		req.URL.Path = "homieclips/uploaded" + ctx.Param("proxyPath")
+		req.URL.Path = remoteUrl.Path + ctx.Param("proxyPath")
 		fmt.Println("URL PATH: ", req.URL.String())
 	}
 
