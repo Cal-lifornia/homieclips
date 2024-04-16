@@ -3,9 +3,9 @@ package authenticator
 import (
 	"context"
 	"errors"
+	"github.com/Cal-lifornia/homieclips/util"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
-	"homieclips/util"
 )
 
 type Authenticator struct {

@@ -1,9 +1,9 @@
 package api
 
 import (
-	db "homieclips/db/models"
-	"homieclips/storage"
-	"homieclips/util"
+	db "github.com/Cal-lifornia/homieclips/db/models"
+	"github.com/Cal-lifornia/homieclips/storage"
+	"github.com/Cal-lifornia/homieclips/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

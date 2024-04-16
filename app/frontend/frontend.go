@@ -1,9 +1,9 @@
 package frontend
 
 import (
-	"homieclips/components"
-	db "homieclips/db/models"
-	"homieclips/util/gintemplrenderer"
+	"github.com/Cal-lifornia/homieclips/components"
+	db "github.com/Cal-lifornia/homieclips/db/models"
+	"github.com/Cal-lifornia/homieclips/util/gintemplrenderer"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"

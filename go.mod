@@ -1,4 +1,4 @@
-module homieclips
+module github.com/Cal-lifornia/homieclips
 
 go 1.21
 

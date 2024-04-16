@@ -11,7 +11,7 @@ import (
 )
 
 func (api *Api) proxy(ctx *gin.Context) {
-	remoteUrl, err := url.Parse("https://" + api.config.MinioURL + "/homieclips/uploaded")
+	remoteUrl, err := url.Parse("https://" + api.config.MinioURL + "/homieclips/stream")
 	if err != nil {
 		log.Fatalf("failed to connect reverse proxy: %s", err)
 	}

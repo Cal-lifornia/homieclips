@@ -1,7 +1,7 @@
 package api
 
 import (
-	"homieclips/util"
+	"github.com/Cal-lifornia/homieclips/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

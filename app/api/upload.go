@@ -1,13 +1,14 @@
 package api
 
 import (
-	"fmt"
-	"github.com/google/uuid"
-	db "homieclips/db/models"
-	"homieclips/util"
 	"mime/multipart"
 	"net/http"
 	"time"
+
+	db "github.com/Cal-lifornia/homieclips/db/models"
+	"github.com/Cal-lifornia/homieclips/util"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )
@@ -55,17 +56,24 @@ func (api *Api) uploadRecording(ctx *gin.Context) {
 		ObjectName:   objectName.String(),
 		FriendlyName: form.FriendlyName,
 		GameName:     form.GameName,
+		Ready:        false,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
 
-	result, err := api.models.CreateClip(recording)
+	upload := db.Upload{ObjectName: objectName.String(), Ready: false, CreatedAt: time.Now(), UpdatedAt: time.Now()}
+
+	_, err = api.models.CreateClip(recording)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 		return
 	}
 
-	fmt.Println(result.InsertedID)
+	_, err = api.models.CreateUpload(upload)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		return
+	}
 
 	ctx.JSON(http.StatusOK, response)
 }

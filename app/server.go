@@ -2,13 +2,14 @@ package app
 
 import (
 	"encoding/gob"
-	"homieclips/app/api"
-	"homieclips/app/authenticator"
-	"homieclips/app/frontend"
-	db "homieclips/db/models"
-	"homieclips/storage"
-	"homieclips/util"
 	"log"
+
+	"github.com/Cal-lifornia/homieclips/app/api"
+	"github.com/Cal-lifornia/homieclips/app/authenticator"
+	"github.com/Cal-lifornia/homieclips/app/frontend"
+	db "github.com/Cal-lifornia/homieclips/db/models"
+	"github.com/Cal-lifornia/homieclips/storage"
+	"github.com/Cal-lifornia/homieclips/util"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -37,6 +38,8 @@ func NewServer(config util.Config, models *db.Models, storage *storage.Storage) 
 
 func (server *Server) SetupRouter() {
 	router := gin.Default()
+
+	router.MaxMultipartMemory = 2000 << 20
 
 	var err error
 

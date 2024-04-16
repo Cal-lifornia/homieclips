@@ -1,11 +1,11 @@
 package frontend
 
 import (
+	"github.com/Cal-lifornia/homieclips/components"
+	"github.com/Cal-lifornia/homieclips/util"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/mitchellh/mapstructure"
-	"homieclips/components"
-	"homieclips/util"
 	"log"
 	"net/http"
 )

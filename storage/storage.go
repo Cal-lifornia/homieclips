@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"homieclips/util"
+	"github.com/Cal-lifornia/homieclips/util"
 
 	"github.com/minio/minio-go/v7"
 )

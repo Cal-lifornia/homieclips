@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"homieclips/app"
-	db "homieclips/db/models"
-	"homieclips/storage"
-	"homieclips/util"
+	"github.com/Cal-lifornia/homieclips/app"
+	db "github.com/Cal-lifornia/homieclips/db/models"
+	"github.com/Cal-lifornia/homieclips/storage"
+	"github.com/Cal-lifornia/homieclips/util"
 	"log"
 	"time"
 

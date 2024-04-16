@@ -1,9 +1,9 @@
 package frontend
 
 import (
+	"github.com/Cal-lifornia/homieclips/app/authenticator"
+	"github.com/Cal-lifornia/homieclips/components"
 	"github.com/gin-gonic/gin"
-	"homieclips/app/authenticator"
-	"homieclips/components"
 	"net/http"
 )
 
