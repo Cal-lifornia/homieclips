@@ -2,7 +2,7 @@
   "name": "homieclips-js",
   "version": "1.0.0",
   "description": "js package for the homieclips app",
-  "main": "index.js",
+  "main": "assets/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +18,9 @@
   "homepage": "https://github.com/Cal-lifornia/homieclips#readme",
   "devDependencies": {
     "video.js": "^8.10.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "htmx.org": "^1.9.12"
   }
 }
