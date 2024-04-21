@@ -1,27 +1,25 @@
 package api
 
 import (
-	db "github.com/Cal-lifornia/homieclips/db/models"
-	"github.com/Cal-lifornia/homieclips/storage"
-	"github.com/Cal-lifornia/homieclips/util"
 	"net/http"
+
+	db "github.com/Cal-lifornia/homieclips/db/models"
+	"github.com/Cal-lifornia/homieclips/util"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Api struct {
-	router  *gin.Engine
-	models  *db.Models
-	storage *storage.Storage
-	config  util.Config
+	router *gin.Engine
+	models *db.Models
+	config util.Config
 }
 
-func Init(router *gin.Engine, models *db.Models, storage *storage.Storage, config util.Config) {
+func Init(router *gin.Engine, models *db.Models, config util.Config) {
 	api := Api{
-		router:  router,
-		models:  models,
-		storage: storage,
-		config:  config,
+		router: router,
+		models: models,
+		config: config,
 	}
 
 	routeGroup := router.Group("/api")
@@ -34,7 +32,5 @@ func Init(router *gin.Engine, models *db.Models, storage *storage.Storage, confi
 	api.router.GET("/logout", api.logOut)
 
 	api.createClipsRoute(routeGroup)
-	api.createStreamRoute(routeGroup)
 	api.createUploadRoute(routeGroup)
-	routeGroup.Any("/storage/*proxyPath", api.proxy)
 }

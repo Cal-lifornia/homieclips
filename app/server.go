@@ -8,7 +8,6 @@ import (
 	"github.com/Cal-lifornia/homieclips/app/authenticator"
 	"github.com/Cal-lifornia/homieclips/app/frontend"
 	db "github.com/Cal-lifornia/homieclips/db/models"
-	"github.com/Cal-lifornia/homieclips/storage"
 	"github.com/Cal-lifornia/homieclips/util"
 
 	"github.com/gin-contrib/sessions"
@@ -17,18 +16,16 @@ import (
 )
 
 type Server struct {
-	config  util.Config
-	models  *db.Models
-	storage *storage.Storage
-	router  *gin.Engine
-	auth    *authenticator.Authenticator
+	config util.Config
+	models *db.Models
+	router *gin.Engine
+	auth   *authenticator.Authenticator
 }
 
-func NewServer(config util.Config, models *db.Models, storage *storage.Storage) *Server {
+func NewServer(config util.Config, models *db.Models) *Server {
 	server := &Server{
-		config:  config,
-		models:  models,
-		storage: storage,
+		config: config,
+		models: models,
 	}
 
 	server.SetupRouter()
@@ -62,10 +59,10 @@ func (server *Server) SetupRouter() {
 	baseUrl.GET("/login", server.auth.Login)
 	baseUrl.GET("/callback", server.auth.Callback)
 
-	frontend.Init(router, server.models)
+	frontend.Init(router, server.models, server.config.CloudFrontURL)
 	baseUrl.Static("/assets", "assets")
 
-	api.Init(router, server.models, server.storage, server.config)
+	api.Init(router, server.models, server.config)
 
 	server.router = router
 

@@ -14,6 +14,7 @@ type Config struct {
 	Auth0ClientID     string `mapstructure:"AUTH0_CLIENT_ID"`
 	Auth0ClientSecret string `mapstructure:"AUTH0_CLIENT_SECRET"`
 	Auth0CallbackURL  string `mapstructure:"AUTH0_CALLBACK_URL"`
+	CloudFrontURL     string `mapstructure:"CLOUDFRONT_URL"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

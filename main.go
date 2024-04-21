@@ -5,13 +5,10 @@ import (
 	"fmt"
 	"github.com/Cal-lifornia/homieclips/app"
 	db "github.com/Cal-lifornia/homieclips/db/models"
-	"github.com/Cal-lifornia/homieclips/storage"
 	"github.com/Cal-lifornia/homieclips/util"
 	"log"
 	"time"
 
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -32,40 +29,14 @@ func main() {
 		log.Fatalf("ran into error connecting to mongo instance %s\n", err)
 	}
 
-	minioClient, err := setupMinio(dbCtx, &config)
-	if err != nil {
-		cancelFunc()
-		log.Fatalf("ran into error connecting to minio: %s\n", err)
-	}
-
 	dbCtx.Done()
 
 	models := db.New(dbClient, config.DbName)
 
-	storageClient := storage.New(minioClient, config)
-
-	mainApp := app.NewServer(config, models, storageClient)
+	mainApp := app.NewServer(config, models)
 
 	err = mainApp.Start("localhost:8080")
 	if err != nil {
 		return
 	}
-}
-
-func setupMinio(ctx context.Context, config *util.Config) (*minio.Client, error) {
-	minioClient, err := minio.New(config.MinioURL, &minio.Options{
-		Creds:  credentials.NewStaticV4(config.MinioAccessKey, config.MinioSecretKey, ""),
-		Secure: true,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	exists, errBucketExists := minioClient.BucketExists(ctx, config.BucketName)
-	if errBucketExists == nil && exists {
-		log.Printf("bucket exists and is ours")
-		return minioClient, nil
-	}
-
-	return nil, errBucketExists
 }

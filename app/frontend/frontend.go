@@ -11,18 +11,20 @@ import (
 )
 
 type Frontend struct {
-	router *gin.Engine
-	models *db.Models
+	router        *gin.Engine
+	models        *db.Models
+	cloudfrontURL string
 }
 
-func Init(router *gin.Engine, models *db.Models) {
+func Init(router *gin.Engine, models *db.Models, cloudFrontURL string) {
 	ginHtmlRenderer := router.HTMLRender
 
 	router.HTMLRender = &gintemplrenderer.HTMLTemplRenderer{FallbackHtmlRenderer: ginHtmlRenderer}
 
 	frontend := &Frontend{
-		router: router,
-		models: models,
+		router:        router,
+		models:        models,
+		cloudfrontURL: cloudFrontURL,
 	}
 
 	routerGroup := frontend.router.Group("")

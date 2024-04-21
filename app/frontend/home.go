@@ -12,7 +12,7 @@ func (frontend *Frontend) createAuthRoutes(rg *gin.RouterGroup) {
 
 	auth.GET("", authenticator.IsAuthenticated(), frontend.homePage)
 	auth.GET("/user", authenticator.IsAuthenticated(), frontend.userPage)
-
+	auth.GET("/stream/:object_name", authenticator.IsAuthenticated(), frontend.getVideo)
 }
 
 func (frontend *Frontend) homePage(ctx *gin.Context) {

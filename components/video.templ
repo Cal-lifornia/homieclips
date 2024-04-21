@@ -1,0 +1,16 @@
+package components
+
+templ Video(clipURL string) {
+    <video
+        class="video-js"
+        data-setup="{}"
+        type="application/x-mpegURL"
+        controls
+        preload="auto"
+        >
+        <source src={ clipURL }/>
+    </video>
+    <script>
+        var player = videojs('my-video');
+    </script>
+}

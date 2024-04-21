@@ -1,15 +1,13 @@
 package components
 
-import "homieclips/db/models"
+import "github.com/Cal-lifornia/homieclips/db/models"
 
 templ Home(clips []db.Clip) {
     <div id="clips" class="container">
-        <div class="row row-cols-3 row-cols-sm-1 row-cols-md-3 g-4">
+        <ul>
         for _, clip := range clips {
-            <div class="col">            
-               @Clip(clip)
-            </div>
+            @Clip(clip)
         }
-        </div>
+        </ul>
     </div>
 }

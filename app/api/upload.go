@@ -1,7 +1,6 @@
 package api
 
 import (
-	"mime/multipart"
 	"net/http"
 	"time"
 
@@ -24,9 +23,8 @@ type uploadResponse struct {
 }
 
 type uploadFileForm struct {
-	FriendlyName string                `json:"friendly_name" bson:"friendly_name" form:"friendly_name" binding:"required"`
-	GameName     string                `json:"game_name" bson:"game_name" form:"game_name" binding:"required"`
-	File         *multipart.FileHeader `form:"file" binding:"required"`
+	FriendlyName string `json:"friendly_name" bson:"friendly_name" form:"friendly_name" binding:"required"`
+	GameName     string `json:"game_name" bson:"game_name" form:"game_name" binding:"required"`
 }
 
 func (api *Api) uploadRecording(ctx *gin.Context) {
@@ -47,11 +45,6 @@ func (api *Api) uploadRecording(ctx *gin.Context) {
 		return
 	}
 
-	file := form.File
-	api.storage.UploadClip(ctx, objectName.String(), file, &response.UploadComplete)
-	if ctx.IsAborted() {
-		return
-	}
 	recording := db.Clip{
 		ObjectName:   objectName.String(),
 		FriendlyName: form.FriendlyName,

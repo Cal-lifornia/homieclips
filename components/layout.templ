@@ -6,10 +6,13 @@ templ Header() {
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>Homie Clips</title>
-		<script src="/assets/index.js"></script>
+		<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+		<script src="/assets/js/htmx.min.js"></script>
+		<script src="/assets/bootstrap-5.3.3/js/bootstrap.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 		<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-
+        <link rel="stylesheet" href="/assets/bootstrap-5.3.3/css/bootstrap.css"/>
+        <script src="https://unpkg.com/videojs-contrib-hls/dist/videojscontrib-hls.js"></script>
 	</head>
 }
 
@@ -28,7 +31,8 @@ templ NavBar() {
 templ Page(contents templ.Component) {
 	<html data-bs-theme="dark" lang="">
 		@Header()
-		<body id="contents" hx-ext="client-side-templates">
+		@NavBar()
+		<body id="contents">
 			@contents
 		</body>
 	</html>
