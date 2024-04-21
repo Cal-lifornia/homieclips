@@ -2,13 +2,12 @@ package app
 
 import (
 	"encoding/gob"
-	"log"
-
 	"github.com/Cal-lifornia/homieclips/app/api"
 	"github.com/Cal-lifornia/homieclips/app/authenticator"
 	"github.com/Cal-lifornia/homieclips/app/frontend"
 	db "github.com/Cal-lifornia/homieclips/db/models"
 	"github.com/Cal-lifornia/homieclips/util"
+	"log"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -36,8 +35,6 @@ func NewServer(config util.Config, models *db.Models) *Server {
 func (server *Server) SetupRouter() {
 	router := gin.Default()
 
-	router.MaxMultipartMemory = 2000 << 20
-
 	var err error
 
 	server.auth, err = authenticator.New(server.config)
@@ -60,8 +57,7 @@ func (server *Server) SetupRouter() {
 	baseUrl.GET("/callback", server.auth.Callback)
 
 	frontend.Init(router, server.models, server.config.CloudFrontURL)
-	baseUrl.Static("/assets", "assets")
-
+	router.Static("/assets", "./assets")
 	api.Init(router, server.models, server.config)
 
 	server.router = router

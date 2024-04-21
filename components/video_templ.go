@@ -23,7 +23,7 @@ func Video(clipURL string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<video class=\"video-js\" data-setup=\"{}\" type=\"application/x-mpegURL\" controls preload=\"auto\"><source src=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<video class=\"video-js\" data-setup=\"{}\" controls preload=\"auto\" fluid=\"true\"><source src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -36,7 +36,7 @@ func Video(clipURL string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></video><script>\n        var player = videojs('my-video');\n    </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"application/x-mpegURL\"></video><script>\n        var player = videojs('my-video');\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

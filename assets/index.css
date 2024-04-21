@@ -1,0 +1,10 @@
+/* node_modules/tailwindcss/base.css */
+@tailwind base;
+
+/* node_modules/tailwindcss/components.css */
+@tailwind components;
+
+/* node_modules/tailwindcss/utilities.css */
+@tailwind utilities;
+
+/* assets/input.css */

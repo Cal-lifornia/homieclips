@@ -3,7 +3,7 @@ package components
 import "github.com/Cal-lifornia/homieclips/db/models"
 
 templ Home(clips []db.Clip) {
-    <div id="clips" class="container">
+    <div id="clips" class="">
         <ul>
         for _, clip := range clips {
             @Clip(clip)

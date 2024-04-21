@@ -4,11 +4,11 @@ templ Video(clipURL string) {
     <video
         class="video-js"
         data-setup="{}"
-        type="application/x-mpegURL"
         controls
         preload="auto"
+        fluid="true"
         >
-        <source src={ clipURL }/>
+        <source src={ clipURL }  type="application/x-mpegURL"/>
     </video>
     <script>
         var player = videojs('my-video');
