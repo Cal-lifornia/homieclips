@@ -2,15 +2,17 @@ package components
 
 templ Video(clipURL string) {
     <video
-        class="video-js"
-        data-setup="{}"
+        id="my-video"
+        class='video-js'
+        data-setup='{}'
         controls
-        preload="auto"
         fluid="true"
+        preload="auto"
         >
-        <source src={ clipURL }  type="application/x-mpegURL"/>
+        <source src={ clipURL } type="application/x-mpegURL"/>
     </video>
-    <script>
-        var player = videojs('my-video');
+    <script src="/assets/index.js">
+        let player = videojs("my-video");
+        player.play()
     </script>
 }

@@ -8,6 +8,7 @@
     "video.js": "^8.10.0"
   },
   "dependencies": {
+    "@videojs/http-streaming": "^3.10.0",
     "htmx.org": "^1.9.12"
   },
   "scripts": {

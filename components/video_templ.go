@@ -23,20 +23,20 @@ func Video(clipURL string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<video class=\"video-js\" data-setup=\"{}\" controls preload=\"auto\" fluid=\"true\"><source src=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<video id=\"my-video\" class=\"video-js\" data-setup=\"{}\" controls fluid=\"true\" preload=\"auto\"><source src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(clipURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/video.templ`, Line: 11, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/video.templ`, Line: 12, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"application/x-mpegURL\"></video><script>\n        var player = videojs('my-video');\n    </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"application/x-mpegURL\"></video><script src=\"/assets/index.js\">\n        let player = videojs(\"my-video\");\n        player.play()\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

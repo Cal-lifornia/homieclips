@@ -8,29 +8,23 @@ templ Header() {
 		<title>Homie Clips</title>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 		<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+        <link href="/assets/index.css" rel="stylesheet"/>
 		<link href="/assets/output.css" rel="stylesheet"/>
 	</head>
 }
 
 templ NavBar() {
-	<nav class="">
-		<div class="container-fluid">
-			<a class="navbar-brand">HomieClips</a>
-			<form class="d-flex align-self-center" role="search">
-				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"></input>
-				<button class="btn btn-outline-success" type="submit">Search</button>
-			</form>
-		</div>
-	</nav>
+    <p>Hellp</p>
 }
 
 templ Page(contents templ.Component) {
-	<html data-bs-theme="dark" lang="">
+    <!doctype html>
+	<html data-bs-theme="dark" lang="en">
 		@Header()
 		@NavBar()
-		<body id="contents" class="bg-">
+		<body id="contents" class="">
 			@contents
-			<script src="/assets/index.js"></script>
+        <script src="/assets/index.js"></script>
 		</body>
 	</html>
 }

@@ -3399,7 +3399,7 @@
       };
       module2.exports = createXHR;
       module2.exports.default = createXHR;
-      createXHR.XMLHttpRequest = window8.XMLHttpRequest || noop2;
+      createXHR.XMLHttpRequest = window8.XMLHttpRequest || noop3;
       createXHR.XDomainRequest = "withCredentials" in new createXHR.XMLHttpRequest() ? createXHR.XMLHttpRequest : window8.XDomainRequest;
       forEachArray(["get", "put", "post", "patch", "head", "delete"], function(method) {
         createXHR[method === "delete" ? "del" : method] = function(uri, options, callback) {
@@ -3597,7 +3597,7 @@
         }
         return null;
       }
-      function noop2() {
+      function noop3() {
       }
     }
   });
@@ -3605,7 +3605,7 @@
   // node_modules/videojs-vtt.js/lib/vtt.js
   var require_vtt = __commonJS({
     "node_modules/videojs-vtt.js/lib/vtt.js"(exports2, module2) {
-      var document3 = require_document();
+      var document4 = require_document();
       var _objCreate = Object.create || /* @__PURE__ */ function() {
         function F2() {
         }
@@ -3823,7 +3823,7 @@
         skipWhitespace();
         consumeCueSettings(input, cue);
       }
-      var TEXTAREA_ELEMENT = document3.createElement && document3.createElement("textarea");
+      var TEXTAREA_ELEMENT = document4.createElement && document4.createElement("textarea");
       var TAG_NAME = {
         c: "span",
         i: "i",
@@ -5608,7 +5608,7 @@
          * @see https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-5CED94D7 DOM Level 1 Core
          * @see https://dom.spec.whatwg.org/#dom-domimplementation-hasfeature DOM Living Standard
          */
-        hasFeature: function(feature, version2) {
+        hasFeature: function(feature, version3) {
           return true;
         },
         /**
@@ -5729,8 +5729,8 @@
           }
         },
         // Introduced in DOM Level 2:
-        isSupported: function(feature, version2) {
-          return this.ownerDocument.implementation.hasFeature(feature, version2);
+        isSupported: function(feature, version3) {
+          return this.ownerDocument.implementation.hasFeature(feature, version3);
         },
         // Introduced in DOM Level 2:
         hasAttributes: function() {
@@ -9708,7 +9708,7 @@
   var require_parse_sidx = __commonJS({
     "node_modules/mux.js/lib/tools/parse-sidx.js"(exports2, module2) {
       var getUint64 = require_numbers().getUint64;
-      var parseSidx2 = function(data) {
+      var parseSidx3 = function(data) {
         var view = new DataView(data.buffer, data.byteOffset, data.byteLength), result = {
           version: data[0],
           flags: new Uint8Array(data.subarray(1, 4)),
@@ -9740,14 +9740,14 @@
         }
         return result;
       };
-      module2.exports = parseSidx2;
+      module2.exports = parseSidx3;
     }
   });
 
   // node_modules/mux.js/lib/utils/clock.js
   var require_clock = __commonJS({
     "node_modules/mux.js/lib/utils/clock.js"(exports2, module2) {
-      var ONE_SECOND_IN_TS2 = 9e4;
+      var ONE_SECOND_IN_TS3 = 9e4;
       var secondsToVideoTs;
       var secondsToAudioTs;
       var videoTsToSeconds;
@@ -9756,13 +9756,13 @@
       var videoTsToAudioTs;
       var metadataTsToSeconds;
       secondsToVideoTs = function(seconds) {
-        return seconds * ONE_SECOND_IN_TS2;
+        return seconds * ONE_SECOND_IN_TS3;
       };
       secondsToAudioTs = function(seconds, sampleRate) {
         return seconds * sampleRate;
       };
       videoTsToSeconds = function(timestamp) {
-        return timestamp / ONE_SECOND_IN_TS2;
+        return timestamp / ONE_SECOND_IN_TS3;
       };
       audioTsToSeconds = function(timestamp, sampleRate) {
         return timestamp / sampleRate;
@@ -9777,7 +9777,7 @@
         return videoTsToSeconds(keepOriginalTimestamps ? timestamp : timestamp - timelineStartPts);
       };
       module2.exports = {
-        ONE_SECOND_IN_TS: ONE_SECOND_IN_TS2,
+        ONE_SECOND_IN_TS: ONE_SECOND_IN_TS3,
         secondsToVideoTs,
         secondsToAudioTs,
         videoTsToSeconds,
@@ -9797,6 +9797,114 @@
           tailwindcss: {},
           autoprefixer: {}
         }
+      };
+    }
+  });
+
+  // node_modules/@videojs/http-streaming/node_modules/mux.js/lib/utils/numbers.js
+  var require_numbers2 = __commonJS({
+    "node_modules/@videojs/http-streaming/node_modules/mux.js/lib/utils/numbers.js"(exports2, module2) {
+      var MAX_UINT32 = Math.pow(2, 32);
+      var getUint64 = function(uint8) {
+        var dv = new DataView(uint8.buffer, uint8.byteOffset, uint8.byteLength);
+        var value;
+        if (dv.getBigUint64) {
+          value = dv.getBigUint64(0);
+          if (value < Number.MAX_SAFE_INTEGER) {
+            return Number(value);
+          }
+          return value;
+        }
+        return dv.getUint32(0) * MAX_UINT32 + dv.getUint32(4);
+      };
+      module2.exports = {
+        getUint64,
+        MAX_UINT32
+      };
+    }
+  });
+
+  // node_modules/@videojs/http-streaming/node_modules/mux.js/lib/tools/parse-sidx.js
+  var require_parse_sidx2 = __commonJS({
+    "node_modules/@videojs/http-streaming/node_modules/mux.js/lib/tools/parse-sidx.js"(exports2, module2) {
+      var getUint64 = require_numbers2().getUint64;
+      var parseSidx3 = function(data) {
+        var view = new DataView(data.buffer, data.byteOffset, data.byteLength), result = {
+          version: data[0],
+          flags: new Uint8Array(data.subarray(1, 4)),
+          references: [],
+          referenceId: view.getUint32(4),
+          timescale: view.getUint32(8)
+        }, i2 = 12;
+        if (result.version === 0) {
+          result.earliestPresentationTime = view.getUint32(i2);
+          result.firstOffset = view.getUint32(i2 + 4);
+          i2 += 8;
+        } else {
+          result.earliestPresentationTime = getUint64(data.subarray(i2));
+          result.firstOffset = getUint64(data.subarray(i2 + 8));
+          i2 += 16;
+        }
+        i2 += 2;
+        var referenceCount = view.getUint16(i2);
+        i2 += 2;
+        for (; referenceCount > 0; i2 += 12, referenceCount--) {
+          result.references.push({
+            referenceType: (data[i2] & 128) >>> 7,
+            referencedSize: view.getUint32(i2) & 2147483647,
+            subsegmentDuration: view.getUint32(i2 + 4),
+            startsWithSap: !!(data[i2 + 8] & 128),
+            sapType: (data[i2 + 8] & 112) >>> 4,
+            sapDeltaTime: view.getUint32(i2 + 8) & 268435455
+          });
+        }
+        return result;
+      };
+      module2.exports = parseSidx3;
+    }
+  });
+
+  // node_modules/@videojs/http-streaming/node_modules/mux.js/lib/utils/clock.js
+  var require_clock2 = __commonJS({
+    "node_modules/@videojs/http-streaming/node_modules/mux.js/lib/utils/clock.js"(exports2, module2) {
+      var ONE_SECOND_IN_TS3 = 9e4;
+      var secondsToVideoTs;
+      var secondsToAudioTs;
+      var videoTsToSeconds;
+      var audioTsToSeconds;
+      var audioTsToVideoTs;
+      var videoTsToAudioTs;
+      var metadataTsToSeconds;
+      secondsToVideoTs = function(seconds) {
+        return seconds * ONE_SECOND_IN_TS3;
+      };
+      secondsToAudioTs = function(seconds, sampleRate) {
+        return seconds * sampleRate;
+      };
+      videoTsToSeconds = function(timestamp) {
+        return timestamp / ONE_SECOND_IN_TS3;
+      };
+      audioTsToSeconds = function(timestamp, sampleRate) {
+        return timestamp / sampleRate;
+      };
+      audioTsToVideoTs = function(timestamp, sampleRate) {
+        return secondsToVideoTs(audioTsToSeconds(timestamp, sampleRate));
+      };
+      videoTsToAudioTs = function(timestamp, sampleRate) {
+        return secondsToAudioTs(videoTsToSeconds(timestamp), sampleRate);
+      };
+      metadataTsToSeconds = function(timestamp, timelineStartPts, keepOriginalTimestamps) {
+        return videoTsToSeconds(keepOriginalTimestamps ? timestamp : timestamp - timelineStartPts);
+      };
+      module2.exports = {
+        ONE_SECOND_IN_TS: ONE_SECOND_IN_TS3,
+        secondsToVideoTs,
+        secondsToAudioTs,
+        videoTsToSeconds,
+        audioTsToSeconds,
+        audioTsToVideoTs,
+        videoTsToAudioTs,
+        metadataTsToSeconds
       };
     }
   });
@@ -10590,7 +10698,7 @@
       let currentMap;
       let key;
       let hasParts = false;
-      const noop2 = function() {
+      const noop3 = function() {
       };
       const defaultMediaGroups = {
         "AUDIO": {},
@@ -11067,7 +11175,7 @@
                 this.manifest.contentSteering = camelCaseKeys(entry.attributes);
                 this.warnOnMissingAttributes_("#EXT-X-CONTENT-STEERING", entry.attributes, ["SERVER-URI"]);
               }
-            }[entry.tagType] || noop2).call(self2);
+            }[entry.tagType] || noop3).call(self2);
           },
           uri() {
             currentUri.uri = entry.uri;
@@ -11630,13 +11738,13 @@
      */
     static(attributes) {
       const {
-        duration: duration2,
+        duration: duration3,
         timescale = 1,
         sourceDuration,
         periodDuration
       } = attributes;
       const endNumber = parseEndNumber(attributes.endNumber);
-      const segmentDuration = duration2 / timescale;
+      const segmentDuration = duration3 / timescale;
       if (typeof endNumber === "number") {
         return {
           start: 0,
@@ -11668,7 +11776,7 @@
         clientOffset,
         availabilityStartTime,
         timescale = 1,
-        duration: duration2,
+        duration: duration3,
         periodStart = 0,
         minimumUpdatePeriod = 0,
         timeShiftBufferDepth = Infinity
@@ -11678,9 +11786,9 @@
       const periodStartWC = availabilityStartTime + periodStart;
       const periodEndWC = now + minimumUpdatePeriod;
       const periodDuration = periodEndWC - periodStartWC;
-      const segmentCount = Math.ceil(periodDuration * timescale / duration2);
-      const availableStart = Math.floor((now - periodStartWC - timeShiftBufferDepth) * timescale / duration2);
-      const availableEnd = Math.floor((now - periodStartWC) * timescale / duration2);
+      const segmentCount = Math.ceil(periodDuration * timescale / duration3);
+      const availableStart = Math.floor((now - periodStartWC - timeShiftBufferDepth) * timescale / duration3);
+      const availableEnd = Math.floor((now - periodStartWC) * timescale / duration3);
       return {
         start: Math.max(0, availableStart),
         end: typeof endNumber === "number" ? endNumber : Math.min(segmentCount, availableEnd)
@@ -11689,22 +11797,22 @@
   };
   var toSegments = (attributes) => (number) => {
     const {
-      duration: duration2,
+      duration: duration3,
       timescale = 1,
       periodStart,
       startNumber = 1
     } = attributes;
     return {
       number: startNumber + number,
-      duration: duration2 / timescale,
+      duration: duration3 / timescale,
       timeline: periodStart,
-      time: number * duration2
+      time: number * duration3
     };
   };
   var parseByDuration = (attributes) => {
     const {
       type,
-      duration: duration2,
+      duration: duration3,
       timescale = 1,
       periodDuration,
       sourceDuration
@@ -11717,7 +11825,7 @@
     if (type === "static") {
       const index = segments.length - 1;
       const sectionDuration = typeof periodDuration === "number" ? periodDuration : sourceDuration;
-      segments[index].duration = sectionDuration - duration2 / timescale * index;
+      segments[index].duration = sectionDuration - duration3 / timescale * index;
     }
     return segments;
   };
@@ -11730,7 +11838,7 @@
       periodStart,
       presentationTime,
       number = 0,
-      duration: duration2
+      duration: duration3
     } = attributes;
     if (!baseUrl) {
       throw new Error(errors.NO_BASE_URL);
@@ -11746,7 +11854,7 @@
       indexRange
     });
     segment.map = initSegment;
-    if (duration2) {
+    if (duration3) {
       const segmentTimeInfo = parseByDuration(attributes);
       if (segmentTimeInfo.length) {
         segment.duration = segmentTimeInfo[0].duration;
@@ -11782,7 +11890,7 @@
     for (let i2 = 0; i2 < mediaReferences.length; i2++) {
       const reference = sidx.references[i2];
       const size = reference.referencedSize;
-      const duration2 = reference.subsegmentDuration;
+      const duration3 = reference.subsegmentDuration;
       let endIndex;
       if (typeof startIndex === "bigint") {
         endIndex = startIndex + import_window6.default.BigInt(size) - import_window6.default.BigInt(1);
@@ -11797,7 +11905,7 @@
         periodStart,
         presentationTime,
         number,
-        duration: duration2,
+        duration: duration3,
         sourceDuration,
         indexRange,
         type
@@ -11812,7 +11920,7 @@
       } else {
         startIndex += size;
       }
-      presentationTime += duration2 / timescale;
+      presentationTime += duration3 / timescale;
       number++;
     }
     playlist.segments = segments;
@@ -11975,7 +12083,7 @@
     mediaSequence,
     discontinuitySequence,
     discontinuityStarts
-  }, isAudioOnly2) => {
+  }, isAudioOnly3) => {
     const playlist = {
       attributes: {
         NAME: attributes.id,
@@ -12003,7 +12111,7 @@
     if (sidx) {
       playlist.sidx = sidx;
     }
-    if (isAudioOnly2) {
+    if (isAudioOnly3) {
       playlist.attributes.AUDIO = "audio";
       playlist.attributes.SUBTITLES = "subs";
     }
@@ -12052,7 +12160,7 @@
     }
     return vttPlaylist;
   };
-  var organizeAudioPlaylists = (playlists, sidxMapping = {}, isAudioOnly2 = false) => {
+  var organizeAudioPlaylists = (playlists, sidxMapping = {}, isAudioOnly3 = false) => {
     let mainPlaylist;
     const formattedPlaylists = playlists.reduce((a2, playlist) => {
       const role = playlist.attributes.role && playlist.attributes.role.value || "";
@@ -12071,7 +12179,7 @@
           uri: ""
         };
       }
-      const formatted = addSidxSegmentsToPlaylist(formatAudioPlaylist(playlist, isAudioOnly2), sidxMapping);
+      const formatted = addSidxSegmentsToPlaylist(formatAudioPlaylist(playlist, isAudioOnly3), sidxMapping);
       a2[label].playlists.push(formatted);
       if (typeof mainPlaylist === "undefined" && role === "main") {
         mainPlaylist = playlist;
@@ -12216,7 +12324,7 @@
       return {};
     }
     const {
-      sourceDuration: duration2,
+      sourceDuration: duration3,
       type,
       suggestedPresentationDelay,
       minimumUpdatePeriod
@@ -12237,7 +12345,7 @@
         SUBTITLES: {}
       },
       uri: "",
-      duration: duration2,
+      duration: duration3,
       playlists: addSidxSegmentsToPlaylists(videoPlaylists, sidxMapping)
     };
     if (minimumUpdatePeriod >= 0) {
@@ -12255,8 +12363,8 @@
     if (eventStream && eventStream.length > 0) {
       manifest.eventStream = eventStream;
     }
-    const isAudioOnly2 = manifest.playlists.length === 0;
-    const organizedAudioGroup = audioPlaylists.length ? organizeAudioPlaylists(audioPlaylists, sidxMapping, isAudioOnly2) : null;
+    const isAudioOnly3 = manifest.playlists.length === 0;
+    const organizedAudioGroup = audioPlaylists.length ? organizeAudioPlaylists(audioPlaylists, sidxMapping, isAudioOnly3) : null;
     const organizedVttGroup = vttPlaylists.length ? organizeVttPlaylists(vttPlaylists, sidxMapping) : null;
     const formattedPlaylists = videoPlaylists.concat(flattenMediaGroupPlaylists(organizedAudioGroup), flattenMediaGroupPlaylists(organizedVttGroup));
     const playlistTimelineStarts = formattedPlaylists.map(({
@@ -12281,7 +12389,7 @@
     }
     return manifest;
   };
-  var getLiveRValue = (attributes, time, duration2) => {
+  var getLiveRValue = (attributes, time, duration3) => {
     const {
       NOW,
       clientOffset,
@@ -12294,7 +12402,7 @@
     const periodStartWC = availabilityStartTime + periodStart;
     const periodEndWC = now + minimumUpdatePeriod;
     const periodDuration = periodEndWC - periodStartWC;
-    return Math.ceil((periodDuration * timescale - time) / duration2);
+    return Math.ceil((periodDuration * timescale - time) / duration3);
   };
   var parseByTimeline = (attributes, segmentTimeline) => {
     const {
@@ -12310,7 +12418,7 @@
     let time = -1;
     for (let sIndex = 0; sIndex < segmentTimeline.length; sIndex++) {
       const S2 = segmentTimeline[sIndex];
-      const duration2 = S2.d;
+      const duration3 = S2.d;
       const repeat = S2.r || 0;
       const segmentTime = S2.t || 0;
       if (time < 0) {
@@ -12324,12 +12432,12 @@
         const nextS = sIndex + 1;
         if (nextS === segmentTimeline.length) {
           if (type === "dynamic" && minimumUpdatePeriod > 0 && media.indexOf("$Number$") > 0) {
-            count = getLiveRValue(attributes, time, duration2);
+            count = getLiveRValue(attributes, time, duration3);
           } else {
-            count = (sourceDuration * timescale - time) / duration2;
+            count = (sourceDuration * timescale - time) / duration3;
           }
         } else {
-          count = (segmentTimeline[nextS].t - time) / duration2;
+          count = (segmentTimeline[nextS].t - time) / duration3;
         }
       } else {
         count = repeat + 1;
@@ -12339,11 +12447,11 @@
       while (number < end) {
         segments.push({
           number,
-          duration: duration2 / timescale,
+          duration: duration3 / timescale,
           time,
           timeline
         });
-        time += duration2;
+        time += duration3;
         number++;
       }
     }
@@ -12446,16 +12554,16 @@
   };
   var segmentsFromList = (attributes, segmentTimeline) => {
     const {
-      duration: duration2,
+      duration: duration3,
       segmentUrls = [],
       periodStart
     } = attributes;
-    if (!duration2 && !segmentTimeline || duration2 && segmentTimeline) {
+    if (!duration3 && !segmentTimeline || duration3 && segmentTimeline) {
       throw new Error(errors.SEGMENT_TIME_UNSPECIFIED);
     }
     const segmentUrlMap = segmentUrls.map((segmentUrlObject) => SegmentURLToSegmentObject(attributes, segmentUrlObject));
     let segmentTimeInfo;
-    if (duration2) {
+    if (duration3) {
       segmentTimeInfo = parseByDuration(attributes);
     }
     if (segmentTimeline) {
@@ -12500,10 +12608,10 @@
     const segments = segmentsFn(segmentAttributes, segmentInfo.segmentTimeline);
     if (segmentAttributes.duration) {
       const {
-        duration: duration2,
+        duration: duration3,
         timescale = 1
       } = segmentAttributes;
-      segmentAttributes.duration = duration2 / timescale;
+      segmentAttributes.duration = duration3 / timescale;
     } else if (segments.length) {
       segmentAttributes.duration = segments.reduce((max, segment) => {
         return Math.max(max, Math.ceil(segment.duration));
@@ -12968,14 +13076,14 @@
         const eventAttributes = parseAttributes2(event);
         const presentationTime = eventAttributes.presentationTime || 0;
         const timescale = eventStreamAttributes.timescale || 1;
-        const duration2 = eventAttributes.duration || 0;
+        const duration3 = eventAttributes.duration || 0;
         const start = presentationTime / timescale + period.attributes.start;
         return {
           schemeIdUri,
           value: eventStreamAttributes.value,
           id: eventAttributes.id,
           start,
-          end: start + duration2 / timescale,
+          end: start + duration3 / timescale,
           messageData: getContent(event) || eventAttributes.messageData,
           contentEncoding: eventStreamAttributes.contentEncoding,
           presentationTimeOffset: eventStreamAttributes.presentationTimeOffset || 0
@@ -13774,8 +13882,8 @@
     FullscreenApi.prefixed = browserApi[0] !== specApi[0];
   }
   var history2 = [];
-  var LogByTypeFactory = (name, log2, styles) => (type, level, args) => {
-    const lvl = log2.levels[level];
+  var LogByTypeFactory = (name, log3, styles) => (type, level, args) => {
+    const lvl = log3.levels[level];
     const lvlRegExp = new RegExp(`^(${lvl})$`);
     let resultName = name;
     if (type !== "log") {
@@ -13806,20 +13914,20 @@
   function createLogger$1(name, delimiter = ":", styles = "") {
     let level = "info";
     let logByType;
-    const log2 = function(...args) {
+    const log3 = function(...args) {
       logByType("log", level, args);
     };
-    logByType = LogByTypeFactory(name, log2, styles);
-    log2.createLogger = (subName, subDelimiter, subStyles) => {
+    logByType = LogByTypeFactory(name, log3, styles);
+    log3.createLogger = (subName, subDelimiter, subStyles) => {
       const resultDelimiter = subDelimiter !== void 0 ? subDelimiter : delimiter;
       const resultStyles = subStyles !== void 0 ? subStyles : styles;
       const resultName = `${name} ${resultDelimiter} ${subName}`;
       return createLogger$1(resultName, resultDelimiter, resultStyles);
     };
-    log2.createNewLogger = (newName, newDelimiter, newStyles) => {
+    log3.createNewLogger = (newName, newDelimiter, newStyles) => {
       return createLogger$1(newName, newDelimiter, newStyles);
     };
-    log2.levels = {
+    log3.levels = {
       all: "debug|log|warn|error",
       off: "",
       debug: "debug|log|warn|error",
@@ -13828,41 +13936,41 @@
       error: "error",
       DEFAULT: level
     };
-    log2.level = (lvl) => {
+    log3.level = (lvl) => {
       if (typeof lvl === "string") {
-        if (!log2.levels.hasOwnProperty(lvl)) {
+        if (!log3.levels.hasOwnProperty(lvl)) {
           throw new Error(`"${lvl}" in not a valid log level`);
         }
         level = lvl;
       }
       return level;
     };
-    log2.history = () => history2 ? [].concat(history2) : [];
-    log2.history.filter = (fname) => {
+    log3.history = () => history2 ? [].concat(history2) : [];
+    log3.history.filter = (fname) => {
       return (history2 || []).filter((historyItem) => {
         return new RegExp(`.*${fname}.*`).test(historyItem[0]);
       });
     };
-    log2.history.clear = () => {
+    log3.history.clear = () => {
       if (history2) {
         history2.length = 0;
       }
     };
-    log2.history.disable = () => {
+    log3.history.disable = () => {
       if (history2 !== null) {
         history2.length = 0;
         history2 = null;
       }
     };
-    log2.history.enable = () => {
+    log3.history.enable = () => {
       if (history2 === null) {
         history2 = [];
       }
     };
-    log2.error = (...args) => logByType("error", level, args);
-    log2.warn = (...args) => logByType("warn", level, args);
-    log2.debug = (...args) => logByType("debug", level, args);
-    return log2;
+    log3.error = (...args) => logByType("error", level, args);
+    log3.warn = (...args) => logByType("warn", level, args);
+    log3.debug = (...args) => logByType("debug", level, args);
+    return log3;
   }
   var log$1 = createLogger$1("VIDEOJS");
   var createLogger = log$1.createLogger;
@@ -14004,11 +14112,11 @@
     }();
     IE_VERSION = function() {
       const result = /MSIE\s(\d+)\.\d/.exec(USER_AGENT);
-      let version2 = result && parseFloat(result[1]);
-      if (!version2 && /Trident\/7.0/i.test(USER_AGENT) && /rv:11.0/.test(USER_AGENT)) {
-        version2 = 11;
+      let version3 = result && parseFloat(result[1]);
+      if (!version3 && /Trident\/7.0/i.test(USER_AGENT) && /rv:11.0/.test(USER_AGENT)) {
+        version3 = 11;
       }
-      return version2;
+      return version3;
     }();
     IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
     IS_WINDOWS = /Windows/i.test(USER_AGENT);
@@ -14257,13 +14365,13 @@
     if (IS_IOS) {
       let item = el;
       while (item && item.nodeName.toLowerCase() !== "html") {
-        const transform2 = computedStyle(item, "transform");
-        if (/^matrix/.test(transform2)) {
-          const values3 = transform2.slice(7, -1).split(/,\s/).map(Number);
+        const transform3 = computedStyle(item, "transform");
+        if (/^matrix/.test(transform3)) {
+          const values3 = transform3.slice(7, -1).split(/,\s/).map(Number);
           translated.x += values3[4];
           translated.y += values3[5];
-        } else if (/^matrix3d/.test(transform2)) {
-          const values3 = transform2.slice(9, -1).split(/,\s/).map(Number);
+        } else if (/^matrix3d/.test(transform3)) {
+          const values3 = transform3.slice(9, -1).split(/,\s/).map(Number);
           translated.x += values3[12];
           translated.y += values3[13];
         }
@@ -16806,11 +16914,11 @@
     resetFormatTime,
     formatTime
   });
-  function bufferedPercent(buffered, duration2) {
+  function bufferedPercent(buffered, duration3) {
     let bufferedDuration = 0;
     let start;
     let end;
-    if (!duration2) {
+    if (!duration3) {
       return 0;
     }
     if (!buffered || !buffered.length) {
@@ -16819,12 +16927,12 @@
     for (let i2 = 0; i2 < buffered.length; i2++) {
       start = buffered.start(i2);
       end = buffered.end(i2);
-      if (end > duration2) {
-        end = duration2;
+      if (end > duration3) {
+        end = duration3;
       }
       bufferedDuration += end - start;
     }
-    return bufferedDuration / duration2;
+    return bufferedDuration / duration3;
   }
   function MediaError(value) {
     if (value instanceof MediaError) {
@@ -20746,8 +20854,8 @@
      * @listens Player#loadedmetadata
      */
     updateContent(event) {
-      const duration2 = this.player_.duration();
-      this.updateTextNode_(duration2);
+      const duration3 = this.player_.duration();
+      this.updateTextNode_(duration3);
     }
   };
   DurationDisplay.prototype.labelText_ = "Duration";
@@ -21320,10 +21428,10 @@
       this.requestNamedAnimationFrame("LoadProgressBar#update", () => {
         const liveTracker = this.player_.liveTracker;
         const buffered = this.player_.buffered();
-        const duration2 = liveTracker && liveTracker.isLive() ? liveTracker.seekableEnd() : this.player_.duration();
+        const duration3 = liveTracker && liveTracker.isLive() ? liveTracker.seekableEnd() : this.player_.duration();
         const bufferedEnd = this.player_.bufferedEnd();
         const children = this.partEls_;
-        const percent = percentify(bufferedEnd, duration2);
+        const percent = percentify(bufferedEnd, duration3);
         if (this.percent_ !== percent) {
           this.el_.style.width = percent;
           textContent(this.percentageEl_, percent);
@@ -21443,13 +21551,13 @@
     updateTime(seekBarRect, seekBarPoint, time, cb) {
       this.requestNamedAnimationFrame("TimeTooltip#updateTime", () => {
         let content;
-        const duration2 = this.player_.duration();
+        const duration3 = this.player_.duration();
         if (this.player_.liveTracker && this.player_.liveTracker.isLive()) {
           const liveWindow = this.player_.liveTracker.liveWindow();
           const secondsBehind = liveWindow - seekBarPoint * liveWindow;
           content = (secondsBehind < 1 ? "" : "-") + formatTime(secondsBehind, liveWindow);
         } else {
-          content = formatTime(time, duration2);
+          content = formatTime(time, duration3);
         }
         this.update(seekBarRect, seekBarPoint, content);
         if (cb) {
@@ -21659,18 +21767,18 @@
       this.requestNamedAnimationFrame("SeekBar#update", () => {
         const currentTime = this.player_.ended() ? this.player_.duration() : this.getCurrentTime_();
         const liveTracker = this.player_.liveTracker;
-        let duration2 = this.player_.duration();
+        let duration3 = this.player_.duration();
         if (liveTracker && liveTracker.isLive()) {
-          duration2 = this.player_.liveTracker.liveCurrentTime();
+          duration3 = this.player_.liveTracker.liveCurrentTime();
         }
         if (this.percent_ !== percent) {
           this.el_.setAttribute("aria-valuenow", (percent * 100).toFixed(2));
           this.percent_ = percent;
         }
-        if (this.currentTime_ !== currentTime || this.duration_ !== duration2) {
-          this.el_.setAttribute("aria-valuetext", this.localize("progress bar timing: currentTime={1} duration={2}", [formatTime(currentTime, duration2), formatTime(duration2, duration2)], "{1} of {2}"));
+        if (this.currentTime_ !== currentTime || this.duration_ !== duration3) {
+          this.el_.setAttribute("aria-valuetext", this.localize("progress bar timing: currentTime={1} duration={2}", [formatTime(currentTime, duration3), formatTime(duration3, duration3)], "{1} of {2}"));
           this.currentTime_ = currentTime;
-          this.duration_ = duration2;
+          this.duration_ = duration3;
         }
         if (this.bar) {
           this.bar.update(getBoundingClientRect(this.el()), this.getProgress());
@@ -23037,12 +23145,12 @@
       }
       const currentVideoTime = this.player_.currentTime();
       const liveTracker = this.player_.liveTracker;
-      const duration2 = liveTracker && liveTracker.isLive() ? liveTracker.seekableEnd() : this.player_.duration();
+      const duration3 = liveTracker && liveTracker.isLive() ? liveTracker.seekableEnd() : this.player_.duration();
       let newTime;
-      if (currentVideoTime + this.skipTime <= duration2) {
+      if (currentVideoTime + this.skipTime <= duration3) {
         newTime = currentVideoTime + this.skipTime;
       } else {
-        newTime = duration2;
+        newTime = duration3;
       }
       this.player_.currentTime(newTime);
     }
@@ -25427,8 +25535,8 @@
      * and for tracking how far past seek end we should be
      */
     trackLive_() {
-      const seekable2 = this.player_.seekable();
-      if (!seekable2 || !seekable2.length) {
+      const seekable3 = this.player_.seekable();
+      if (!seekable3 || !seekable3.length) {
         return;
       }
       const newTime = Number(import_window7.default.performance.now().toFixed(4));
@@ -25558,11 +25666,11 @@
      *         The furthest seekable end or Infinity.
      */
     seekableEnd() {
-      const seekable2 = this.player_.seekable();
+      const seekable3 = this.player_.seekable();
       const seekableEnds = [];
-      let i2 = seekable2 ? seekable2.length : 0;
+      let i2 = seekable3 ? seekable3.length : 0;
       while (i2--) {
-        seekableEnds.push(seekable2.end(i2));
+        seekableEnds.push(seekable3.end(i2));
       }
       return seekableEnds.length ? seekableEnds.sort()[seekableEnds.length - 1] : Infinity;
     }
@@ -25574,11 +25682,11 @@
      *         The earliest seekable start or 0.
      */
     seekableStart() {
-      const seekable2 = this.player_.seekable();
+      const seekable3 = this.player_.seekable();
       const seekableStarts = [];
-      let i2 = seekable2 ? seekable2.length : 0;
+      let i2 = seekable3 ? seekable3.length : 0;
       while (i2--) {
-        seekableStarts.push(seekable2.start(i2));
+        seekableStarts.push(seekable3.start(i2));
       }
       return seekableStarts.length ? seekableStarts.sort()[0] : 0;
     }
@@ -26729,23 +26837,23 @@
   };
   Html5.canOverrideAttributes = function() {
     try {
-      const noop2 = () => {
+      const noop3 = () => {
       };
       Object.defineProperty(import_document.default.createElement("video"), "src", {
-        get: noop2,
-        set: noop2
+        get: noop3,
+        set: noop3
       });
       Object.defineProperty(import_document.default.createElement("audio"), "src", {
-        get: noop2,
-        set: noop2
+        get: noop3,
+        set: noop3
       });
       Object.defineProperty(import_document.default.createElement("video"), "innerHTML", {
-        get: noop2,
-        set: noop2
+        get: noop3,
+        set: noop3
       });
       Object.defineProperty(import_document.default.createElement("audio"), "innerHTML", {
-        get: noop2,
-        set: noop2
+        get: noop3,
+        set: noop3
       });
     } catch (e2) {
       return false;
@@ -29279,11 +29387,11 @@
      *         A mock {@link TimeRanges} object (following HTML spec)
      */
     seekable() {
-      let seekable2 = this.techGet_("seekable");
-      if (!seekable2 || !seekable2.length) {
-        seekable2 = createTimeRanges$1(0, 0);
+      let seekable3 = this.techGet_("seekable");
+      if (!seekable3 || !seekable3.length) {
+        seekable3 = createTimeRanges$1(0, 0);
       }
-      return seekable2;
+      return seekable3;
     }
     /**
      * Returns whether the player is in the "seeking" state.
@@ -29368,10 +29476,10 @@
      */
     bufferedEnd() {
       const buffered = this.buffered();
-      const duration2 = this.duration();
+      const duration3 = this.duration();
       let end = buffered.end(buffered.length - 1);
-      if (end > duration2) {
-        end = duration2;
+      if (end > duration3) {
+        end = duration3;
       }
       return end;
     }
@@ -35320,7 +35428,7 @@ browserWorkerPolyFill(self);
       }
       return box.apply(null, [types.mvex].concat(boxes));
     };
-    mvhd = function(duration2) {
+    mvhd = function(duration3) {
       var bytes = new Uint8Array([
         0,
         // version 0
@@ -35343,10 +35451,10 @@ browserWorkerPolyFill(self);
         95,
         144,
         // timescale, 90,000 "ticks" per second
-        (duration2 & 4278190080) >> 24,
-        (duration2 & 16711680) >> 16,
-        (duration2 & 65280) >> 8,
-        duration2 & 255,
+        (duration3 & 4278190080) >> 24,
+        (duration3 & 16711680) >> 16,
+        (duration3 & 65280) >> 8,
+        duration3 & 255,
         // duration
         0,
         1,
@@ -38916,7 +39024,7 @@ browserWorkerPolyFill(self);
       } while (frameStart < packet.byteLength);
       return null;
     };
-    var utils2 = {
+    var utils3 = {
       isLikelyAacData: isLikelyAacData$1,
       parseId3TagSize,
       parseAdtsSize,
@@ -38925,7 +39033,7 @@ browserWorkerPolyFill(self);
       parseAacTimestamp
     };
     var Stream$1 = stream;
-    var aacUtils = utils2;
+    var aacUtils = utils3;
     var AacStream$1;
     AacStream$1 = function() {
       var everything = new Uint8Array(), timeStamp = 0;
@@ -39011,7 +39119,7 @@ browserWorkerPolyFill(self);
     var AdtsStream = adts;
     var H264Stream = h2642.H264Stream;
     var AacStream = aac2;
-    var isLikelyAacData = utils2.isLikelyAacData;
+    var isLikelyAacData = utils3.isLikelyAacData;
     var ONE_SECOND_IN_TS$1 = clock$2.ONE_SECOND_IN_TS;
     var AUDIO_PROPERTIES = audioProperties;
     var VIDEO_PROPERTIES = videoProperties;
@@ -39280,10 +39388,10 @@ browserWorkerPolyFill(self);
         return null;
       };
       this.alignGopsAtStart_ = function(gops) {
-        var alignIndex, gopIndex, align, gop, byteLength, nalCount, duration2, alignedGops;
+        var alignIndex, gopIndex, align, gop, byteLength, nalCount, duration3, alignedGops;
         byteLength = gops.byteLength;
         nalCount = gops.nalCount;
-        duration2 = gops.duration;
+        duration3 = gops.duration;
         alignIndex = gopIndex = 0;
         while (alignIndex < gopsToAlignWith.length && gopIndex < gops.length) {
           align = gopsToAlignWith[alignIndex];
@@ -39298,7 +39406,7 @@ browserWorkerPolyFill(self);
           gopIndex++;
           byteLength -= gop.byteLength;
           nalCount -= gop.nalCount;
-          duration2 -= gop.duration;
+          duration3 -= gop.duration;
         }
         if (gopIndex === 0) {
           return gops;
@@ -39308,7 +39416,7 @@ browserWorkerPolyFill(self);
         }
         alignedGops = gops.slice(gopIndex);
         alignedGops.byteLength = byteLength;
-        alignedGops.duration = duration2;
+        alignedGops.duration = duration3;
         alignedGops.nalCount = nalCount;
         alignedGops.pts = alignedGops[0].pts;
         alignedGops.dts = alignedGops[0].dts;
@@ -40055,8 +40163,8 @@ browserWorkerPolyFill(self);
           parsedCaptions.captions.push(event);
           parsedCaptions.captionStreams[event.stream] = true;
         });
-        captionStream2.on("log", function(log2) {
-          parsedCaptions.logs.push(log2);
+        captionStream2.on("log", function(log3) {
+          parsedCaptions.logs.push(log3);
         });
       };
       this.isNewInit = function(videoTrackIds, timescales) {
@@ -40171,9 +40279,9 @@ browserWorkerPolyFill(self);
     var getUint64$1 = numbers.getUint64;
     var parseEmsgBox = function(boxData) {
       var offset = 4;
-      var version2 = boxData[0];
+      var version3 = boxData[0];
       var scheme_id_uri, value, timescale2, presentation_time, presentation_time_delta, event_duration, id, message_data;
-      if (version2 === 0) {
+      if (version3 === 0) {
         scheme_id_uri = uint8ToCString(boxData.subarray(offset));
         offset += scheme_id_uri.length;
         value = uint8ToCString(boxData.subarray(offset));
@@ -40187,7 +40295,7 @@ browserWorkerPolyFill(self);
         offset += 4;
         id = dv.getUint32(offset);
         offset += 4;
-      } else if (version2 === 1) {
+      } else if (version3 === 1) {
         var dv = new DataView(boxData.buffer);
         timescale2 = dv.getUint32(offset);
         offset += 4;
@@ -40214,16 +40322,16 @@ browserWorkerPolyFill(self);
         id,
         message_data
       };
-      return isValidEmsgBox(version2, emsgBox) ? emsgBox : void 0;
+      return isValidEmsgBox(version3, emsgBox) ? emsgBox : void 0;
     };
     var scaleTime = function(presentationTime, timescale2, timeDelta, offset) {
       return presentationTime || presentationTime === 0 ? presentationTime / timescale2 : offset + timeDelta / timescale2;
     };
-    var isValidEmsgBox = function(version2, emsg2) {
+    var isValidEmsgBox = function(version3, emsg2) {
       var hasScheme = emsg2.scheme_id_uri !== "\0";
-      var isValidV0Box = version2 === 0 && isDefined(emsg2.presentation_time_delta) && hasScheme;
-      var isValidV1Box = version2 === 1 && isDefined(emsg2.presentation_time) && hasScheme;
-      return !(version2 > 1) && isValidV0Box || isValidV1Box;
+      var isValidV0Box = version3 === 0 && isDefined(emsg2.presentation_time_delta) && hasScheme;
+      var isValidV1Box = version3 === 1 && isDefined(emsg2.presentation_time) && hasScheme;
+      return !(version3 > 1) && isValidV0Box || isValidV1Box;
     };
     var isDefined = function(data) {
       return data !== void 0 || data !== null;
@@ -40242,25 +40350,25 @@ browserWorkerPolyFill(self);
     var parseTfdt = parseTfdt$2;
     var getUint64 = numbers.getUint64;
     var timescale, startTime, compositionStartTime, getVideoTrackIds, getTracks, getTimescaleFromMediaHeader, getEmsgID3;
-    var window$12 = window_1;
+    var window$13 = window_1;
     var parseId3Frames = parseId3.parseId3Frames;
     timescale = function(init) {
       var result = {}, traks = findBox3(init, ["moov", "trak"]);
       return traks.reduce(function(result2, trak2) {
-        var tkhd2, version2, index, id, mdhd2;
+        var tkhd2, version3, index, id, mdhd2;
         tkhd2 = findBox3(trak2, ["tkhd"])[0];
         if (!tkhd2) {
           return null;
         }
-        version2 = tkhd2[0];
-        index = version2 === 0 ? 12 : 20;
+        version3 = tkhd2[0];
+        index = version3 === 0 ? 12 : 20;
         id = toUnsigned(tkhd2[index] << 24 | tkhd2[index + 1] << 16 | tkhd2[index + 2] << 8 | tkhd2[index + 3]);
         mdhd2 = findBox3(trak2, ["mdia", "mdhd"])[0];
         if (!mdhd2) {
           return null;
         }
-        version2 = mdhd2[0];
-        index = version2 === 0 ? 12 : 20;
+        version3 = mdhd2[0];
+        index = version3 === 0 ? 12 : 20;
         result2[id] = toUnsigned(mdhd2[index] << 24 | mdhd2[index + 1] << 16 | mdhd2[index + 2] << 8 | mdhd2[index + 3]);
         return result2;
       }, result);
@@ -40282,7 +40390,7 @@ browserWorkerPolyFill(self);
         }
         let seconds;
         if (typeof baseTime === "bigint") {
-          seconds = baseTime / window$12.BigInt(scale);
+          seconds = baseTime / window$13.BigInt(scale);
         } else if (typeof baseTime === "number" && !isNaN(baseTime)) {
           seconds = baseTime / scale;
         }
@@ -40322,8 +40430,8 @@ browserWorkerPolyFill(self);
       }
       var timescale2 = timescales[trackId] || 9e4;
       if (typeof baseMediaDecodeTime === "bigint") {
-        compositionTimeOffset = window$12.BigInt(compositionTimeOffset);
-        timescale2 = window$12.BigInt(timescale2);
+        compositionTimeOffset = window$13.BigInt(compositionTimeOffset);
+        timescale2 = window$13.BigInt(timescale2);
       }
       var result = (baseMediaDecodeTime + compositionTimeOffset) / timescale2;
       if (typeof result === "bigint" && result < Number.MAX_SAFE_INTEGER) {
@@ -40341,12 +40449,12 @@ browserWorkerPolyFill(self);
           var handlerType = parseType$1(hdlr2.subarray(8, 12));
           var tkhd2 = tkhds[index];
           var view;
-          var version2;
+          var version3;
           var trackId;
           if (handlerType === "vide") {
             view = new DataView(tkhd2.buffer, tkhd2.byteOffset, tkhd2.byteLength);
-            version2 = view.getUint8(0);
-            trackId = version2 === 0 ? view.getUint32(12) : view.getUint32(20);
+            version3 = view.getUint8(0);
+            trackId = version3 === 0 ? view.getUint32(12) : view.getUint32(20);
             videoTrackIds.push(trackId);
           }
         });
@@ -40354,8 +40462,8 @@ browserWorkerPolyFill(self);
       return videoTrackIds;
     };
     getTimescaleFromMediaHeader = function(mdhd2) {
-      var version2 = mdhd2[0];
-      var index = version2 === 0 ? 12 : 20;
+      var version3 = mdhd2[0];
+      var index = version3 === 0 ? 12 : 20;
       return toUnsigned(mdhd2[index] << 24 | mdhd2[index + 1] << 16 | mdhd2[index + 2] << 8 | mdhd2[index + 3]);
     };
     getTracks = function(init) {
@@ -40635,8 +40743,8 @@ browserWorkerPolyFill(self);
     var handleRollover = timestampRolloverStream.handleRollover;
     var probe = {};
     probe.ts = probe$1;
-    probe.aac = utils2;
-    var ONE_SECOND_IN_TS2 = clock$2.ONE_SECOND_IN_TS;
+    probe.aac = utils3;
+    var ONE_SECOND_IN_TS3 = clock$2.ONE_SECOND_IN_TS;
     var MP2T_PACKET_LENGTH = 188, SYNC_BYTE = 71;
     var parsePsi_ = function(bytes, pmt) {
       var startIndex = 0, endIndex = MP2T_PACKET_LENGTH, packet, type2;
@@ -40830,8 +40938,8 @@ browserWorkerPolyFill(self);
         segmentInfo.audio.forEach(function(info) {
           info.dts = handleRollover(info.dts, audioBaseTimestamp);
           info.pts = handleRollover(info.pts, audioBaseTimestamp);
-          info.dtsTime = info.dts / ONE_SECOND_IN_TS2;
-          info.ptsTime = info.pts / ONE_SECOND_IN_TS2;
+          info.dtsTime = info.dts / ONE_SECOND_IN_TS3;
+          info.ptsTime = info.pts / ONE_SECOND_IN_TS3;
         });
       }
       if (segmentInfo.video && segmentInfo.video.length) {
@@ -40842,15 +40950,15 @@ browserWorkerPolyFill(self);
         segmentInfo.video.forEach(function(info) {
           info.dts = handleRollover(info.dts, videoBaseTimestamp);
           info.pts = handleRollover(info.pts, videoBaseTimestamp);
-          info.dtsTime = info.dts / ONE_SECOND_IN_TS2;
-          info.ptsTime = info.pts / ONE_SECOND_IN_TS2;
+          info.dtsTime = info.dts / ONE_SECOND_IN_TS3;
+          info.ptsTime = info.pts / ONE_SECOND_IN_TS3;
         });
         if (segmentInfo.firstKeyFrame) {
           var frame = segmentInfo.firstKeyFrame;
           frame.dts = handleRollover(frame.dts, videoBaseTimestamp);
           frame.pts = handleRollover(frame.pts, videoBaseTimestamp);
-          frame.dtsTime = frame.dts / ONE_SECOND_IN_TS2;
-          frame.ptsTime = frame.pts / ONE_SECOND_IN_TS2;
+          frame.dtsTime = frame.dts / ONE_SECOND_IN_TS3;
+          frame.ptsTime = frame.pts / ONE_SECOND_IN_TS3;
         }
       }
     };
@@ -40903,7 +41011,7 @@ browserWorkerPolyFill(self);
       if (sampleRate === null || timestamp === null) {
         return null;
       }
-      var audioTimescale = ONE_SECOND_IN_TS2 / sampleRate;
+      var audioTimescale = ONE_SECOND_IN_TS3 / sampleRate;
       var result = {
         audio: [{
           type: "audio",
@@ -41069,10 +41177,10 @@ browserWorkerPolyFill(self);
           }
         });
       });
-      transmuxer2.on("log", function(log2) {
+      transmuxer2.on("log", function(log3) {
         self2.postMessage({
           action: "log",
-          log: log2
+          log: log3
         });
       });
     };
@@ -41706,7 +41814,7 @@ browserWorkerPolyFill(self);
     onTransmuxerLog
   }) => {
     const fmp4Tracks = segment.map && segment.map.tracks || {};
-    const isMuxed2 = Boolean(fmp4Tracks.audio && fmp4Tracks.video);
+    const isMuxed3 = Boolean(fmp4Tracks.audio && fmp4Tracks.video);
     let audioStartFn = timingInfoFn.bind(null, segment, "audio", "start");
     const audioEndFn = timingInfoFn.bind(null, segment, "audio", "end");
     let videoStartFn = timingInfoFn.bind(null, segment, "video", "start");
@@ -41716,14 +41824,14 @@ browserWorkerPolyFill(self);
       transmuxer: segment.transmuxer,
       audioAppendStart: segment.audioAppendStart,
       gopsToAlignWith: segment.gopsToAlignWith,
-      remux: isMuxed2,
+      remux: isMuxed3,
       onData: (result) => {
         result.type = result.type === "combined" ? "video" : result.type;
         dataFn(segment, result);
       },
       onTrackInfo: (trackInfo) => {
         if (trackInfoFn) {
-          if (isMuxed2) {
+          if (isMuxed3) {
             trackInfo.isMuxed = true;
           }
           trackInfoFn(segment, trackInfo);
@@ -41784,7 +41892,7 @@ browserWorkerPolyFill(self);
           trackInfoFn(segment, {
             hasAudio: probeResult.hasAudio,
             hasVideo: probeResult.hasVideo,
-            isMuxed: isMuxed2
+            isMuxed: isMuxed3
           });
           trackInfoFn = null;
         }
@@ -41883,8 +41991,8 @@ browserWorkerPolyFill(self);
                 callback: (message) => {
                   bytes = message.data.buffer;
                   segment.bytes = bytesAsUint8Array = message.data;
-                  message.logs.forEach(function(log2) {
-                    onTransmuxerLog(merge2(log2, {
+                  message.logs.forEach(function(log3) {
+                    onTransmuxerLog(merge2(log3, {
                       stream: "mp4CaptionParser"
                     }));
                   });
@@ -42478,9 +42586,9 @@ browserWorkerPolyFill(self);
       main,
       currentTime,
       bandwidth,
-      duration: duration2,
+      duration: duration3,
       segmentDuration,
-      timeUntilRebuffer: timeUntilRebuffer2,
+      timeUntilRebuffer: timeUntilRebuffer3,
       currentTimeline,
       syncController
     } = settings;
@@ -42491,10 +42599,10 @@ browserWorkerPolyFill(self);
     }
     const bandwidthPlaylists = enabledPlaylists.filter(Playlist.hasAttribute.bind(null, "BANDWIDTH"));
     const rebufferingEstimates = bandwidthPlaylists.map((playlist) => {
-      const syncPoint = syncController.getSyncPoint(playlist, duration2, currentTimeline, currentTime);
+      const syncPoint = syncController.getSyncPoint(playlist, duration3, currentTimeline, currentTime);
       const numRequests = syncPoint ? 1 : 2;
       const requestTimeEstimate = Playlist.estimateSegmentRequestTime(segmentDuration, bandwidth, playlist);
-      const rebufferingImpact = requestTimeEstimate * numRequests - timeUntilRebuffer2;
+      const rebufferingImpact = requestTimeEstimate * numRequests - timeUntilRebuffer3;
       return {
         playlist,
         rebufferingImpact
@@ -42864,10 +42972,10 @@ browserWorkerPolyFill(self);
     }
     return null;
   };
-  var safeBackBufferTrimTime = (seekable2, currentTime, targetDuration) => {
+  var safeBackBufferTrimTime = (seekable3, currentTime, targetDuration) => {
     let trimTime = currentTime - Config.BACK_BUFFER_LENGTH;
-    if (seekable2.length) {
-      trimTime = Math.max(trimTime, seekable2.start(0));
+    if (seekable3.length) {
+      trimTime = Math.max(trimTime, seekable3.start(0));
     }
     const maxTrimTime = currentTime - targetDuration;
     return Math.min(maxTrimTime, trimTime);
@@ -42875,7 +42983,7 @@ browserWorkerPolyFill(self);
   var segmentInfoString = (segmentInfo) => {
     const {
       startOfSegment,
-      duration: duration2,
+      duration: duration3,
       segment,
       part,
       playlist: {
@@ -42902,7 +43010,7 @@ browserWorkerPolyFill(self);
     const zeroBasedPartCount = hasPartIndex ? getKnownPartCount({
       preloadSegment: segment
     }) - 1 : 0;
-    return `${name} [${seq + index}/${seq + segmentLen}]` + (hasPartIndex ? ` part [${partIndex}/${zeroBasedPartCount}]` : "") + ` segment start/end [${segment.start} => ${segment.end}]` + (hasPartIndex ? ` part start/end [${part.start} => ${part.end}]` : "") + ` startOfSegment [${startOfSegment}] duration [${duration2}] timeline [${timeline}] selected by [${selection}] playlist [${id}]`;
+    return `${name} [${seq + index}/${seq + segmentLen}]` + (hasPartIndex ? ` part [${partIndex}/${zeroBasedPartCount}]` : "") + ` segment start/end [${segment.start} => ${segment.end}]` + (hasPartIndex ? ` part start/end [${part.start} => ${part.end}]` : "") + ` startOfSegment [${startOfSegment}] duration [${duration3}] timeline [${timeline}] selected by [${selection}] playlist [${id}]`;
   };
   var timingInfoPropertyForMedia = (mediaType) => `${mediaType}TimingInfo`;
   var timestampOffsetForSegment = ({
@@ -42958,14 +43066,14 @@ browserWorkerPolyFill(self);
         start,
         end
       } = typeTimingInfo;
-      let duration2;
+      let duration3;
       if (typeof start === "bigint" || typeof end === "bigint") {
-        duration2 = import_window7.default.BigInt(end) - import_window7.default.BigInt(start);
+        duration3 = import_window7.default.BigInt(end) - import_window7.default.BigInt(start);
       } else if (typeof start === "number" && typeof end === "number") {
-        duration2 = end - start;
+        duration3 = end - start;
       }
-      if (typeof duration2 !== "undefined" && duration2 > maxDuration) {
-        maxDuration = duration2;
+      if (typeof duration3 !== "undefined" && duration3 > maxDuration) {
+        maxDuration = duration3;
       }
     });
     if (typeof maxDuration === "bigint" && maxDuration < Number.MAX_SAFE_INTEGER) {
@@ -43274,9 +43382,9 @@ browserWorkerPolyFill(self);
         const {
           hasAudio,
           hasVideo,
-          isMuxed: isMuxed2
+          isMuxed: isMuxed3
         } = trackInfo;
-        if (hasVideo && hasAudio && !this.audioDisabled_ && !isMuxed2) {
+        if (hasVideo && hasAudio && !this.audioDisabled_ && !isMuxed3) {
           return this.sourceUpdater_.buffered();
         }
         if (hasVideo) {
@@ -43753,7 +43861,7 @@ browserWorkerPolyFill(self);
         isSyncRequest,
         partIndex,
         forceTimestampOffset,
-        getMediaInfoForTime: getMediaInfoForTime2
+        getMediaInfoForTime: getMediaInfoForTime3
       } = options;
       const segment = playlist.segments[mediaIndex];
       const part = typeof partIndex === "number" && segment.parts[partIndex];
@@ -43787,7 +43895,7 @@ browserWorkerPolyFill(self);
         byteLength: 0,
         transmuxer: this.transmuxer_,
         // type of getMediaInfoForTime that was used to get this segment
-        getMediaInfoForTime: getMediaInfoForTime2,
+        getMediaInfoForTime: getMediaInfoForTime3,
         independent
       };
       const overrideCheck = typeof forceTimestampOffset !== "undefined" ? forceTimestampOffset : this.isPendingTimestampOffset_;
@@ -44081,12 +44189,12 @@ browserWorkerPolyFill(self);
       const {
         hasAudio,
         hasVideo,
-        isMuxed: isMuxed2
+        isMuxed: isMuxed3
       } = trackInfo;
       if (hasVideo && !segmentInfo.videoTimingInfo) {
         return false;
       }
-      if (hasAudio && !this.audioDisabled_ && !isMuxed2 && !segmentInfo.audioTimingInfo) {
+      if (hasAudio && !this.audioDisabled_ && !isMuxed3 && !segmentInfo.audioTimingInfo) {
         return false;
       }
       if (shouldWaitForTimelineChange({
@@ -44478,10 +44586,10 @@ browserWorkerPolyFill(self);
         this.mediaTransferDuration += stats.roundTripTime;
       }
     }
-    saveBandwidthRelatedStats_(duration2, stats) {
+    saveBandwidthRelatedStats_(duration3, stats) {
       this.pendingSegment_.byteLength = stats.bytesReceived;
-      if (duration2 < MIN_SEGMENT_DURATION_TO_SAVE_STATS) {
-        this.logger_(`Ignoring segment's bandwidth because its duration of ${duration2} is less than the min to record ${MIN_SEGMENT_DURATION_TO_SAVE_STATS}`);
+      if (duration3 < MIN_SEGMENT_DURATION_TO_SAVE_STATS) {
+        this.logger_(`Ignoring segment's bandwidth because its duration of ${duration3} is less than the min to record ${MIN_SEGMENT_DURATION_TO_SAVE_STATS}`);
         return;
       }
       this.bandwidth = stats.bandwidth;
@@ -44598,10 +44706,10 @@ browserWorkerPolyFill(self);
       const {
         hasAudio,
         hasVideo,
-        isMuxed: isMuxed2
+        isMuxed: isMuxed3
       } = trackInfo;
       const waitForVideo = this.loaderType_ === "main" && hasVideo;
-      const waitForAudio = !this.audioDisabled_ && hasAudio && !isMuxed2;
+      const waitForAudio = !this.audioDisabled_ && hasAudio && !isMuxed3;
       segmentInfo.waitingOnAppends = 0;
       if (!segmentInfo.hasAppendedData_) {
         if (!segmentInfo.timingInfo && typeof segmentInfo.timestampOffset === "number") {
@@ -44939,7 +45047,7 @@ browserWorkerPolyFill(self);
   };
   var inSourceBuffers = (mediaSource, sourceBuffer) => mediaSource && sourceBuffer && Array.prototype.indexOf.call(mediaSource.sourceBuffers, sourceBuffer) !== -1;
   var actions = {
-    appendBuffer: (bytes, segmentInfo, onError2) => (type, sourceUpdater) => {
+    appendBuffer: (bytes, segmentInfo, onError3) => (type, sourceUpdater) => {
       const sourceBuffer = sourceUpdater[`${type}Buffer`];
       if (!inSourceBuffers(sourceUpdater.mediaSource, sourceBuffer)) {
         return;
@@ -44950,7 +45058,7 @@ browserWorkerPolyFill(self);
       } catch (e2) {
         sourceUpdater.logger_(`Error with code ${e2.code} ` + (e2.code === QUOTA_EXCEEDED_ERR ? "(QUOTA_EXCEEDED_ERR) " : "") + `when appending segment ${segmentInfo.mediaIndex} to ${type}Buffer`);
         sourceUpdater.queuePending[type] = null;
-        onError2(e2);
+        onError3(e2);
       }
     },
     remove: (start, end) => (type, sourceUpdater) => {
@@ -44987,10 +45095,10 @@ browserWorkerPolyFill(self);
         videojs.log.warn("Failed to call media source endOfStream", e2);
       }
     },
-    duration: (duration2) => (sourceUpdater) => {
-      sourceUpdater.logger_(`Setting mediaSource duration to ${duration2}`);
+    duration: (duration3) => (sourceUpdater) => {
+      sourceUpdater.logger_(`Setting mediaSource duration to ${duration3}`);
       try {
-        sourceUpdater.mediaSource.duration = duration2;
+        sourceUpdater.mediaSource.duration = duration3;
       } catch (e2) {
         videojs.log.warn("Failed to set media source duration", e2);
       }
@@ -45274,13 +45382,13 @@ browserWorkerPolyFill(self);
         this.logger_(`delayed audio append of ${bytes.length} until video append`);
         return;
       }
-      const onError2 = doneFn;
+      const onError3 = doneFn;
       pushQueue({
         type,
         sourceUpdater: this,
         action: actions.appendBuffer(bytes, segmentInfo || {
           mediaIndex: -1
-        }, onError2),
+        }, onError3),
         doneFn,
         name: "appendBuffer"
       });
@@ -45347,11 +45455,11 @@ browserWorkerPolyFill(self);
      * @param {Function} [doneFn]
      *        function to run after duration has been set.
      */
-    setDuration(duration2, doneFn = noop) {
+    setDuration(duration3, doneFn = noop) {
       pushQueue({
         type: "mediaSource",
         sourceUpdater: this,
-        action: actions.duration(duration2),
+        action: actions.duration(duration3),
         name: "duration",
         doneFn
       });
@@ -45870,10 +45978,10 @@ browserWorkerPolyFill(self);
       const mpegTsInSeconds = MPEGTS / import_clock.ONE_SECOND_IN_TS;
       const diff = mpegTsInSeconds - LOCAL + mappingObj.mapping;
       segmentInfo.cues.forEach((cue) => {
-        const duration2 = cue.endTime - cue.startTime;
+        const duration3 = cue.endTime - cue.startTime;
         const startTime = MPEGTS === 0 ? cue.startTime + diff : this.handleRollover_(cue.startTime + diff, mappingObj.time);
         cue.startTime = Math.max(startTime, 0);
-        cue.endTime = Math.max(startTime + duration2, 0);
+        cue.endTime = Math.max(startTime + duration3, 0);
       });
       if (!playlist.syncInfo) {
         const firstStart = segmentInfo.cues[0].startTime;
@@ -45978,8 +46086,8 @@ browserWorkerPolyFill(self);
     //                the equivalence display-time 0 === segment-index 0
     {
       name: "VOD",
-      run: (syncController, playlist, duration2, currentTimeline, currentTime) => {
-        if (duration2 !== Infinity) {
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
+        if (duration3 !== Infinity) {
           const syncPoint = {
             time: 0,
             segmentIndex: 0,
@@ -46002,7 +46110,7 @@ browserWorkerPolyFill(self);
        * @param {number} currentTime
        * @param {string} type
        */
-      run: (syncController, playlist, duration2, currentTimeline, currentTime, type) => {
+      run: (syncController, playlist, duration3, currentTimeline, currentTime, type) => {
         if (!type) {
           return null;
         }
@@ -46053,7 +46161,7 @@ browserWorkerPolyFill(self);
     // Stategy "ProgramDateTime": We have a program-date-time tag in this playlist
     {
       name: "ProgramDateTime",
-      run: (syncController, playlist, duration2, currentTimeline, currentTime) => {
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
         if (!Object.keys(syncController.timelineToDatetimeMappings).length) {
           return null;
         }
@@ -46094,7 +46202,7 @@ browserWorkerPolyFill(self);
     //                    segment in the current timeline with timing data
     {
       name: "Segment",
-      run: (syncController, playlist, duration2, currentTimeline, currentTime) => {
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
         let syncPoint = null;
         let lastDistance = null;
         currentTime = currentTime || 0;
@@ -46126,7 +46234,7 @@ browserWorkerPolyFill(self);
     //                          display-time
     {
       name: "Discontinuity",
-      run: (syncController, playlist, duration2, currentTimeline, currentTime) => {
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
         let syncPoint = null;
         currentTime = currentTime || 0;
         if (playlist.discontinuityStarts && playlist.discontinuityStarts.length) {
@@ -46158,7 +46266,7 @@ browserWorkerPolyFill(self);
     //                     segment index to display time
     {
       name: "Playlist",
-      run: (syncController, playlist, duration2, currentTimeline, currentTime) => {
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
         if (playlist.syncInfo) {
           const syncPoint = {
             time: playlist.syncInfo.time,
@@ -46252,14 +46360,14 @@ Current map: `, currentMap);
      * @return {Object}
      *          A sync-point object
      */
-    getSyncPoint(playlist, duration2, currentTimeline, currentTime, type) {
-      if (duration2 !== Infinity) {
+    getSyncPoint(playlist, duration3, currentTimeline, currentTime, type) {
+      if (duration3 !== Infinity) {
         const vodSyncPointStrategy = syncPointStrategies.find(({
           name
         }) => name === "VOD");
-        return vodSyncPointStrategy.run(this, playlist, duration2);
+        return vodSyncPointStrategy.run(this, playlist, duration3);
       }
-      const syncPoints = this.runStrategies_(playlist, duration2, currentTimeline, currentTime, type);
+      const syncPoints = this.runStrategies_(playlist, duration3, currentTimeline, currentTime, type);
       if (!syncPoints.length) {
         return null;
       }
@@ -46300,11 +46408,11 @@ Current map: `, currentMap);
      *          The amount of time that has expired off the playlist during playback. Null
      *          if no sync-points for the playlist can be found.
      */
-    getExpiredTime(playlist, duration2) {
+    getExpiredTime(playlist, duration3) {
       if (!playlist || !playlist.segments) {
         return null;
       }
-      const syncPoints = this.runStrategies_(playlist, duration2, playlist.discontinuitySequence, 0, "main");
+      const syncPoints = this.runStrategies_(playlist, duration3, playlist.discontinuitySequence, 0, "main");
       if (!syncPoints.length) {
         return null;
       }
@@ -46340,11 +46448,11 @@ Current map: `, currentMap);
      * @return {Array}
      *          A list of sync-point objects
      */
-    runStrategies_(playlist, duration2, currentTimeline, currentTime, type) {
+    runStrategies_(playlist, duration3, currentTimeline, currentTime, type) {
       const syncPoints = [];
       for (let i2 = 0; i2 < syncPointStrategies.length; i2++) {
         const strategy = syncPointStrategies[i2];
-        const syncPoint = strategy.run(this, playlist, duration2, currentTimeline, currentTime, type);
+        const syncPoint = strategy.run(this, playlist, duration3, currentTimeline, currentTime, type);
         if (syncPoint) {
           syncPoint.strategy = strategy.name;
           syncPoints.push({
@@ -46836,7 +46944,7 @@ Current map: `, currentMap);
     const ntoh = function(word) {
       return word << 24 | (word & 65280) << 8 | (word & 16711680) >> 8 | word >>> 24;
     };
-    const decrypt2 = function(encrypted, key, initVector) {
+    const decrypt3 = function(encrypted, key, initVector) {
       const encrypted32 = new Int32Array(encrypted.buffer, encrypted.byteOffset, encrypted.byteLength >> 2);
       const decipher = new AES(Array.prototype.slice.call(key));
       const decrypted = new Uint8Array(encrypted.byteLength);
@@ -46871,9 +46979,9 @@ Current map: `, currentMap);
       }
       return decrypted;
     };
-    class Decrypter2 {
+    class Decrypter3 {
       constructor(encrypted, key, initVector, done) {
-        const step = Decrypter2.STEP;
+        const step = Decrypter3.STEP;
         const encrypted32 = new Int32Array(encrypted.buffer);
         const decrypted = new Uint8Array(encrypted.byteLength);
         let i2 = 0;
@@ -46900,7 +47008,7 @@ Current map: `, currentMap);
        */
       decryptChunk_(encrypted, key, initVector, decrypted) {
         return function() {
-          const bytes = decrypt2(encrypted, key, initVector);
+          const bytes = decrypt3(encrypted, key, initVector);
           decrypted.set(bytes, encrypted.byteOffset);
         };
       }
@@ -46936,7 +47044,7 @@ Current map: `, currentMap);
       }
       return "unknown";
     })();
-    const createTransferableMessage2 = function(message) {
+    const createTransferableMessage3 = function(message) {
       const transferable = {};
       Object.keys(message).forEach((key) => {
         const value = message[key];
@@ -46957,8 +47065,8 @@ Current map: `, currentMap);
       const encrypted = new Uint8Array(data.encrypted.bytes, data.encrypted.byteOffset, data.encrypted.byteLength);
       const key = new Uint32Array(data.key.bytes, data.key.byteOffset, data.key.byteLength / 4);
       const iv = new Uint32Array(data.iv.bytes, data.iv.byteOffset, data.iv.byteLength / 4);
-      new Decrypter2(encrypted, key, iv, function(err, bytes) {
-        self.postMessage(createTransferableMessage2({
+      new Decrypter3(encrypted, key, iv, function(err, bytes) {
+        self.postMessage(createTransferableMessage3({
           source: data.source,
           decrypted: bytes
         }), [bytes.buffer]);
@@ -46995,27 +47103,27 @@ Current map: `, currentMap);
         [type]: mediaType
       }
     } = settings;
-    const activeTrack2 = mediaType.activeTrack();
-    const activeGroup2 = mediaType.getActiveGroup();
+    const activeTrack3 = mediaType.activeTrack();
+    const activeGroup3 = mediaType.getActiveGroup();
     const previousActiveLoader = mediaType.activePlaylistLoader;
     const lastGroup = mediaType.lastGroup_;
-    if (activeGroup2 && lastGroup && activeGroup2.id === lastGroup.id) {
+    if (activeGroup3 && lastGroup && activeGroup3.id === lastGroup.id) {
       return;
     }
-    mediaType.lastGroup_ = activeGroup2;
-    mediaType.lastTrack_ = activeTrack2;
+    mediaType.lastGroup_ = activeGroup3;
+    mediaType.lastTrack_ = activeTrack3;
     stopLoaders(segmentLoader, mediaType);
-    if (!activeGroup2 || activeGroup2.isMainPlaylist) {
+    if (!activeGroup3 || activeGroup3.isMainPlaylist) {
       return;
     }
-    if (!activeGroup2.playlistLoader) {
+    if (!activeGroup3.playlistLoader) {
       if (previousActiveLoader) {
         mainSegmentLoader.resetEverything();
       }
       return;
     }
     segmentLoader.resyncLoader();
-    startLoaders(activeGroup2.playlistLoader, mediaType);
+    startLoaders(activeGroup3.playlistLoader, mediaType);
   };
   var onGroupChanging = (type, settings) => () => {
     const {
@@ -47041,21 +47149,21 @@ Current map: `, currentMap);
         [type]: mediaType
       }
     } = settings;
-    const activeTrack2 = mediaType.activeTrack();
-    const activeGroup2 = mediaType.getActiveGroup();
+    const activeTrack3 = mediaType.activeTrack();
+    const activeGroup3 = mediaType.getActiveGroup();
     const previousActiveLoader = mediaType.activePlaylistLoader;
     const lastTrack = mediaType.lastTrack_;
-    if (lastTrack && activeTrack2 && lastTrack.id === activeTrack2.id) {
+    if (lastTrack && activeTrack3 && lastTrack.id === activeTrack3.id) {
       return;
     }
-    mediaType.lastGroup_ = activeGroup2;
-    mediaType.lastTrack_ = activeTrack2;
+    mediaType.lastGroup_ = activeGroup3;
+    mediaType.lastTrack_ = activeTrack3;
     stopLoaders(segmentLoader, mediaType);
-    if (!activeGroup2) {
+    if (!activeGroup3) {
       return;
     }
-    if (activeGroup2.isMainPlaylist) {
-      if (!activeTrack2 || !lastTrack || activeTrack2.id === lastTrack.id) {
+    if (activeGroup3.isMainPlaylist) {
+      if (!activeTrack3 || !lastTrack || activeTrack3.id === lastTrack.id) {
         return;
       }
       const pc = settings.vhs.playlistController_;
@@ -47063,14 +47171,14 @@ Current map: `, currentMap);
       if (pc.media() === newPlaylist) {
         return;
       }
-      mediaType.logger_(`track change. Switching main audio from ${lastTrack.id} to ${activeTrack2.id}`);
+      mediaType.logger_(`track change. Switching main audio from ${lastTrack.id} to ${activeTrack3.id}`);
       mainPlaylistLoader.pause();
       mainSegmentLoader.resetEverything();
       pc.fastQualityChange_(newPlaylist);
       return;
     }
     if (type === "AUDIO") {
-      if (!activeGroup2.playlistLoader) {
+      if (!activeGroup3.playlistLoader) {
         mainSegmentLoader.setAudio(true);
         mainSegmentLoader.resetEverything();
         return;
@@ -47078,15 +47186,15 @@ Current map: `, currentMap);
       segmentLoader.setAudio(true);
       mainSegmentLoader.setAudio(false);
     }
-    if (previousActiveLoader === activeGroup2.playlistLoader) {
-      startLoaders(activeGroup2.playlistLoader, mediaType);
+    if (previousActiveLoader === activeGroup3.playlistLoader) {
+      startLoaders(activeGroup3.playlistLoader, mediaType);
       return;
     }
     if (segmentLoader.track) {
-      segmentLoader.track(activeTrack2);
+      segmentLoader.track(activeTrack3);
     }
     segmentLoader.resetEverything();
-    startLoaders(activeGroup2.playlistLoader, mediaType);
+    startLoaders(activeGroup3.playlistLoader, mediaType);
   };
   var onError = {
     /**
@@ -47109,11 +47217,11 @@ Current map: `, currentMap);
         },
         excludePlaylist
       } = settings;
-      const activeTrack2 = mediaType.activeTrack();
-      const activeGroup2 = mediaType.activeGroup();
-      const id = (activeGroup2.filter((group) => group.default)[0] || activeGroup2[0]).id;
+      const activeTrack3 = mediaType.activeTrack();
+      const activeGroup3 = mediaType.activeGroup();
+      const id = (activeGroup3.filter((group) => group.default)[0] || activeGroup3[0]).id;
       const defaultTrack = mediaType.tracks[id];
-      if (activeTrack2 === defaultTrack) {
+      if (activeTrack3 === defaultTrack) {
         excludePlaylist({
           error: {
             message: "Problem encountered loading the default audio track."
@@ -47880,15 +47988,15 @@ Current map: `, currentMap);
       if (!reloadUri) {
         return null;
       }
-      const isExcluded2 = (uri) => this.excludedSteeringManifestURLs.has(uri);
+      const isExcluded3 = (uri) => this.excludedSteeringManifestURLs.has(uri);
       if (this.proxyServerUrl_) {
         const proxyURI = this.setProxyServerUrl_(reloadUri);
-        if (!isExcluded2(proxyURI)) {
+        if (!isExcluded3(proxyURI)) {
           return proxyURI;
         }
       }
       const steeringURI = this.setSteeringParams_(reloadUri);
-      if (!isExcluded2(steeringURI)) {
+      if (!isExcluded3(steeringURI)) {
         return steeringURI;
       }
       return null;
@@ -47989,9 +48097,9 @@ Current map: `, currentMap);
     nextPlaylist,
     bufferLowWaterLine,
     bufferHighWaterLine,
-    duration: duration2,
+    duration: duration3,
     bufferBasedABR,
-    log: log2
+    log: log3
   }) {
     if (!nextPlaylist) {
       videojs.log.warn("We received no playlist to switch to. Please check your stream.");
@@ -47999,7 +48107,7 @@ Current map: `, currentMap);
     }
     const sharedLogLine = `allowing switch ${currentPlaylist && currentPlaylist.id || "null"} -> ${nextPlaylist.id}`;
     if (!currentPlaylist) {
-      log2(`${sharedLogLine} as current playlist is not set`);
+      log3(`${sharedLogLine} as current playlist is not set`);
       return true;
     }
     if (nextPlaylist.id === currentPlaylist.id) {
@@ -48008,16 +48116,16 @@ Current map: `, currentMap);
     const isBuffered = Boolean(findRange(buffered, currentTime).length);
     if (!currentPlaylist.endList) {
       if (!isBuffered && typeof currentPlaylist.partTargetDuration === "number") {
-        log2(`not ${sharedLogLine} as current playlist is live llhls, but currentTime isn't in buffered.`);
+        log3(`not ${sharedLogLine} as current playlist is live llhls, but currentTime isn't in buffered.`);
         return false;
       }
-      log2(`${sharedLogLine} as current playlist is live`);
+      log3(`${sharedLogLine} as current playlist is live`);
       return true;
     }
     const forwardBuffer = timeAheadOf(buffered, currentTime);
     const maxBufferLowWaterLine = bufferBasedABR ? Config.EXPERIMENTAL_MAX_BUFFER_LOW_WATER_LINE : Config.MAX_BUFFER_LOW_WATER_LINE;
-    if (duration2 < maxBufferLowWaterLine) {
-      log2(`${sharedLogLine} as duration < max low water line (${duration2} < ${maxBufferLowWaterLine})`);
+    if (duration3 < maxBufferLowWaterLine) {
+      log3(`${sharedLogLine} as duration < max low water line (${duration3} < ${maxBufferLowWaterLine})`);
       return true;
     }
     const nextBandwidth = nextPlaylist.attributes.BANDWIDTH;
@@ -48027,7 +48135,7 @@ Current map: `, currentMap);
       if (bufferBasedABR) {
         logLine += ` and forwardBuffer < bufferHighWaterLine (${forwardBuffer} < ${bufferHighWaterLine})`;
       }
-      log2(logLine);
+      log3(logLine);
       return true;
     }
     if ((!bufferBasedABR || nextBandwidth > currBandwidth) && forwardBuffer >= bufferLowWaterLine) {
@@ -48035,10 +48143,10 @@ Current map: `, currentMap);
       if (bufferBasedABR) {
         logLine += ` and next bandwidth > current bandwidth (${nextBandwidth} > ${currBandwidth})`;
       }
-      log2(logLine);
+      log3(logLine);
       return true;
     }
-    log2(`not ${sharedLogLine} as no switching criteria met`);
+    log3(`not ${sharedLogLine} as no switching criteria met`);
     return false;
   };
   var PlaylistController = class extends videojs.EventTarget {
@@ -48150,15 +48258,15 @@ Current map: `, currentMap);
         featuresNativeTextTracks: this.tech_.featuresNativeTextTracks,
         loadVttJs: () => new Promise((resolve, reject) => {
           function onLoad() {
-            tech.off("vttjserror", onError2);
+            tech.off("vttjserror", onError3);
             resolve();
           }
-          function onError2() {
+          function onError3() {
             tech.off("vttjsloaded", onLoad);
             reject();
           }
           tech.one("vttjsloaded", onLoad);
-          tech.one("vttjserror", onError2);
+          tech.one("vttjserror", onError3);
           tech.addWebVttScript_();
         })
       }), options);
@@ -48253,10 +48361,10 @@ Current map: `, currentMap);
     switchMediaForDASHContentSteering_() {
       ["AUDIO", "SUBTITLES", "CLOSED-CAPTIONS"].forEach((type) => {
         const mediaType = this.mediaTypes_[type];
-        const activeGroup2 = mediaType ? mediaType.activeGroup() : null;
+        const activeGroup3 = mediaType ? mediaType.activeGroup() : null;
         const pathway = this.contentSteeringController_.getPathway();
-        if (activeGroup2 && pathway) {
-          const mediaPlaylists = activeGroup2.length ? activeGroup2[0].playlists : activeGroup2.playlists;
+        if (activeGroup3 && pathway) {
+          const mediaPlaylists = activeGroup3.length ? activeGroup3[0].playlists : activeGroup3.playlists;
           const dashMediaPlaylists = mediaPlaylists.filter((p2) => p2.attributes.serviceLocation === pathway);
           if (dashMediaPlaylists.length) {
             this.mediaTypes_[type].activePlaylistLoader.media(dashMediaPlaylists[0]);
@@ -48716,10 +48824,10 @@ Current map: `, currentMap);
       if (this.hasPlayed_) {
         this.load();
       }
-      const seekable2 = this.tech_.seekable();
+      const seekable3 = this.tech_.seekable();
       if (this.tech_.duration() === Infinity) {
-        if (this.tech_.currentTime() < seekable2.start(0)) {
-          return this.tech_.setCurrentTime(seekable2.end(seekable2.length - 1));
+        if (this.tech_.currentTime() < seekable3.start(0)) {
+          return this.tech_.setCurrentTime(seekable3.end(seekable3.length - 1));
         }
       }
     }
@@ -48733,16 +48841,16 @@ Current map: `, currentMap);
         return false;
       }
       if (!media.endList || media.start) {
-        const seekable2 = this.seekable();
-        if (!seekable2.length) {
+        const seekable3 = this.seekable();
+        if (!seekable3.length) {
           return false;
         }
-        const seekableEnd = seekable2.end(0);
+        const seekableEnd = seekable3.end(0);
         let startPoint = seekableEnd;
         if (media.start) {
           const offset = media.start.timeOffset;
           if (offset < 0) {
-            startPoint = Math.max(seekableEnd + offset, seekable2.start(0));
+            startPoint = Math.max(seekableEnd + offset, seekable3.start(0));
           } else {
             startPoint = Math.min(seekableEnd, offset);
           }
@@ -48783,8 +48891,8 @@ Current map: `, currentMap);
       if (!cues || !cues.length) {
         return;
       }
-      const duration2 = this.duration();
-      cues[cues.length - 1].endTime = isNaN(duration2) || Math.abs(duration2) === Infinity ? Number.MAX_VALUE : duration2;
+      const duration3 = this.duration();
+      cues[cues.length - 1].endTime = isNaN(duration3) || Math.abs(duration3) === Infinity ? Number.MAX_VALUE : duration3;
     }
     /**
      * handle the durationchange event on the MediaSource
@@ -48825,8 +48933,8 @@ Current map: `, currentMap);
      * @return {boolean} whether the playlist has stopped being updated or not
      */
     stuckAtPlaylistEnd_(playlist) {
-      const seekable2 = this.seekable();
-      if (!seekable2.length) {
+      const seekable3 = this.seekable();
+      if (!seekable3.length) {
         return false;
       }
       const expired = this.syncController_.getExpiredTime(playlist, this.duration());
@@ -48926,9 +49034,9 @@ Current map: `, currentMap);
         this.trigger("error");
         return;
       }
-      const logFn2 = error.internal ? this.logger_ : videojs.log.warn;
+      const logFn3 = error.internal ? this.logger_ : videojs.log.warn;
       const errorMessage = error.message ? " " + error.message : "";
-      logFn2(`${error.internal ? "Internal problem" : "Problem"} encountered with playlist ${playlistToExclude.id}.${errorMessage} Switching to playlist ${nextPlaylist.id}.`);
+      logFn3(`${error.internal ? "Internal problem" : "Problem"} encountered with playlist ${playlistToExclude.id}.${errorMessage} Switching to playlist ${nextPlaylist.id}.`);
       if (nextPlaylist.attributes.AUDIO !== playlistToExclude.attributes.AUDIO) {
         this.delegateLoaders_("audio", ["abort", "pause"]);
       }
@@ -49115,22 +49223,22 @@ Current map: `, currentMap);
         return;
       }
       if (isLive) {
-        const seekable2 = this.seekable();
-        if (!seekable2.length) {
+        const seekable3 = this.seekable();
+        if (!seekable3.length) {
           return;
         }
-        if (isNaN(this.mediaSource.duration) || this.mediaSource.duration < seekable2.end(seekable2.length - 1)) {
-          this.sourceUpdater_.setDuration(seekable2.end(seekable2.length - 1));
+        if (isNaN(this.mediaSource.duration) || this.mediaSource.duration < seekable3.end(seekable3.length - 1)) {
+          this.sourceUpdater_.setDuration(seekable3.end(seekable3.length - 1));
         }
         return;
       }
       const buffered = this.tech_.buffered();
-      let duration2 = Vhs$1.Playlist.duration(this.mainPlaylistLoader_.media());
+      let duration3 = Vhs$1.Playlist.duration(this.mainPlaylistLoader_.media());
       if (buffered.length > 0) {
-        duration2 = Math.max(duration2, buffered.end(buffered.length - 1));
+        duration3 = Math.max(duration3, buffered.end(buffered.length - 1));
       }
-      if (this.mediaSource.duration !== duration2) {
-        this.sourceUpdater_.setDuration(duration2);
+      if (this.mediaSource.duration !== duration3) {
+        this.sourceUpdater_.setDuration(duration3);
       }
     }
     /**
@@ -49392,9 +49500,9 @@ Current map: `, currentMap);
     }
     updateAdCues_(media) {
       let offset = 0;
-      const seekable2 = this.seekable();
-      if (seekable2.length) {
-        offset = seekable2.start(0);
+      const seekable3 = this.seekable();
+      if (seekable3.length) {
+        offset = seekable3.start(0);
       }
       updateAdCues(media, this.cueTagsTrack_, offset);
     }
@@ -49969,22 +50077,22 @@ Current map: `, currentMap);
       if (!seeking) {
         return false;
       }
-      const seekable2 = this.seekable();
+      const seekable3 = this.seekable();
       const currentTime = this.tech_.currentTime();
-      const isAfterSeekableRange = this.afterSeekableWindow_(seekable2, currentTime, this.media(), this.allowSeeksWithinUnsafeLiveWindow);
+      const isAfterSeekableRange = this.afterSeekableWindow_(seekable3, currentTime, this.media(), this.allowSeeksWithinUnsafeLiveWindow);
       let seekTo;
       if (isAfterSeekableRange) {
-        const seekableEnd = seekable2.end(seekable2.length - 1);
+        const seekableEnd = seekable3.end(seekable3.length - 1);
         seekTo = seekableEnd;
       }
-      if (this.beforeSeekableWindow_(seekable2, currentTime)) {
-        const seekableStart = seekable2.start(0);
+      if (this.beforeSeekableWindow_(seekable3, currentTime)) {
+        const seekableStart = seekable3.start(0);
         seekTo = seekableStart + // if the playlist is too short and the seekable range is an exact time (can
         // happen in live with a 3 segment playlist), then don't use a time delta
-        (seekableStart === seekable2.end(0) ? 0 : SAFE_TIME_DELTA);
+        (seekableStart === seekable3.end(0) ? 0 : SAFE_TIME_DELTA);
       }
       if (typeof seekTo !== "undefined") {
-        this.logger_(`Trying to seek outside of seekable at time ${currentTime} with seekable range ${printableRange(seekable2)}. Seeking to ${seekTo}.`);
+        this.logger_(`Trying to seek outside of seekable at time ${currentTime} with seekable range ${printableRange(seekable3)}. Seeking to ${seekTo}.`);
         this.tech_.setCurrentTime(seekTo);
         return true;
       }
@@ -50045,13 +50153,13 @@ Current map: `, currentMap);
      * @private
      */
     techWaiting_() {
-      const seekable2 = this.seekable();
+      const seekable3 = this.seekable();
       const currentTime = this.tech_.currentTime();
       if (this.tech_.seeking()) {
         return true;
       }
-      if (this.beforeSeekableWindow_(seekable2, currentTime)) {
-        const livePoint = seekable2.end(seekable2.length - 1);
+      if (this.beforeSeekableWindow_(seekable3, currentTime)) {
+        const livePoint = seekable3.end(seekable3.length - 1);
         this.logger_(`Fell out of live window at time ${currentTime}. Seeking to live point (seekable end) ${livePoint}`);
         this.resetTimeUpdate_();
         this.tech_.setCurrentTime(livePoint);
@@ -50086,24 +50194,24 @@ Current map: `, currentMap);
       }
       return false;
     }
-    afterSeekableWindow_(seekable2, currentTime, playlist, allowSeeksWithinUnsafeLiveWindow = false) {
-      if (!seekable2.length) {
+    afterSeekableWindow_(seekable3, currentTime, playlist, allowSeeksWithinUnsafeLiveWindow = false) {
+      if (!seekable3.length) {
         return false;
       }
-      let allowedEnd = seekable2.end(seekable2.length - 1) + SAFE_TIME_DELTA;
+      let allowedEnd = seekable3.end(seekable3.length - 1) + SAFE_TIME_DELTA;
       const isLive = !playlist.endList;
       const isLLHLS = typeof playlist.partTargetDuration === "number";
       if (isLive && (isLLHLS || allowSeeksWithinUnsafeLiveWindow)) {
-        allowedEnd = seekable2.end(seekable2.length - 1) + playlist.targetDuration * 3;
+        allowedEnd = seekable3.end(seekable3.length - 1) + playlist.targetDuration * 3;
       }
       if (currentTime > allowedEnd) {
         return true;
       }
       return false;
     }
-    beforeSeekableWindow_(seekable2, currentTime) {
-      if (seekable2.length && // can't fall before 0 and 0 seekable start identifies VOD stream
-      seekable2.start(0) > 0 && currentTime < seekable2.start(0) - this.liveRangeSafeTimeDelta) {
+    beforeSeekableWindow_(seekable3, currentTime) {
+      if (seekable3.length && // can't fall before 0 and 0 seekable start identifies VOD stream
+      seekable3.start(0) > 0 && currentTime < seekable3.start(0) - this.liveRangeSafeTimeDelta) {
         return true;
       }
       return false;
@@ -51102,6 +51210,19133 @@ Current map: `, currentMap);
 
   // app.js
   var import_post = __toESM(require_post_config());
+
+  // node_modules/@videojs/http-streaming/dist/videojs-http-streaming.es.js
+  var import_document2 = __toESM(require_document());
+  var import_window8 = __toESM(require_window());
+  var import_parse_sidx2 = __toESM(require_parse_sidx2());
+  var import_clock2 = __toESM(require_clock2());
+  var resolveUrl4 = resolve_url_default;
+  var resolveManifestRedirect2 = (url, req) => {
+    if (req && req.responseURL && url !== req.responseURL) {
+      return req.responseURL;
+    }
+    return url;
+  };
+  var logger2 = (source) => {
+    if (videojs.log.debug) {
+      return videojs.log.debug.bind(videojs, "VHS:", `${source} >`);
+    }
+    return function() {
+    };
+  };
+  function merge3(...args) {
+    const context = videojs.obj || videojs;
+    const fn = context.merge || context.mergeOptions;
+    return fn.apply(context, args);
+  }
+  function createTimeRanges2(...args) {
+    const context = videojs.time || videojs;
+    const fn = context.createTimeRanges || context.createTimeRanges;
+    return fn.apply(context, args);
+  }
+  var TIME_FUDGE_FACTOR2 = 1 / 30;
+  var SAFE_TIME_DELTA2 = TIME_FUDGE_FACTOR2 * 3;
+  var filterRanges2 = function(timeRanges, predicate) {
+    const results = [];
+    let i2;
+    if (timeRanges && timeRanges.length) {
+      for (i2 = 0; i2 < timeRanges.length; i2++) {
+        if (predicate(timeRanges.start(i2), timeRanges.end(i2))) {
+          results.push([timeRanges.start(i2), timeRanges.end(i2)]);
+        }
+      }
+    }
+    return createTimeRanges2(results);
+  };
+  var findRange2 = function(buffered, time) {
+    return filterRanges2(buffered, function(start, end) {
+      return start - SAFE_TIME_DELTA2 <= time && end + SAFE_TIME_DELTA2 >= time;
+    });
+  };
+  var findNextRange2 = function(timeRanges, time) {
+    return filterRanges2(timeRanges, function(start) {
+      return start - TIME_FUDGE_FACTOR2 >= time;
+    });
+  };
+  var findGaps2 = function(buffered) {
+    if (buffered.length < 2) {
+      return createTimeRanges2();
+    }
+    const ranges = [];
+    for (let i2 = 1; i2 < buffered.length; i2++) {
+      const start = buffered.end(i2 - 1);
+      const end = buffered.start(i2);
+      ranges.push([start, end]);
+    }
+    return createTimeRanges2(ranges);
+  };
+  var bufferIntersection2 = function(bufferA, bufferB) {
+    let start = null;
+    let end = null;
+    let arity = 0;
+    const extents = [];
+    const ranges = [];
+    if (!bufferA || !bufferA.length || !bufferB || !bufferB.length) {
+      return createTimeRanges2();
+    }
+    let count = bufferA.length;
+    while (count--) {
+      extents.push({
+        time: bufferA.start(count),
+        type: "start"
+      });
+      extents.push({
+        time: bufferA.end(count),
+        type: "end"
+      });
+    }
+    count = bufferB.length;
+    while (count--) {
+      extents.push({
+        time: bufferB.start(count),
+        type: "start"
+      });
+      extents.push({
+        time: bufferB.end(count),
+        type: "end"
+      });
+    }
+    extents.sort(function(a2, b2) {
+      return a2.time - b2.time;
+    });
+    for (count = 0; count < extents.length; count++) {
+      if (extents[count].type === "start") {
+        arity++;
+        if (arity === 2) {
+          start = extents[count].time;
+        }
+      } else if (extents[count].type === "end") {
+        arity--;
+        if (arity === 1) {
+          end = extents[count].time;
+        }
+      }
+      if (start !== null && end !== null) {
+        ranges.push([start, end]);
+        start = null;
+        end = null;
+      }
+    }
+    return createTimeRanges2(ranges);
+  };
+  var printableRange2 = (range2) => {
+    const strArr = [];
+    if (!range2 || !range2.length) {
+      return "";
+    }
+    for (let i2 = 0; i2 < range2.length; i2++) {
+      strArr.push(range2.start(i2) + " => " + range2.end(i2));
+    }
+    return strArr.join(", ");
+  };
+  var timeUntilRebuffer2 = function(buffered, currentTime, playbackRate = 1) {
+    const bufferedEnd = buffered.length ? buffered.end(buffered.length - 1) : 0;
+    return (bufferedEnd - currentTime) / playbackRate;
+  };
+  var timeRangesToArray2 = (timeRanges) => {
+    const timeRangesList = [];
+    for (let i2 = 0; i2 < timeRanges.length; i2++) {
+      timeRangesList.push({
+        start: timeRanges.start(i2),
+        end: timeRanges.end(i2)
+      });
+    }
+    return timeRangesList;
+  };
+  var isRangeDifferent2 = function(a2, b2) {
+    if (a2 === b2) {
+      return false;
+    }
+    if (!a2 && b2 || !b2 && a2) {
+      return true;
+    }
+    if (a2.length !== b2.length) {
+      return true;
+    }
+    for (let i2 = 0; i2 < a2.length; i2++) {
+      if (a2.start(i2) !== b2.start(i2) || a2.end(i2) !== b2.end(i2)) {
+        return true;
+      }
+    }
+    return false;
+  };
+  var lastBufferedEnd2 = function(a2) {
+    if (!a2 || !a2.length || !a2.end) {
+      return;
+    }
+    return a2.end(a2.length - 1);
+  };
+  var timeAheadOf2 = function(range2, startTime) {
+    let time = 0;
+    if (!range2 || !range2.length) {
+      return time;
+    }
+    for (let i2 = 0; i2 < range2.length; i2++) {
+      const start = range2.start(i2);
+      const end = range2.end(i2);
+      if (startTime > end) {
+        continue;
+      }
+      if (startTime > start && startTime <= end) {
+        time += end - startTime;
+        continue;
+      }
+      time += end - start;
+    }
+    return time;
+  };
+  var segmentDurationWithParts2 = (playlist, segment) => {
+    if (!segment.preload) {
+      return segment.duration;
+    }
+    let result = 0;
+    (segment.parts || []).forEach(function(p2) {
+      result += p2.duration;
+    });
+    (segment.preloadHints || []).forEach(function(p2) {
+      if (p2.type === "PART") {
+        result += playlist.partTargetDuration;
+      }
+    });
+    return result;
+  };
+  var getPartsAndSegments2 = (playlist) => (playlist.segments || []).reduce((acc, segment, si) => {
+    if (segment.parts) {
+      segment.parts.forEach(function(part, pi) {
+        acc.push({
+          duration: part.duration,
+          segmentIndex: si,
+          partIndex: pi,
+          part,
+          segment
+        });
+      });
+    } else {
+      acc.push({
+        duration: segment.duration,
+        segmentIndex: si,
+        partIndex: null,
+        segment,
+        part: null
+      });
+    }
+    return acc;
+  }, []);
+  var getLastParts2 = (media) => {
+    const lastSegment = media.segments && media.segments.length && media.segments[media.segments.length - 1];
+    return lastSegment && lastSegment.parts || [];
+  };
+  var getKnownPartCount2 = ({
+    preloadSegment
+  }) => {
+    if (!preloadSegment) {
+      return;
+    }
+    const {
+      parts,
+      preloadHints
+    } = preloadSegment;
+    let partCount = (preloadHints || []).reduce((count, hint) => count + (hint.type === "PART" ? 1 : 0), 0);
+    partCount += parts && parts.length ? parts.length : 0;
+    return partCount;
+  };
+  var liveEdgeDelay2 = (main, media) => {
+    if (media.endList) {
+      return 0;
+    }
+    if (main && main.suggestedPresentationDelay) {
+      return main.suggestedPresentationDelay;
+    }
+    const hasParts = getLastParts2(media).length > 0;
+    if (hasParts && media.serverControl && media.serverControl.partHoldBack) {
+      return media.serverControl.partHoldBack;
+    } else if (hasParts && media.partTargetDuration) {
+      return media.partTargetDuration * 3;
+    } else if (media.serverControl && media.serverControl.holdBack) {
+      return media.serverControl.holdBack;
+    } else if (media.targetDuration) {
+      return media.targetDuration * 3;
+    }
+    return 0;
+  };
+  var backwardDuration2 = function(playlist, endSequence) {
+    let result = 0;
+    let i2 = endSequence - playlist.mediaSequence;
+    let segment = playlist.segments[i2];
+    if (segment) {
+      if (typeof segment.start !== "undefined") {
+        return {
+          result: segment.start,
+          precise: true
+        };
+      }
+      if (typeof segment.end !== "undefined") {
+        return {
+          result: segment.end - segment.duration,
+          precise: true
+        };
+      }
+    }
+    while (i2--) {
+      segment = playlist.segments[i2];
+      if (typeof segment.end !== "undefined") {
+        return {
+          result: result + segment.end,
+          precise: true
+        };
+      }
+      result += segmentDurationWithParts2(playlist, segment);
+      if (typeof segment.start !== "undefined") {
+        return {
+          result: result + segment.start,
+          precise: true
+        };
+      }
+    }
+    return {
+      result,
+      precise: false
+    };
+  };
+  var forwardDuration2 = function(playlist, endSequence) {
+    let result = 0;
+    let segment;
+    let i2 = endSequence - playlist.mediaSequence;
+    for (; i2 < playlist.segments.length; i2++) {
+      segment = playlist.segments[i2];
+      if (typeof segment.start !== "undefined") {
+        return {
+          result: segment.start - result,
+          precise: true
+        };
+      }
+      result += segmentDurationWithParts2(playlist, segment);
+      if (typeof segment.end !== "undefined") {
+        return {
+          result: segment.end - result,
+          precise: true
+        };
+      }
+    }
+    return {
+      result: -1,
+      precise: false
+    };
+  };
+  var intervalDuration2 = function(playlist, endSequence, expired) {
+    if (typeof endSequence === "undefined") {
+      endSequence = playlist.mediaSequence + playlist.segments.length;
+    }
+    if (endSequence < playlist.mediaSequence) {
+      return 0;
+    }
+    const backward = backwardDuration2(playlist, endSequence);
+    if (backward.precise) {
+      return backward.result;
+    }
+    const forward = forwardDuration2(playlist, endSequence);
+    if (forward.precise) {
+      return forward.result;
+    }
+    return backward.result + expired;
+  };
+  var duration2 = function(playlist, endSequence, expired) {
+    if (!playlist) {
+      return 0;
+    }
+    if (typeof expired !== "number") {
+      expired = 0;
+    }
+    if (typeof endSequence === "undefined") {
+      if (playlist.totalDuration) {
+        return playlist.totalDuration;
+      }
+      if (!playlist.endList) {
+        return import_window8.default.Infinity;
+      }
+    }
+    return intervalDuration2(playlist, endSequence, expired);
+  };
+  var sumDurations2 = function({
+    defaultDuration,
+    durationList,
+    startIndex,
+    endIndex
+  }) {
+    let durations = 0;
+    if (startIndex > endIndex) {
+      [startIndex, endIndex] = [endIndex, startIndex];
+    }
+    if (startIndex < 0) {
+      for (let i2 = startIndex; i2 < Math.min(0, endIndex); i2++) {
+        durations += defaultDuration;
+      }
+      startIndex = 0;
+    }
+    for (let i2 = startIndex; i2 < endIndex; i2++) {
+      durations += durationList[i2].duration;
+    }
+    return durations;
+  };
+  var playlistEnd2 = function(playlist, expired, useSafeLiveEnd, liveEdgePadding) {
+    if (!playlist || !playlist.segments) {
+      return null;
+    }
+    if (playlist.endList) {
+      return duration2(playlist);
+    }
+    if (expired === null) {
+      return null;
+    }
+    expired = expired || 0;
+    let lastSegmentEndTime = intervalDuration2(playlist, playlist.mediaSequence + playlist.segments.length, expired);
+    if (useSafeLiveEnd) {
+      liveEdgePadding = typeof liveEdgePadding === "number" ? liveEdgePadding : liveEdgeDelay2(null, playlist);
+      lastSegmentEndTime -= liveEdgePadding;
+    }
+    return Math.max(0, lastSegmentEndTime);
+  };
+  var seekable2 = function(playlist, expired, liveEdgePadding) {
+    const useSafeLiveEnd = true;
+    const seekableStart = expired || 0;
+    let seekableEnd = playlistEnd2(playlist, expired, useSafeLiveEnd, liveEdgePadding);
+    if (seekableEnd === null) {
+      return createTimeRanges2();
+    }
+    if (seekableEnd < seekableStart) {
+      seekableEnd = seekableStart;
+    }
+    return createTimeRanges2(seekableStart, seekableEnd);
+  };
+  var getMediaInfoForTime2 = function({
+    playlist,
+    currentTime,
+    startingSegmentIndex,
+    startingPartIndex,
+    startTime,
+    exactManifestTimings
+  }) {
+    let time = currentTime - startTime;
+    const partsAndSegments = getPartsAndSegments2(playlist);
+    let startIndex = 0;
+    for (let i2 = 0; i2 < partsAndSegments.length; i2++) {
+      const partAndSegment = partsAndSegments[i2];
+      if (startingSegmentIndex !== partAndSegment.segmentIndex) {
+        continue;
+      }
+      if (typeof startingPartIndex === "number" && typeof partAndSegment.partIndex === "number" && startingPartIndex !== partAndSegment.partIndex) {
+        continue;
+      }
+      startIndex = i2;
+      break;
+    }
+    if (time < 0) {
+      if (startIndex > 0) {
+        for (let i2 = startIndex - 1; i2 >= 0; i2--) {
+          const partAndSegment = partsAndSegments[i2];
+          time += partAndSegment.duration;
+          if (exactManifestTimings) {
+            if (time < 0) {
+              continue;
+            }
+          } else if (time + TIME_FUDGE_FACTOR2 <= 0) {
+            continue;
+          }
+          return {
+            partIndex: partAndSegment.partIndex,
+            segmentIndex: partAndSegment.segmentIndex,
+            startTime: startTime - sumDurations2({
+              defaultDuration: playlist.targetDuration,
+              durationList: partsAndSegments,
+              startIndex,
+              endIndex: i2
+            })
+          };
+        }
+      }
+      return {
+        partIndex: partsAndSegments[0] && partsAndSegments[0].partIndex || null,
+        segmentIndex: partsAndSegments[0] && partsAndSegments[0].segmentIndex || 0,
+        startTime: currentTime
+      };
+    }
+    if (startIndex < 0) {
+      for (let i2 = startIndex; i2 < 0; i2++) {
+        time -= playlist.targetDuration;
+        if (time < 0) {
+          return {
+            partIndex: partsAndSegments[0] && partsAndSegments[0].partIndex || null,
+            segmentIndex: partsAndSegments[0] && partsAndSegments[0].segmentIndex || 0,
+            startTime: currentTime
+          };
+        }
+      }
+      startIndex = 0;
+    }
+    for (let i2 = startIndex; i2 < partsAndSegments.length; i2++) {
+      const partAndSegment = partsAndSegments[i2];
+      time -= partAndSegment.duration;
+      const canUseFudgeFactor = partAndSegment.duration > TIME_FUDGE_FACTOR2;
+      const isExactlyAtTheEnd = time === 0;
+      const isExtremelyCloseToTheEnd = canUseFudgeFactor && time + TIME_FUDGE_FACTOR2 >= 0;
+      if (isExactlyAtTheEnd || isExtremelyCloseToTheEnd) {
+        if (i2 !== partsAndSegments.length - 1) {
+          continue;
+        }
+      }
+      if (exactManifestTimings) {
+        if (time > 0) {
+          continue;
+        }
+      } else if (time - TIME_FUDGE_FACTOR2 >= 0) {
+        continue;
+      }
+      return {
+        partIndex: partAndSegment.partIndex,
+        segmentIndex: partAndSegment.segmentIndex,
+        startTime: startTime + sumDurations2({
+          defaultDuration: playlist.targetDuration,
+          durationList: partsAndSegments,
+          startIndex,
+          endIndex: i2
+        })
+      };
+    }
+    return {
+      segmentIndex: partsAndSegments[partsAndSegments.length - 1].segmentIndex,
+      partIndex: partsAndSegments[partsAndSegments.length - 1].partIndex,
+      startTime: currentTime
+    };
+  };
+  var isExcluded2 = function(playlist) {
+    return playlist.excludeUntil && playlist.excludeUntil > Date.now();
+  };
+  var isIncompatible2 = function(playlist) {
+    return playlist.excludeUntil && playlist.excludeUntil === Infinity;
+  };
+  var isEnabled2 = function(playlist) {
+    const excluded = isExcluded2(playlist);
+    return !playlist.disabled && !excluded;
+  };
+  var isDisabled2 = function(playlist) {
+    return playlist.disabled;
+  };
+  var isAes2 = function(media) {
+    for (let i2 = 0; i2 < media.segments.length; i2++) {
+      if (media.segments[i2].key) {
+        return true;
+      }
+    }
+    return false;
+  };
+  var hasAttribute2 = function(attr, playlist) {
+    return playlist.attributes && playlist.attributes[attr];
+  };
+  var estimateSegmentRequestTime2 = function(segmentDuration, bandwidth, playlist, bytesReceived = 0) {
+    if (!hasAttribute2("BANDWIDTH", playlist)) {
+      return NaN;
+    }
+    const size = segmentDuration * playlist.attributes.BANDWIDTH;
+    return (size - bytesReceived * 8) / bandwidth;
+  };
+  var isLowestEnabledRendition2 = (main, media) => {
+    if (main.playlists.length === 1) {
+      return true;
+    }
+    const currentBandwidth = media.attributes.BANDWIDTH || Number.MAX_VALUE;
+    return main.playlists.filter((playlist) => {
+      if (!isEnabled2(playlist)) {
+        return false;
+      }
+      return (playlist.attributes.BANDWIDTH || 0) < currentBandwidth;
+    }).length === 0;
+  };
+  var playlistMatch2 = (a2, b2) => {
+    if (!a2 && !b2 || !a2 && b2 || a2 && !b2) {
+      return false;
+    }
+    if (a2 === b2) {
+      return true;
+    }
+    if (a2.id && b2.id && a2.id === b2.id) {
+      return true;
+    }
+    if (a2.resolvedUri && b2.resolvedUri && a2.resolvedUri === b2.resolvedUri) {
+      return true;
+    }
+    if (a2.uri && b2.uri && a2.uri === b2.uri) {
+      return true;
+    }
+    return false;
+  };
+  var someAudioVariant2 = function(main, callback) {
+    const AUDIO = main && main.mediaGroups && main.mediaGroups.AUDIO || {};
+    let found = false;
+    for (const groupName in AUDIO) {
+      for (const label in AUDIO[groupName]) {
+        found = callback(AUDIO[groupName][label]);
+        if (found) {
+          break;
+        }
+      }
+      if (found) {
+        break;
+      }
+    }
+    return !!found;
+  };
+  var isAudioOnly2 = (main) => {
+    if (!main || !main.playlists || !main.playlists.length) {
+      const found = someAudioVariant2(main, (variant) => variant.playlists && variant.playlists.length || variant.uri);
+      return found;
+    }
+    for (let i2 = 0; i2 < main.playlists.length; i2++) {
+      const playlist = main.playlists[i2];
+      const CODECS = playlist.attributes && playlist.attributes.CODECS;
+      if (CODECS && CODECS.split(",").every((c2) => isAudioCodec(c2))) {
+        continue;
+      }
+      const found = someAudioVariant2(main, (variant) => playlistMatch2(playlist, variant));
+      if (found) {
+        continue;
+      }
+      return false;
+    }
+    return true;
+  };
+  var Playlist2 = {
+    liveEdgeDelay: liveEdgeDelay2,
+    duration: duration2,
+    seekable: seekable2,
+    getMediaInfoForTime: getMediaInfoForTime2,
+    isEnabled: isEnabled2,
+    isDisabled: isDisabled2,
+    isExcluded: isExcluded2,
+    isIncompatible: isIncompatible2,
+    playlistEnd: playlistEnd2,
+    isAes: isAes2,
+    hasAttribute: hasAttribute2,
+    estimateSegmentRequestTime: estimateSegmentRequestTime2,
+    isLowestEnabledRendition: isLowestEnabledRendition2,
+    isAudioOnly: isAudioOnly2,
+    playlistMatch: playlistMatch2,
+    segmentDurationWithParts: segmentDurationWithParts2
+  };
+  var {
+    log: log2
+  } = videojs;
+  var createPlaylistID2 = (index, uri) => {
+    return `${index}-${uri}`;
+  };
+  var groupID2 = (type, group, label) => {
+    return `placeholder-uri-${type}-${group}-${label}`;
+  };
+  var parseManifest2 = ({
+    onwarn,
+    oninfo,
+    manifestString,
+    customTagParsers = [],
+    customTagMappers = [],
+    llhls
+  }) => {
+    const parser5 = new Parser();
+    if (onwarn) {
+      parser5.on("warn", onwarn);
+    }
+    if (oninfo) {
+      parser5.on("info", oninfo);
+    }
+    customTagParsers.forEach((customParser) => parser5.addParser(customParser));
+    customTagMappers.forEach((mapper) => parser5.addTagMapper(mapper));
+    parser5.push(manifestString);
+    parser5.end();
+    const manifest = parser5.manifest;
+    if (!llhls) {
+      ["preloadSegment", "skip", "serverControl", "renditionReports", "partInf", "partTargetDuration"].forEach(function(k2) {
+        if (manifest.hasOwnProperty(k2)) {
+          delete manifest[k2];
+        }
+      });
+      if (manifest.segments) {
+        manifest.segments.forEach(function(segment) {
+          ["parts", "preloadHints"].forEach(function(k2) {
+            if (segment.hasOwnProperty(k2)) {
+              delete segment[k2];
+            }
+          });
+        });
+      }
+    }
+    if (!manifest.targetDuration) {
+      let targetDuration = 10;
+      if (manifest.segments && manifest.segments.length) {
+        targetDuration = manifest.segments.reduce((acc, s2) => Math.max(acc, s2.duration), 0);
+      }
+      if (onwarn) {
+        onwarn({
+          message: `manifest has no targetDuration defaulting to ${targetDuration}`
+        });
+      }
+      manifest.targetDuration = targetDuration;
+    }
+    const parts = getLastParts2(manifest);
+    if (parts.length && !manifest.partTargetDuration) {
+      const partTargetDuration = parts.reduce((acc, p2) => Math.max(acc, p2.duration), 0);
+      if (onwarn) {
+        onwarn({
+          message: `manifest has no partTargetDuration defaulting to ${partTargetDuration}`
+        });
+        log2.error("LL-HLS manifest has parts but lacks required #EXT-X-PART-INF:PART-TARGET value. See https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-09#section-4.4.3.7. Playback is not guaranteed.");
+      }
+      manifest.partTargetDuration = partTargetDuration;
+    }
+    return manifest;
+  };
+  var forEachMediaGroup4 = (main, callback) => {
+    if (!main.mediaGroups) {
+      return;
+    }
+    ["AUDIO", "SUBTITLES"].forEach((mediaType) => {
+      if (!main.mediaGroups[mediaType]) {
+        return;
+      }
+      for (const groupKey in main.mediaGroups[mediaType]) {
+        for (const labelKey in main.mediaGroups[mediaType][groupKey]) {
+          const mediaProperties = main.mediaGroups[mediaType][groupKey][labelKey];
+          callback(mediaProperties, mediaType, groupKey, labelKey);
+        }
+      }
+    });
+  };
+  var setupMediaPlaylist2 = ({
+    playlist,
+    uri,
+    id
+  }) => {
+    playlist.id = id;
+    playlist.playlistErrors_ = 0;
+    if (uri) {
+      playlist.uri = uri;
+    }
+    playlist.attributes = playlist.attributes || {};
+  };
+  var setupMediaPlaylists2 = (main) => {
+    let i2 = main.playlists.length;
+    while (i2--) {
+      const playlist = main.playlists[i2];
+      setupMediaPlaylist2({
+        playlist,
+        id: createPlaylistID2(i2, playlist.uri)
+      });
+      playlist.resolvedUri = resolveUrl4(main.uri, playlist.uri);
+      main.playlists[playlist.id] = playlist;
+      main.playlists[playlist.uri] = playlist;
+      if (!playlist.attributes.BANDWIDTH) {
+        log2.warn("Invalid playlist STREAM-INF detected. Missing BANDWIDTH attribute.");
+      }
+    }
+  };
+  var resolveMediaGroupUris2 = (main) => {
+    forEachMediaGroup4(main, (properties) => {
+      if (properties.uri) {
+        properties.resolvedUri = resolveUrl4(main.uri, properties.uri);
+      }
+    });
+  };
+  var mainForMedia2 = (media, uri) => {
+    const id = createPlaylistID2(0, uri);
+    const main = {
+      mediaGroups: {
+        "AUDIO": {},
+        "VIDEO": {},
+        "CLOSED-CAPTIONS": {},
+        "SUBTITLES": {}
+      },
+      uri: import_window8.default.location.href,
+      resolvedUri: import_window8.default.location.href,
+      playlists: [{
+        uri,
+        id,
+        resolvedUri: uri,
+        // m3u8-parser does not attach an attributes property to media playlists so make
+        // sure that the property is attached to avoid undefined reference errors
+        attributes: {}
+      }]
+    };
+    main.playlists[id] = main.playlists[0];
+    main.playlists[uri] = main.playlists[0];
+    return main;
+  };
+  var addPropertiesToMain2 = (main, uri, createGroupID = groupID2) => {
+    main.uri = uri;
+    for (let i2 = 0; i2 < main.playlists.length; i2++) {
+      if (!main.playlists[i2].uri) {
+        const phonyUri = `placeholder-uri-${i2}`;
+        main.playlists[i2].uri = phonyUri;
+      }
+    }
+    const audioOnlyMain = isAudioOnly2(main);
+    forEachMediaGroup4(main, (properties, mediaType, groupKey, labelKey) => {
+      if (!properties.playlists || !properties.playlists.length) {
+        if (audioOnlyMain && mediaType === "AUDIO" && !properties.uri) {
+          for (let i2 = 0; i2 < main.playlists.length; i2++) {
+            const p2 = main.playlists[i2];
+            if (p2.attributes && p2.attributes.AUDIO && p2.attributes.AUDIO === groupKey) {
+              return;
+            }
+          }
+        }
+        properties.playlists = [_extends({}, properties)];
+      }
+      properties.playlists.forEach(function(p2, i2) {
+        const groupId = createGroupID(mediaType, groupKey, labelKey, p2);
+        const id = createPlaylistID2(i2, groupId);
+        if (p2.uri) {
+          p2.resolvedUri = p2.resolvedUri || resolveUrl4(main.uri, p2.uri);
+        } else {
+          p2.uri = i2 === 0 ? groupId : id;
+          p2.resolvedUri = p2.uri;
+        }
+        p2.id = p2.id || id;
+        p2.attributes = p2.attributes || {};
+        main.playlists[p2.id] = p2;
+        main.playlists[p2.uri] = p2;
+      });
+    });
+    setupMediaPlaylists2(main);
+    resolveMediaGroupUris2(main);
+  };
+  var DateRangesStorage2 = class {
+    constructor() {
+      this.offset_ = null;
+      this.pendingDateRanges_ = /* @__PURE__ */ new Map();
+      this.processedDateRanges_ = /* @__PURE__ */ new Map();
+    }
+    setOffset(segments = []) {
+      if (this.offset_ !== null) {
+        return;
+      }
+      if (!segments.length) {
+        return;
+      }
+      const [firstSegment] = segments;
+      if (firstSegment.programDateTime === void 0) {
+        return;
+      }
+      this.offset_ = firstSegment.programDateTime / 1e3;
+    }
+    setPendingDateRanges(dateRanges = []) {
+      if (!dateRanges.length) {
+        return;
+      }
+      const [dateRange] = dateRanges;
+      const startTime = dateRange.startDate.getTime();
+      this.trimProcessedDateRanges_(startTime);
+      this.pendingDateRanges_ = dateRanges.reduce((map, pendingDateRange) => {
+        map.set(pendingDateRange.id, pendingDateRange);
+        return map;
+      }, /* @__PURE__ */ new Map());
+    }
+    processDateRange(dateRange) {
+      this.pendingDateRanges_.delete(dateRange.id);
+      this.processedDateRanges_.set(dateRange.id, dateRange);
+    }
+    getDateRangesToProcess() {
+      if (this.offset_ === null) {
+        return [];
+      }
+      const dateRangeClasses = {};
+      const dateRangesToProcess = [];
+      this.pendingDateRanges_.forEach((dateRange, id) => {
+        if (this.processedDateRanges_.has(id)) {
+          return;
+        }
+        dateRange.startTime = dateRange.startDate.getTime() / 1e3 - this.offset_;
+        dateRange.processDateRange = () => this.processDateRange(dateRange);
+        dateRangesToProcess.push(dateRange);
+        if (!dateRange.class) {
+          return;
+        }
+        if (dateRangeClasses[dateRange.class]) {
+          const length = dateRangeClasses[dateRange.class].push(dateRange);
+          dateRange.classListIndex = length - 1;
+        } else {
+          dateRangeClasses[dateRange.class] = [dateRange];
+          dateRange.classListIndex = 0;
+        }
+      });
+      for (const dateRange of dateRangesToProcess) {
+        const classList = dateRangeClasses[dateRange.class] || [];
+        if (dateRange.endDate) {
+          dateRange.endTime = dateRange.endDate.getTime() / 1e3 - this.offset_;
+        } else if (dateRange.endOnNext && classList[dateRange.classListIndex + 1]) {
+          dateRange.endTime = classList[dateRange.classListIndex + 1].startTime;
+        } else if (dateRange.duration) {
+          dateRange.endTime = dateRange.startTime + dateRange.duration;
+        } else if (dateRange.plannedDuration) {
+          dateRange.endTime = dateRange.startTime + dateRange.plannedDuration;
+        } else {
+          dateRange.endTime = dateRange.startTime;
+        }
+      }
+      return dateRangesToProcess;
+    }
+    trimProcessedDateRanges_(startTime) {
+      const copy = new Map(this.processedDateRanges_);
+      copy.forEach((dateRange, id) => {
+        if (dateRange.startDate.getTime() < startTime) {
+          this.processedDateRanges_.delete(id);
+        }
+      });
+    }
+  };
+  var {
+    EventTarget: EventTarget$12
+  } = videojs;
+  var addLLHLSQueryDirectives2 = (uri, media) => {
+    if (media.endList || !media.serverControl) {
+      return uri;
+    }
+    const parameters = {};
+    if (media.serverControl.canBlockReload) {
+      const {
+        preloadSegment
+      } = media;
+      let nextMSN = media.mediaSequence + media.segments.length;
+      if (preloadSegment) {
+        const parts = preloadSegment.parts || [];
+        const nextPart = getKnownPartCount2(media) - 1;
+        if (nextPart > -1 && nextPart !== parts.length - 1) {
+          parameters._HLS_part = nextPart;
+        }
+        if (nextPart > -1 || parts.length) {
+          nextMSN--;
+        }
+      }
+      parameters._HLS_msn = nextMSN;
+    }
+    if (media.serverControl && media.serverControl.canSkipUntil) {
+      parameters._HLS_skip = media.serverControl.canSkipDateranges ? "v2" : "YES";
+    }
+    if (Object.keys(parameters).length) {
+      const parsedUri = new import_window8.default.URL(uri);
+      ["_HLS_skip", "_HLS_msn", "_HLS_part"].forEach(function(name) {
+        if (!parameters.hasOwnProperty(name)) {
+          return;
+        }
+        parsedUri.searchParams.set(name, parameters[name]);
+      });
+      uri = parsedUri.toString();
+    }
+    return uri;
+  };
+  var updateSegment2 = (a2, b2) => {
+    if (!a2) {
+      return b2;
+    }
+    const result = merge3(a2, b2);
+    if (a2.preloadHints && !b2.preloadHints) {
+      delete result.preloadHints;
+    }
+    if (a2.parts && !b2.parts) {
+      delete result.parts;
+    } else if (a2.parts && b2.parts) {
+      for (let i2 = 0; i2 < b2.parts.length; i2++) {
+        if (a2.parts && a2.parts[i2]) {
+          result.parts[i2] = merge3(a2.parts[i2], b2.parts[i2]);
+        }
+      }
+    }
+    if (!a2.skipped && b2.skipped) {
+      result.skipped = false;
+    }
+    if (a2.preload && !b2.preload) {
+      result.preload = false;
+    }
+    return result;
+  };
+  var updateSegments2 = (original, update, offset) => {
+    const oldSegments = original.slice();
+    const newSegments = update.slice();
+    offset = offset || 0;
+    const result = [];
+    let currentMap;
+    for (let newIndex = 0; newIndex < newSegments.length; newIndex++) {
+      const oldSegment = oldSegments[newIndex + offset];
+      const newSegment = newSegments[newIndex];
+      if (oldSegment) {
+        currentMap = oldSegment.map || currentMap;
+        result.push(updateSegment2(oldSegment, newSegment));
+      } else {
+        if (currentMap && !newSegment.map) {
+          newSegment.map = currentMap;
+        }
+        result.push(newSegment);
+      }
+    }
+    return result;
+  };
+  var resolveSegmentUris2 = (segment, baseUri) => {
+    if (!segment.resolvedUri && segment.uri) {
+      segment.resolvedUri = resolveUrl4(baseUri, segment.uri);
+    }
+    if (segment.key && !segment.key.resolvedUri) {
+      segment.key.resolvedUri = resolveUrl4(baseUri, segment.key.uri);
+    }
+    if (segment.map && !segment.map.resolvedUri) {
+      segment.map.resolvedUri = resolveUrl4(baseUri, segment.map.uri);
+    }
+    if (segment.map && segment.map.key && !segment.map.key.resolvedUri) {
+      segment.map.key.resolvedUri = resolveUrl4(baseUri, segment.map.key.uri);
+    }
+    if (segment.parts && segment.parts.length) {
+      segment.parts.forEach((p2) => {
+        if (p2.resolvedUri) {
+          return;
+        }
+        p2.resolvedUri = resolveUrl4(baseUri, p2.uri);
+      });
+    }
+    if (segment.preloadHints && segment.preloadHints.length) {
+      segment.preloadHints.forEach((p2) => {
+        if (p2.resolvedUri) {
+          return;
+        }
+        p2.resolvedUri = resolveUrl4(baseUri, p2.uri);
+      });
+    }
+  };
+  var getAllSegments2 = function(media) {
+    const segments = media.segments || [];
+    const preloadSegment = media.preloadSegment;
+    if (preloadSegment && preloadSegment.parts && preloadSegment.parts.length) {
+      if (preloadSegment.preloadHints) {
+        for (let i2 = 0; i2 < preloadSegment.preloadHints.length; i2++) {
+          if (preloadSegment.preloadHints[i2].type === "MAP") {
+            return segments;
+          }
+        }
+      }
+      preloadSegment.duration = media.targetDuration;
+      preloadSegment.preload = true;
+      segments.push(preloadSegment);
+    }
+    return segments;
+  };
+  var isPlaylistUnchanged2 = (a2, b2) => a2 === b2 || a2.segments && b2.segments && a2.segments.length === b2.segments.length && a2.endList === b2.endList && a2.mediaSequence === b2.mediaSequence && a2.preloadSegment === b2.preloadSegment;
+  var updateMain$12 = (main, newMedia, unchangedCheck = isPlaylistUnchanged2) => {
+    const result = merge3(main, {});
+    const oldMedia = result.playlists[newMedia.id];
+    if (!oldMedia) {
+      return null;
+    }
+    if (unchangedCheck(oldMedia, newMedia)) {
+      return null;
+    }
+    newMedia.segments = getAllSegments2(newMedia);
+    const mergedPlaylist = merge3(oldMedia, newMedia);
+    if (mergedPlaylist.preloadSegment && !newMedia.preloadSegment) {
+      delete mergedPlaylist.preloadSegment;
+    }
+    if (oldMedia.segments) {
+      if (newMedia.skip) {
+        newMedia.segments = newMedia.segments || [];
+        for (let i2 = 0; i2 < newMedia.skip.skippedSegments; i2++) {
+          newMedia.segments.unshift({
+            skipped: true
+          });
+        }
+      }
+      mergedPlaylist.segments = updateSegments2(oldMedia.segments, newMedia.segments, newMedia.mediaSequence - oldMedia.mediaSequence);
+    }
+    mergedPlaylist.segments.forEach((segment) => {
+      resolveSegmentUris2(segment, mergedPlaylist.resolvedUri);
+    });
+    for (let i2 = 0; i2 < result.playlists.length; i2++) {
+      if (result.playlists[i2].id === newMedia.id) {
+        result.playlists[i2] = mergedPlaylist;
+      }
+    }
+    result.playlists[newMedia.id] = mergedPlaylist;
+    result.playlists[newMedia.uri] = mergedPlaylist;
+    forEachMediaGroup4(main, (properties, mediaType, groupKey, labelKey) => {
+      if (!properties.playlists) {
+        return;
+      }
+      for (let i2 = 0; i2 < properties.playlists.length; i2++) {
+        if (newMedia.id === properties.playlists[i2].id) {
+          properties.playlists[i2] = mergedPlaylist;
+        }
+      }
+    });
+    return result;
+  };
+  var refreshDelay2 = (media, update) => {
+    const segments = media.segments || [];
+    const lastSegment = segments[segments.length - 1];
+    const lastPart = lastSegment && lastSegment.parts && lastSegment.parts[lastSegment.parts.length - 1];
+    const lastDuration = lastPart && lastPart.duration || lastSegment && lastSegment.duration;
+    if (update && lastDuration) {
+      return lastDuration * 1e3;
+    }
+    return (media.partTargetDuration || media.targetDuration || 10) * 500;
+  };
+  var PlaylistLoader2 = class extends EventTarget$12 {
+    constructor(src, vhs, options = {}) {
+      super();
+      if (!src) {
+        throw new Error("A non-empty playlist URL or object is required");
+      }
+      this.logger_ = logger2("PlaylistLoader");
+      const {
+        withCredentials = false
+      } = options;
+      this.src = src;
+      this.vhs_ = vhs;
+      this.withCredentials = withCredentials;
+      this.addDateRangesToTextTrack_ = options.addDateRangesToTextTrack;
+      const vhsOptions = vhs.options_;
+      this.customTagParsers = vhsOptions && vhsOptions.customTagParsers || [];
+      this.customTagMappers = vhsOptions && vhsOptions.customTagMappers || [];
+      this.llhls = vhsOptions && vhsOptions.llhls;
+      this.dateRangesStorage_ = new DateRangesStorage2();
+      this.state = "HAVE_NOTHING";
+      this.handleMediaupdatetimeout_ = this.handleMediaupdatetimeout_.bind(this);
+      this.on("mediaupdatetimeout", this.handleMediaupdatetimeout_);
+      this.on("loadedplaylist", this.handleLoadedPlaylist_.bind(this));
+    }
+    handleLoadedPlaylist_() {
+      const mediaPlaylist = this.media();
+      if (!mediaPlaylist) {
+        return;
+      }
+      this.dateRangesStorage_.setOffset(mediaPlaylist.segments);
+      this.dateRangesStorage_.setPendingDateRanges(mediaPlaylist.dateRanges);
+      const availableDateRanges = this.dateRangesStorage_.getDateRangesToProcess();
+      if (!availableDateRanges.length || !this.addDateRangesToTextTrack_) {
+        return;
+      }
+      this.addDateRangesToTextTrack_(availableDateRanges);
+    }
+    handleMediaupdatetimeout_() {
+      if (this.state !== "HAVE_METADATA") {
+        return;
+      }
+      const media = this.media();
+      let uri = resolveUrl4(this.main.uri, media.uri);
+      if (this.llhls) {
+        uri = addLLHLSQueryDirectives2(uri, media);
+      }
+      this.state = "HAVE_CURRENT_METADATA";
+      this.request = this.vhs_.xhr({
+        uri,
+        withCredentials: this.withCredentials
+      }, (error, req) => {
+        if (!this.request) {
+          return;
+        }
+        if (error) {
+          return this.playlistRequestError(this.request, this.media(), "HAVE_METADATA");
+        }
+        this.haveMetadata({
+          playlistString: this.request.responseText,
+          url: this.media().uri,
+          id: this.media().id
+        });
+      });
+    }
+    playlistRequestError(xhr, playlist, startingState) {
+      const {
+        uri,
+        id
+      } = playlist;
+      this.request = null;
+      if (startingState) {
+        this.state = startingState;
+      }
+      this.error = {
+        playlist: this.main.playlists[id],
+        status: xhr.status,
+        message: `HLS playlist request error at URL: ${uri}.`,
+        responseText: xhr.responseText,
+        code: xhr.status >= 500 ? 4 : 2
+      };
+      this.trigger("error");
+    }
+    parseManifest_({
+      url,
+      manifestString
+    }) {
+      return parseManifest2({
+        onwarn: ({
+          message
+        }) => this.logger_(`m3u8-parser warn for ${url}: ${message}`),
+        oninfo: ({
+          message
+        }) => this.logger_(`m3u8-parser info for ${url}: ${message}`),
+        manifestString,
+        customTagParsers: this.customTagParsers,
+        customTagMappers: this.customTagMappers,
+        llhls: this.llhls
+      });
+    }
+    /**
+     * Update the playlist loader's state in response to a new or updated playlist.
+     *
+     * @param {string} [playlistString]
+     *        Playlist string (if playlistObject is not provided)
+     * @param {Object} [playlistObject]
+     *        Playlist object (if playlistString is not provided)
+     * @param {string} url
+     *        URL of playlist
+     * @param {string} id
+     *        ID to use for playlist
+     */
+    haveMetadata({
+      playlistString,
+      playlistObject,
+      url,
+      id
+    }) {
+      this.request = null;
+      this.state = "HAVE_METADATA";
+      const playlist = playlistObject || this.parseManifest_({
+        url,
+        manifestString: playlistString
+      });
+      playlist.lastRequest = Date.now();
+      setupMediaPlaylist2({
+        playlist,
+        uri: url,
+        id
+      });
+      const update = updateMain$12(this.main, playlist);
+      this.targetDuration = playlist.partTargetDuration || playlist.targetDuration;
+      this.pendingMedia_ = null;
+      if (update) {
+        this.main = update;
+        this.media_ = this.main.playlists[id];
+      } else {
+        this.trigger("playlistunchanged");
+      }
+      this.updateMediaUpdateTimeout_(refreshDelay2(this.media(), !!update));
+      this.trigger("loadedplaylist");
+    }
+    /**
+      * Abort any outstanding work and clean up.
+      */
+    dispose() {
+      this.trigger("dispose");
+      this.stopRequest();
+      import_window8.default.clearTimeout(this.mediaUpdateTimeout);
+      import_window8.default.clearTimeout(this.finalRenditionTimeout);
+      this.dateRangesStorage_ = new DateRangesStorage2();
+      this.off();
+    }
+    stopRequest() {
+      if (this.request) {
+        const oldRequest = this.request;
+        this.request = null;
+        oldRequest.onreadystatechange = null;
+        oldRequest.abort();
+      }
+    }
+    /**
+      * When called without any arguments, returns the currently
+      * active media playlist. When called with a single argument,
+      * triggers the playlist loader to asynchronously switch to the
+      * specified media playlist. Calling this method while the
+      * loader is in the HAVE_NOTHING causes an error to be emitted
+      * but otherwise has no effect.
+      *
+      * @param {Object=} playlist the parsed media playlist
+      * object to switch to
+      * @param {boolean=} shouldDelay whether we should delay the request by half target duration
+      *
+      * @return {Playlist} the current loaded media
+      */
+    media(playlist, shouldDelay) {
+      if (!playlist) {
+        return this.media_;
+      }
+      if (this.state === "HAVE_NOTHING") {
+        throw new Error("Cannot switch media playlist from " + this.state);
+      }
+      if (typeof playlist === "string") {
+        if (!this.main.playlists[playlist]) {
+          throw new Error("Unknown playlist URI: " + playlist);
+        }
+        playlist = this.main.playlists[playlist];
+      }
+      import_window8.default.clearTimeout(this.finalRenditionTimeout);
+      if (shouldDelay) {
+        const delay = (playlist.partTargetDuration || playlist.targetDuration) / 2 * 1e3 || 5 * 1e3;
+        this.finalRenditionTimeout = import_window8.default.setTimeout(this.media.bind(this, playlist, false), delay);
+        return;
+      }
+      const startingState = this.state;
+      const mediaChange = !this.media_ || playlist.id !== this.media_.id;
+      const mainPlaylistRef = this.main.playlists[playlist.id];
+      if (mainPlaylistRef && mainPlaylistRef.endList || // handle the case of a playlist object (e.g., if using vhs-json with a resolved
+      // media playlist or, for the case of demuxed audio, a resolved audio media group)
+      playlist.endList && playlist.segments.length) {
+        if (this.request) {
+          this.request.onreadystatechange = null;
+          this.request.abort();
+          this.request = null;
+        }
+        this.state = "HAVE_METADATA";
+        this.media_ = playlist;
+        if (mediaChange) {
+          this.trigger("mediachanging");
+          if (startingState === "HAVE_MAIN_MANIFEST") {
+            this.trigger("loadedmetadata");
+          } else {
+            this.trigger("mediachange");
+          }
+        }
+        return;
+      }
+      this.updateMediaUpdateTimeout_(refreshDelay2(playlist, true));
+      if (!mediaChange) {
+        return;
+      }
+      this.state = "SWITCHING_MEDIA";
+      if (this.request) {
+        if (playlist.resolvedUri === this.request.url) {
+          return;
+        }
+        this.request.onreadystatechange = null;
+        this.request.abort();
+        this.request = null;
+      }
+      if (this.media_) {
+        this.trigger("mediachanging");
+      }
+      this.pendingMedia_ = playlist;
+      this.request = this.vhs_.xhr({
+        uri: playlist.resolvedUri,
+        withCredentials: this.withCredentials
+      }, (error, req) => {
+        if (!this.request) {
+          return;
+        }
+        playlist.lastRequest = Date.now();
+        playlist.resolvedUri = resolveManifestRedirect2(playlist.resolvedUri, req);
+        if (error) {
+          return this.playlistRequestError(this.request, playlist, startingState);
+        }
+        this.haveMetadata({
+          playlistString: req.responseText,
+          url: playlist.uri,
+          id: playlist.id
+        });
+        if (startingState === "HAVE_MAIN_MANIFEST") {
+          this.trigger("loadedmetadata");
+        } else {
+          this.trigger("mediachange");
+        }
+      });
+    }
+    /**
+     * pause loading of the playlist
+     */
+    pause() {
+      if (this.mediaUpdateTimeout) {
+        import_window8.default.clearTimeout(this.mediaUpdateTimeout);
+        this.mediaUpdateTimeout = null;
+      }
+      this.stopRequest();
+      if (this.state === "HAVE_NOTHING") {
+        this.started = false;
+      }
+      if (this.state === "SWITCHING_MEDIA") {
+        if (this.media_) {
+          this.state = "HAVE_METADATA";
+        } else {
+          this.state = "HAVE_MAIN_MANIFEST";
+        }
+      } else if (this.state === "HAVE_CURRENT_METADATA") {
+        this.state = "HAVE_METADATA";
+      }
+    }
+    /**
+     * start loading of the playlist
+     */
+    load(shouldDelay) {
+      if (this.mediaUpdateTimeout) {
+        import_window8.default.clearTimeout(this.mediaUpdateTimeout);
+        this.mediaUpdateTimeout = null;
+      }
+      const media = this.media();
+      if (shouldDelay) {
+        const delay = media ? (media.partTargetDuration || media.targetDuration) / 2 * 1e3 : 5 * 1e3;
+        this.mediaUpdateTimeout = import_window8.default.setTimeout(() => {
+          this.mediaUpdateTimeout = null;
+          this.load();
+        }, delay);
+        return;
+      }
+      if (!this.started) {
+        this.start();
+        return;
+      }
+      if (media && !media.endList) {
+        this.trigger("mediaupdatetimeout");
+      } else {
+        this.trigger("loadedplaylist");
+      }
+    }
+    updateMediaUpdateTimeout_(delay) {
+      if (this.mediaUpdateTimeout) {
+        import_window8.default.clearTimeout(this.mediaUpdateTimeout);
+        this.mediaUpdateTimeout = null;
+      }
+      if (!this.media() || this.media().endList) {
+        return;
+      }
+      this.mediaUpdateTimeout = import_window8.default.setTimeout(() => {
+        this.mediaUpdateTimeout = null;
+        this.trigger("mediaupdatetimeout");
+        this.updateMediaUpdateTimeout_(delay);
+      }, delay);
+    }
+    /**
+     * start loading of the playlist
+     */
+    start() {
+      this.started = true;
+      if (typeof this.src === "object") {
+        if (!this.src.uri) {
+          this.src.uri = import_window8.default.location.href;
+        }
+        this.src.resolvedUri = this.src.uri;
+        setTimeout(() => {
+          this.setupInitialPlaylist(this.src);
+        }, 0);
+        return;
+      }
+      this.request = this.vhs_.xhr({
+        uri: this.src,
+        withCredentials: this.withCredentials
+      }, (error, req) => {
+        if (!this.request) {
+          return;
+        }
+        this.request = null;
+        if (error) {
+          this.error = {
+            status: req.status,
+            message: `HLS playlist request error at URL: ${this.src}.`,
+            responseText: req.responseText,
+            // MEDIA_ERR_NETWORK
+            code: 2
+          };
+          if (this.state === "HAVE_NOTHING") {
+            this.started = false;
+          }
+          return this.trigger("error");
+        }
+        this.src = resolveManifestRedirect2(this.src, req);
+        const manifest = this.parseManifest_({
+          manifestString: req.responseText,
+          url: this.src
+        });
+        this.setupInitialPlaylist(manifest);
+      });
+    }
+    srcUri() {
+      return typeof this.src === "string" ? this.src : this.src.uri;
+    }
+    /**
+     * Given a manifest object that's either a main or media playlist, trigger the proper
+     * events and set the state of the playlist loader.
+     *
+     * If the manifest object represents a main playlist, `loadedplaylist` will be
+     * triggered to allow listeners to select a playlist. If none is selected, the loader
+     * will default to the first one in the playlists array.
+     *
+     * If the manifest object represents a media playlist, `loadedplaylist` will be
+     * triggered followed by `loadedmetadata`, as the only available playlist is loaded.
+     *
+     * In the case of a media playlist, a main playlist object wrapper with one playlist
+     * will be created so that all logic can handle playlists in the same fashion (as an
+     * assumed manifest object schema).
+     *
+     * @param {Object} manifest
+     *        The parsed manifest object
+     */
+    setupInitialPlaylist(manifest) {
+      this.state = "HAVE_MAIN_MANIFEST";
+      if (manifest.playlists) {
+        this.main = manifest;
+        addPropertiesToMain2(this.main, this.srcUri());
+        manifest.playlists.forEach((playlist) => {
+          playlist.segments = getAllSegments2(playlist);
+          playlist.segments.forEach((segment) => {
+            resolveSegmentUris2(segment, playlist.resolvedUri);
+          });
+        });
+        this.trigger("loadedplaylist");
+        if (!this.request) {
+          this.media(this.main.playlists[0]);
+        }
+        return;
+      }
+      const uri = this.srcUri() || import_window8.default.location.href;
+      this.main = mainForMedia2(manifest, uri);
+      this.haveMetadata({
+        playlistObject: manifest,
+        url: uri,
+        id: this.main.playlists[0].id
+      });
+      this.trigger("loadedmetadata");
+    }
+    /**
+     * Updates or deletes a preexisting pathway clone.
+     * Ensures that all playlists related to the old pathway clone are
+     * either updated or deleted.
+     *
+     * @param {Object} clone On update, the pathway clone object for the newly updated pathway clone.
+     *        On delete, the old pathway clone object to be deleted.
+     * @param {boolean} isUpdate True if the pathway is to be updated,
+     *        false if it is meant to be deleted.
+     */
+    updateOrDeleteClone(clone, isUpdate) {
+      const main = this.main;
+      const pathway = clone.ID;
+      let i2 = main.playlists.length;
+      while (i2--) {
+        const p2 = main.playlists[i2];
+        if (p2.attributes["PATHWAY-ID"] === pathway) {
+          const oldPlaylistUri = p2.resolvedUri;
+          const oldPlaylistId = p2.id;
+          if (isUpdate) {
+            const newPlaylistUri = this.createCloneURI_(p2.resolvedUri, clone);
+            const newPlaylistId = createPlaylistID2(pathway, newPlaylistUri);
+            const attributes = this.createCloneAttributes_(pathway, p2.attributes);
+            const updatedPlaylist = this.createClonePlaylist_(p2, newPlaylistId, clone, attributes);
+            main.playlists[i2] = updatedPlaylist;
+            main.playlists[newPlaylistId] = updatedPlaylist;
+            main.playlists[newPlaylistUri] = updatedPlaylist;
+          } else {
+            main.playlists.splice(i2, 1);
+          }
+          delete main.playlists[oldPlaylistId];
+          delete main.playlists[oldPlaylistUri];
+        }
+      }
+      this.updateOrDeleteCloneMedia(clone, isUpdate);
+    }
+    /**
+     * Updates or deletes media data based on the pathway clone object.
+     * Due to the complexity of the media groups and playlists, in all cases
+     * we remove all of the old media groups and playlists.
+     * On updates, we then create new media groups and playlists based on the
+     * new pathway clone object.
+     *
+     * @param {Object} clone The pathway clone object for the newly updated pathway clone.
+     * @param {boolean} isUpdate True if the pathway is to be updated,
+     *        false if it is meant to be deleted.
+     */
+    updateOrDeleteCloneMedia(clone, isUpdate) {
+      const main = this.main;
+      const id = clone.ID;
+      ["AUDIO", "SUBTITLES", "CLOSED-CAPTIONS"].forEach((mediaType) => {
+        if (!main.mediaGroups[mediaType] || !main.mediaGroups[mediaType][id]) {
+          return;
+        }
+        for (const groupKey in main.mediaGroups[mediaType]) {
+          if (groupKey === id) {
+            for (const labelKey in main.mediaGroups[mediaType][groupKey]) {
+              const oldMedia = main.mediaGroups[mediaType][groupKey][labelKey];
+              oldMedia.playlists.forEach((p2, i2) => {
+                const oldMediaPlaylist = main.playlists[p2.id];
+                const oldPlaylistId = oldMediaPlaylist.id;
+                const oldPlaylistUri = oldMediaPlaylist.resolvedUri;
+                delete main.playlists[oldPlaylistId];
+                delete main.playlists[oldPlaylistUri];
+              });
+            }
+            delete main.mediaGroups[mediaType][groupKey];
+          }
+        }
+      });
+      if (isUpdate) {
+        this.createClonedMediaGroups_(clone);
+      }
+    }
+    /**
+     * Given a pathway clone object, clones all necessary playlists.
+     *
+     * @param {Object} clone The pathway clone object.
+     * @param {Object} basePlaylist The original playlist to clone from.
+     */
+    addClonePathway(clone, basePlaylist = {}) {
+      const main = this.main;
+      const index = main.playlists.length;
+      const uri = this.createCloneURI_(basePlaylist.resolvedUri, clone);
+      const playlistId = createPlaylistID2(clone.ID, uri);
+      const attributes = this.createCloneAttributes_(clone.ID, basePlaylist.attributes);
+      const playlist = this.createClonePlaylist_(basePlaylist, playlistId, clone, attributes);
+      main.playlists[index] = playlist;
+      main.playlists[playlistId] = playlist;
+      main.playlists[uri] = playlist;
+      this.createClonedMediaGroups_(clone);
+    }
+    /**
+     * Given a pathway clone object we create clones of all media.
+     * In this function, all necessary information and updated playlists
+     * are added to the `mediaGroup` object.
+     * Playlists are also added to the `playlists` array so the media groups
+     * will be properly linked.
+     *
+     * @param {Object} clone The pathway clone object.
+     */
+    createClonedMediaGroups_(clone) {
+      const id = clone.ID;
+      const baseID = clone["BASE-ID"];
+      const main = this.main;
+      ["AUDIO", "SUBTITLES", "CLOSED-CAPTIONS"].forEach((mediaType) => {
+        if (!main.mediaGroups[mediaType] || main.mediaGroups[mediaType][id]) {
+          return;
+        }
+        for (const groupKey in main.mediaGroups[mediaType]) {
+          if (groupKey === baseID) {
+            main.mediaGroups[mediaType][id] = {};
+          } else {
+            continue;
+          }
+          for (const labelKey in main.mediaGroups[mediaType][groupKey]) {
+            const oldMedia = main.mediaGroups[mediaType][groupKey][labelKey];
+            main.mediaGroups[mediaType][id][labelKey] = _extends({}, oldMedia);
+            const newMedia = main.mediaGroups[mediaType][id][labelKey];
+            const newUri = this.createCloneURI_(oldMedia.resolvedUri, clone);
+            newMedia.resolvedUri = newUri;
+            newMedia.uri = newUri;
+            newMedia.playlists = [];
+            oldMedia.playlists.forEach((p2, i2) => {
+              const oldMediaPlaylist = main.playlists[p2.id];
+              const group = groupID2(mediaType, id, labelKey);
+              const newPlaylistID = createPlaylistID2(id, group);
+              if (oldMediaPlaylist && !main.playlists[newPlaylistID]) {
+                const newMediaPlaylist = this.createClonePlaylist_(oldMediaPlaylist, newPlaylistID, clone);
+                const newPlaylistUri = newMediaPlaylist.resolvedUri;
+                main.playlists[newPlaylistID] = newMediaPlaylist;
+                main.playlists[newPlaylistUri] = newMediaPlaylist;
+              }
+              newMedia.playlists[i2] = this.createClonePlaylist_(p2, newPlaylistID, clone);
+            });
+          }
+        }
+      });
+    }
+    /**
+     * Using the original playlist to be cloned, and the pathway clone object
+     * information, we create a new playlist.
+     *
+     * @param {Object} basePlaylist  The original playlist to be cloned from.
+     * @param {string} id The desired id of the newly cloned playlist.
+     * @param {Object} clone The pathway clone object.
+     * @param {Object} attributes An optional object to populate the `attributes` property in the playlist.
+     *
+     * @return {Object} The combined cloned playlist.
+     */
+    createClonePlaylist_(basePlaylist, id, clone, attributes) {
+      const uri = this.createCloneURI_(basePlaylist.resolvedUri, clone);
+      const newProps = {
+        resolvedUri: uri,
+        uri,
+        id
+      };
+      if (basePlaylist.segments) {
+        newProps.segments = [];
+      }
+      if (attributes) {
+        newProps.attributes = attributes;
+      }
+      return merge3(basePlaylist, newProps);
+    }
+    /**
+     * Generates an updated URI for a cloned pathway based on the original
+     * pathway's URI and the paramaters from the pathway clone object in the
+     * content steering server response.
+     *
+     * @param {string} baseUri URI to be updated in the cloned pathway.
+     * @param {Object} clone The pathway clone object.
+     *
+     * @return {string} The updated URI for the cloned pathway.
+     */
+    createCloneURI_(baseURI, clone) {
+      const uri = new URL(baseURI);
+      uri.hostname = clone["URI-REPLACEMENT"].HOST;
+      const params = clone["URI-REPLACEMENT"].PARAMS;
+      for (const key of Object.keys(params)) {
+        uri.searchParams.set(key, params[key]);
+      }
+      return uri.href;
+    }
+    /**
+     * Helper function to create the attributes needed for the new clone.
+     * This mainly adds the necessary media attributes.
+     *
+     * @param {string} id The pathway clone object ID.
+     * @param {Object} oldAttributes The old attributes to compare to.
+     * @return {Object} The new attributes to add to the playlist.
+     */
+    createCloneAttributes_(id, oldAttributes) {
+      const attributes = {
+        ["PATHWAY-ID"]: id
+      };
+      ["AUDIO", "SUBTITLES", "CLOSED-CAPTIONS"].forEach((mediaType) => {
+        if (oldAttributes[mediaType]) {
+          attributes[mediaType] = id;
+        }
+      });
+      return attributes;
+    }
+    /**
+     * Returns the key ID set from a playlist
+     *
+     * @param {playlist} playlist to fetch the key ID set from.
+     * @return a Set of 32 digit hex strings that represent the unique keyIds for that playlist.
+     */
+    getKeyIdSet(playlist) {
+      if (playlist.contentProtection) {
+        const keyIds = /* @__PURE__ */ new Set();
+        for (const keysystem in playlist.contentProtection) {
+          const keyId = playlist.contentProtection[keysystem].attributes.keyId;
+          if (keyId) {
+            keyIds.add(keyId.toLowerCase());
+          }
+        }
+        return keyIds;
+      }
+    }
+  };
+  var {
+    xhr: videojsXHR2
+  } = videojs;
+  var callbackWrapper2 = function(request, error, response, callback) {
+    const reqResponse = request.responseType === "arraybuffer" ? request.response : request.responseText;
+    if (!error && reqResponse) {
+      request.responseTime = Date.now();
+      request.roundTripTime = request.responseTime - request.requestTime;
+      request.bytesReceived = reqResponse.byteLength || reqResponse.length;
+      if (!request.bandwidth) {
+        request.bandwidth = Math.floor(request.bytesReceived / request.roundTripTime * 8 * 1e3);
+      }
+    }
+    if (response.headers) {
+      request.responseHeaders = response.headers;
+    }
+    if (error && error.code === "ETIMEDOUT") {
+      request.timedout = true;
+    }
+    if (!error && !request.aborted && response.statusCode !== 200 && response.statusCode !== 206 && response.statusCode !== 0) {
+      error = new Error("XHR Failed with a response of: " + (request && (reqResponse || request.responseText)));
+    }
+    callback(error, request);
+  };
+  var callAllRequestHooks2 = (requestSet, options) => {
+    if (!requestSet || !requestSet.size) {
+      return;
+    }
+    let newOptions = options;
+    requestSet.forEach((requestCallback) => {
+      newOptions = requestCallback(newOptions);
+    });
+    return newOptions;
+  };
+  var callAllResponseHooks2 = (responseSet, request, error, response) => {
+    if (!responseSet || !responseSet.size) {
+      return;
+    }
+    responseSet.forEach((responseCallback) => {
+      responseCallback(request, error, response);
+    });
+  };
+  var xhrFactory2 = function() {
+    const xhr = function XhrFunction(options, callback) {
+      options = merge3({
+        timeout: 45e3
+      }, options);
+      const beforeRequest = XhrFunction.beforeRequest || videojs.Vhs.xhr.beforeRequest;
+      const _requestCallbackSet = XhrFunction._requestCallbackSet || videojs.Vhs.xhr._requestCallbackSet || /* @__PURE__ */ new Set();
+      const _responseCallbackSet = XhrFunction._responseCallbackSet || videojs.Vhs.xhr._responseCallbackSet;
+      if (beforeRequest && typeof beforeRequest === "function") {
+        videojs.log.warn("beforeRequest is deprecated, use onRequest instead.");
+        _requestCallbackSet.add(beforeRequest);
+      }
+      const xhrMethod = videojs.Vhs.xhr.original === true ? videojsXHR2 : videojs.Vhs.xhr;
+      const beforeRequestOptions = callAllRequestHooks2(_requestCallbackSet, options);
+      _requestCallbackSet.delete(beforeRequest);
+      const request = xhrMethod(beforeRequestOptions || options, function(error, response) {
+        callAllResponseHooks2(_responseCallbackSet, request, error, response);
+        return callbackWrapper2(request, error, response, callback);
+      });
+      const originalAbort = request.abort;
+      request.abort = function() {
+        request.aborted = true;
+        return originalAbort.apply(request, arguments);
+      };
+      request.uri = options.uri;
+      request.requestTime = Date.now();
+      return request;
+    };
+    xhr.original = true;
+    return xhr;
+  };
+  var byterangeStr2 = function(byterange) {
+    let byterangeEnd;
+    const byterangeStart = byterange.offset;
+    if (typeof byterange.offset === "bigint" || typeof byterange.length === "bigint") {
+      byterangeEnd = import_window8.default.BigInt(byterange.offset) + import_window8.default.BigInt(byterange.length) - import_window8.default.BigInt(1);
+    } else {
+      byterangeEnd = byterange.offset + byterange.length - 1;
+    }
+    return "bytes=" + byterangeStart + "-" + byterangeEnd;
+  };
+  var segmentXhrHeaders2 = function(segment) {
+    const headers = {};
+    if (segment.byterange) {
+      headers.Range = byterangeStr2(segment.byterange);
+    }
+    return headers;
+  };
+  var textRange2 = function(range2, i2) {
+    return range2.start(i2) + "-" + range2.end(i2);
+  };
+  var formatHexString2 = function(e2, i2) {
+    const value = e2.toString(16);
+    return "00".substring(0, 2 - value.length) + value + (i2 % 2 ? " " : "");
+  };
+  var formatAsciiString2 = function(e2) {
+    if (e2 >= 32 && e2 < 126) {
+      return String.fromCharCode(e2);
+    }
+    return ".";
+  };
+  var createTransferableMessage2 = function(message) {
+    const transferable = {};
+    Object.keys(message).forEach((key) => {
+      const value = message[key];
+      if (isArrayBufferView(value)) {
+        transferable[key] = {
+          bytes: value.buffer,
+          byteOffset: value.byteOffset,
+          byteLength: value.byteLength
+        };
+      } else {
+        transferable[key] = value;
+      }
+    });
+    return transferable;
+  };
+  var initSegmentId2 = function(initSegment) {
+    const byterange = initSegment.byterange || {
+      length: Infinity,
+      offset: 0
+    };
+    return [byterange.length, byterange.offset, initSegment.resolvedUri].join(",");
+  };
+  var segmentKeyId2 = function(key) {
+    return key.resolvedUri;
+  };
+  var hexDump2 = (data) => {
+    const bytes = Array.prototype.slice.call(data);
+    const step = 16;
+    let result = "";
+    let hex;
+    let ascii;
+    for (let j2 = 0; j2 < bytes.length / step; j2++) {
+      hex = bytes.slice(j2 * step, j2 * step + step).map(formatHexString2).join("");
+      ascii = bytes.slice(j2 * step, j2 * step + step).map(formatAsciiString2).join("");
+      result += hex + " " + ascii + "\n";
+    }
+    return result;
+  };
+  var tagDump2 = ({
+    bytes
+  }) => hexDump2(bytes);
+  var textRanges2 = (ranges) => {
+    let result = "";
+    let i2;
+    for (i2 = 0; i2 < ranges.length; i2++) {
+      result += textRange2(ranges, i2) + " ";
+    }
+    return result;
+  };
+  var utils2 = /* @__PURE__ */ Object.freeze({
+    __proto__: null,
+    createTransferableMessage: createTransferableMessage2,
+    initSegmentId: initSegmentId2,
+    segmentKeyId: segmentKeyId2,
+    hexDump: hexDump2,
+    tagDump: tagDump2,
+    textRanges: textRanges2
+  });
+  var SEGMENT_END_FUDGE_PERCENT2 = 0.25;
+  var playerTimeToProgramTime2 = (playerTime, segment) => {
+    if (!segment.dateTimeObject) {
+      return null;
+    }
+    const transmuxerPrependedSeconds = segment.videoTimingInfo.transmuxerPrependedSeconds;
+    const transmuxedStart = segment.videoTimingInfo.transmuxedPresentationStart;
+    const startOfSegment = transmuxedStart + transmuxerPrependedSeconds;
+    const offsetFromSegmentStart = playerTime - startOfSegment;
+    return new Date(segment.dateTimeObject.getTime() + offsetFromSegmentStart * 1e3);
+  };
+  var originalSegmentVideoDuration2 = (videoTimingInfo) => {
+    return videoTimingInfo.transmuxedPresentationEnd - videoTimingInfo.transmuxedPresentationStart - videoTimingInfo.transmuxerPrependedSeconds;
+  };
+  var findSegmentForProgramTime2 = (programTime, playlist) => {
+    let dateTimeObject;
+    try {
+      dateTimeObject = new Date(programTime);
+    } catch (e2) {
+      return null;
+    }
+    if (!playlist || !playlist.segments || playlist.segments.length === 0) {
+      return null;
+    }
+    let segment = playlist.segments[0];
+    if (dateTimeObject < new Date(segment.dateTimeObject)) {
+      return null;
+    }
+    for (let i2 = 0; i2 < playlist.segments.length - 1; i2++) {
+      segment = playlist.segments[i2];
+      const nextSegmentStart = new Date(playlist.segments[i2 + 1].dateTimeObject);
+      if (dateTimeObject < nextSegmentStart) {
+        break;
+      }
+    }
+    const lastSegment = playlist.segments[playlist.segments.length - 1];
+    const lastSegmentStart = lastSegment.dateTimeObject;
+    const lastSegmentDuration = lastSegment.videoTimingInfo ? originalSegmentVideoDuration2(lastSegment.videoTimingInfo) : lastSegment.duration + lastSegment.duration * SEGMENT_END_FUDGE_PERCENT2;
+    const lastSegmentEnd = new Date(lastSegmentStart.getTime() + lastSegmentDuration * 1e3);
+    if (dateTimeObject > lastSegmentEnd) {
+      return null;
+    }
+    if (dateTimeObject > new Date(lastSegmentStart)) {
+      segment = lastSegment;
+    }
+    return {
+      segment,
+      estimatedStart: segment.videoTimingInfo ? segment.videoTimingInfo.transmuxedPresentationStart : Playlist2.duration(playlist, playlist.mediaSequence + playlist.segments.indexOf(segment)),
+      // Although, given that all segments have accurate date time objects, the segment
+      // selected should be accurate, unless the video has been transmuxed at some point
+      // (determined by the presence of the videoTimingInfo object), the segment's "player
+      // time" (the start time in the player) can't be considered accurate.
+      type: segment.videoTimingInfo ? "accurate" : "estimate"
+    };
+  };
+  var findSegmentForPlayerTime2 = (time, playlist) => {
+    if (!playlist || !playlist.segments || playlist.segments.length === 0) {
+      return null;
+    }
+    let segmentEnd = 0;
+    let segment;
+    for (let i2 = 0; i2 < playlist.segments.length; i2++) {
+      segment = playlist.segments[i2];
+      segmentEnd = segment.videoTimingInfo ? segment.videoTimingInfo.transmuxedPresentationEnd : segmentEnd + segment.duration;
+      if (time <= segmentEnd) {
+        break;
+      }
+    }
+    const lastSegment = playlist.segments[playlist.segments.length - 1];
+    if (lastSegment.videoTimingInfo && lastSegment.videoTimingInfo.transmuxedPresentationEnd < time) {
+      return null;
+    }
+    if (time > segmentEnd) {
+      if (time > segmentEnd + lastSegment.duration * SEGMENT_END_FUDGE_PERCENT2) {
+        return null;
+      }
+      segment = lastSegment;
+    }
+    return {
+      segment,
+      estimatedStart: segment.videoTimingInfo ? segment.videoTimingInfo.transmuxedPresentationStart : segmentEnd - segment.duration,
+      // Because videoTimingInfo is only set after transmux, it is the only way to get
+      // accurate timing values.
+      type: segment.videoTimingInfo ? "accurate" : "estimate"
+    };
+  };
+  var getOffsetFromTimestamp2 = (comparisonTimeStamp, programTime) => {
+    let segmentDateTime;
+    let programDateTime;
+    try {
+      segmentDateTime = new Date(comparisonTimeStamp);
+      programDateTime = new Date(programTime);
+    } catch (e2) {
+    }
+    const segmentTimeEpoch = segmentDateTime.getTime();
+    const programTimeEpoch = programDateTime.getTime();
+    return (programTimeEpoch - segmentTimeEpoch) / 1e3;
+  };
+  var verifyProgramDateTimeTags2 = (playlist) => {
+    if (!playlist.segments || playlist.segments.length === 0) {
+      return false;
+    }
+    for (let i2 = 0; i2 < playlist.segments.length; i2++) {
+      const segment = playlist.segments[i2];
+      if (!segment.dateTimeObject) {
+        return false;
+      }
+    }
+    return true;
+  };
+  var getProgramTime2 = ({
+    playlist,
+    time = void 0,
+    callback
+  }) => {
+    if (!callback) {
+      throw new Error("getProgramTime: callback must be provided");
+    }
+    if (!playlist || time === void 0) {
+      return callback({
+        message: "getProgramTime: playlist and time must be provided"
+      });
+    }
+    const matchedSegment = findSegmentForPlayerTime2(time, playlist);
+    if (!matchedSegment) {
+      return callback({
+        message: "valid programTime was not found"
+      });
+    }
+    if (matchedSegment.type === "estimate") {
+      return callback({
+        message: "Accurate programTime could not be determined. Please seek to e.seekTime and try again",
+        seekTime: matchedSegment.estimatedStart
+      });
+    }
+    const programTimeObject = {
+      mediaSeconds: time
+    };
+    const programTime = playerTimeToProgramTime2(time, matchedSegment.segment);
+    if (programTime) {
+      programTimeObject.programDateTime = programTime.toISOString();
+    }
+    return callback(null, programTimeObject);
+  };
+  var seekToProgramTime2 = ({
+    programTime,
+    playlist,
+    retryCount = 2,
+    seekTo,
+    pauseAfterSeek = true,
+    tech,
+    callback
+  }) => {
+    if (!callback) {
+      throw new Error("seekToProgramTime: callback must be provided");
+    }
+    if (typeof programTime === "undefined" || !playlist || !seekTo) {
+      return callback({
+        message: "seekToProgramTime: programTime, seekTo and playlist must be provided"
+      });
+    }
+    if (!playlist.endList && !tech.hasStarted_) {
+      return callback({
+        message: "player must be playing a live stream to start buffering"
+      });
+    }
+    if (!verifyProgramDateTimeTags2(playlist)) {
+      return callback({
+        message: "programDateTime tags must be provided in the manifest " + playlist.resolvedUri
+      });
+    }
+    const matchedSegment = findSegmentForProgramTime2(programTime, playlist);
+    if (!matchedSegment) {
+      return callback({
+        message: `${programTime} was not found in the stream`
+      });
+    }
+    const segment = matchedSegment.segment;
+    const mediaOffset = getOffsetFromTimestamp2(segment.dateTimeObject, programTime);
+    if (matchedSegment.type === "estimate") {
+      if (retryCount === 0) {
+        return callback({
+          message: `${programTime} is not buffered yet. Try again`
+        });
+      }
+      seekTo(matchedSegment.estimatedStart + mediaOffset);
+      tech.one("seeked", () => {
+        seekToProgramTime2({
+          programTime,
+          playlist,
+          retryCount: retryCount - 1,
+          seekTo,
+          pauseAfterSeek,
+          tech,
+          callback
+        });
+      });
+      return;
+    }
+    const seekToTime = segment.start + mediaOffset;
+    const seekedCallback = () => {
+      return callback(null, tech.currentTime());
+    };
+    tech.one("seeked", seekedCallback);
+    if (pauseAfterSeek) {
+      tech.pause();
+    }
+    seekTo(seekToTime);
+  };
+  var callbackOnCompleted2 = (request, cb) => {
+    if (request.readyState === 4) {
+      return cb();
+    }
+    return;
+  };
+  var containerRequest2 = (uri, xhr, cb) => {
+    let bytes = [];
+    let id3Offset;
+    let finished = false;
+    const endRequestAndCallback = function(err, req, type, _bytes) {
+      req.abort();
+      finished = true;
+      return cb(err, req, type, _bytes);
+    };
+    const progressListener = function(error, request2) {
+      if (finished) {
+        return;
+      }
+      if (error) {
+        return endRequestAndCallback(error, request2, "", bytes);
+      }
+      const newPart = request2.responseText.substring(bytes && bytes.byteLength || 0, request2.responseText.length);
+      bytes = concatTypedArrays(bytes, stringToBytes(newPart, true));
+      id3Offset = id3Offset || getId3Offset(bytes);
+      if (bytes.length < 10 || id3Offset && bytes.length < id3Offset + 2) {
+        return callbackOnCompleted2(request2, () => endRequestAndCallback(error, request2, "", bytes));
+      }
+      const type = detectContainerForBytes(bytes);
+      if (type === "ts" && bytes.length < 188) {
+        return callbackOnCompleted2(request2, () => endRequestAndCallback(error, request2, "", bytes));
+      }
+      if (!type && bytes.length < 376) {
+        return callbackOnCompleted2(request2, () => endRequestAndCallback(error, request2, "", bytes));
+      }
+      return endRequestAndCallback(null, request2, type, bytes);
+    };
+    const options = {
+      uri,
+      beforeSend(request2) {
+        request2.overrideMimeType("text/plain; charset=x-user-defined");
+        request2.addEventListener("progress", function({
+          total,
+          loaded
+        }) {
+          return callbackWrapper2(request2, null, {
+            statusCode: request2.status
+          }, progressListener);
+        });
+      }
+    };
+    const request = xhr(options, function(error, response) {
+      return callbackWrapper2(request, error, response, progressListener);
+    });
+    return request;
+  };
+  var {
+    EventTarget: EventTarget2
+  } = videojs;
+  var dashPlaylistUnchanged2 = function(a2, b2) {
+    if (!isPlaylistUnchanged2(a2, b2)) {
+      return false;
+    }
+    if (a2.sidx && b2.sidx && (a2.sidx.offset !== b2.sidx.offset || a2.sidx.length !== b2.sidx.length)) {
+      return false;
+    } else if (!a2.sidx && b2.sidx || a2.sidx && !b2.sidx) {
+      return false;
+    }
+    if (a2.segments && !b2.segments || !a2.segments && b2.segments) {
+      return false;
+    }
+    if (!a2.segments && !b2.segments) {
+      return true;
+    }
+    for (let i2 = 0; i2 < a2.segments.length; i2++) {
+      const aSegment = a2.segments[i2];
+      const bSegment = b2.segments[i2];
+      if (aSegment.uri !== bSegment.uri) {
+        return false;
+      }
+      if (!aSegment.byterange && !bSegment.byterange) {
+        continue;
+      }
+      const aByterange = aSegment.byterange;
+      const bByterange = bSegment.byterange;
+      if (aByterange && !bByterange || !aByterange && bByterange) {
+        return false;
+      }
+      if (aByterange.offset !== bByterange.offset || aByterange.length !== bByterange.length) {
+        return false;
+      }
+    }
+    return true;
+  };
+  var dashGroupId2 = (type, group, label, playlist) => {
+    const playlistId = playlist.attributes.NAME || label;
+    return `placeholder-uri-${type}-${group}-${playlistId}`;
+  };
+  var parseMainXml2 = ({
+    mainXml,
+    srcUrl,
+    clientOffset,
+    sidxMapping,
+    previousManifest
+  }) => {
+    const manifest = parse(mainXml, {
+      manifestUri: srcUrl,
+      clientOffset,
+      sidxMapping,
+      previousManifest
+    });
+    addPropertiesToMain2(manifest, srcUrl, dashGroupId2);
+    return manifest;
+  };
+  var removeOldMediaGroupLabels2 = (update, newMain) => {
+    forEachMediaGroup4(update, (properties, type, group, label) => {
+      if (!(label in newMain.mediaGroups[type][group])) {
+        delete update.mediaGroups[type][group][label];
+      }
+    });
+  };
+  var updateMain2 = (oldMain, newMain, sidxMapping) => {
+    let noChanges = true;
+    let update = merge3(oldMain, {
+      // These are top level properties that can be updated
+      duration: newMain.duration,
+      minimumUpdatePeriod: newMain.minimumUpdatePeriod,
+      timelineStarts: newMain.timelineStarts
+    });
+    for (let i2 = 0; i2 < newMain.playlists.length; i2++) {
+      const playlist = newMain.playlists[i2];
+      if (playlist.sidx) {
+        const sidxKey = generateSidxKey(playlist.sidx);
+        if (sidxMapping && sidxMapping[sidxKey] && sidxMapping[sidxKey].sidx) {
+          addSidxSegmentsToPlaylist$1(playlist, sidxMapping[sidxKey].sidx, playlist.sidx.resolvedUri);
+        }
+      }
+      const playlistUpdate = updateMain$12(update, playlist, dashPlaylistUnchanged2);
+      if (playlistUpdate) {
+        update = playlistUpdate;
+        noChanges = false;
+      }
+    }
+    forEachMediaGroup4(newMain, (properties, type, group, label) => {
+      if (properties.playlists && properties.playlists.length) {
+        const id = properties.playlists[0].id;
+        const playlistUpdate = updateMain$12(update, properties.playlists[0], dashPlaylistUnchanged2);
+        if (playlistUpdate) {
+          update = playlistUpdate;
+          if (!(label in update.mediaGroups[type][group])) {
+            update.mediaGroups[type][group][label] = properties;
+          }
+          update.mediaGroups[type][group][label].playlists[0] = update.playlists[id];
+          noChanges = false;
+        }
+      }
+    });
+    removeOldMediaGroupLabels2(update, newMain);
+    if (newMain.minimumUpdatePeriod !== oldMain.minimumUpdatePeriod) {
+      noChanges = false;
+    }
+    if (noChanges) {
+      return null;
+    }
+    return update;
+  };
+  var equivalentSidx2 = (a2, b2) => {
+    const neitherMap = Boolean(!a2.map && !b2.map);
+    const equivalentMap = neitherMap || Boolean(a2.map && b2.map && a2.map.byterange.offset === b2.map.byterange.offset && a2.map.byterange.length === b2.map.byterange.length);
+    return equivalentMap && a2.uri === b2.uri && a2.byterange.offset === b2.byterange.offset && a2.byterange.length === b2.byterange.length;
+  };
+  var compareSidxEntry2 = (playlists, oldSidxMapping) => {
+    const newSidxMapping = {};
+    for (const id in playlists) {
+      const playlist = playlists[id];
+      const currentSidxInfo = playlist.sidx;
+      if (currentSidxInfo) {
+        const key = generateSidxKey(currentSidxInfo);
+        if (!oldSidxMapping[key]) {
+          break;
+        }
+        const savedSidxInfo = oldSidxMapping[key].sidxInfo;
+        if (equivalentSidx2(savedSidxInfo, currentSidxInfo)) {
+          newSidxMapping[key] = oldSidxMapping[key];
+        }
+      }
+    }
+    return newSidxMapping;
+  };
+  var filterChangedSidxMappings2 = (main, oldSidxMapping) => {
+    const videoSidx = compareSidxEntry2(main.playlists, oldSidxMapping);
+    let mediaGroupSidx = videoSidx;
+    forEachMediaGroup4(main, (properties, mediaType, groupKey, labelKey) => {
+      if (properties.playlists && properties.playlists.length) {
+        const playlists = properties.playlists;
+        mediaGroupSidx = merge3(mediaGroupSidx, compareSidxEntry2(playlists, oldSidxMapping));
+      }
+    });
+    return mediaGroupSidx;
+  };
+  var DashPlaylistLoader2 = class extends EventTarget2 {
+    // DashPlaylistLoader must accept either a src url or a playlist because subsequent
+    // playlist loader setups from media groups will expect to be able to pass a playlist
+    // (since there aren't external URLs to media playlists with DASH)
+    constructor(srcUrlOrPlaylist, vhs, options = {}, mainPlaylistLoader) {
+      super();
+      this.mainPlaylistLoader_ = mainPlaylistLoader || this;
+      if (!mainPlaylistLoader) {
+        this.isMain_ = true;
+      }
+      const {
+        withCredentials = false
+      } = options;
+      this.vhs_ = vhs;
+      this.withCredentials = withCredentials;
+      this.addMetadataToTextTrack = options.addMetadataToTextTrack;
+      if (!srcUrlOrPlaylist) {
+        throw new Error("A non-empty playlist URL or object is required");
+      }
+      this.on("minimumUpdatePeriod", () => {
+        this.refreshXml_();
+      });
+      this.on("mediaupdatetimeout", () => {
+        this.refreshMedia_(this.media().id);
+      });
+      this.state = "HAVE_NOTHING";
+      this.loadedPlaylists_ = {};
+      this.logger_ = logger2("DashPlaylistLoader");
+      if (this.isMain_) {
+        this.mainPlaylistLoader_.srcUrl = srcUrlOrPlaylist;
+        this.mainPlaylistLoader_.sidxMapping_ = {};
+      } else {
+        this.childPlaylist_ = srcUrlOrPlaylist;
+      }
+    }
+    requestErrored_(err, request, startingState) {
+      if (!this.request) {
+        return true;
+      }
+      this.request = null;
+      if (err) {
+        this.error = typeof err === "object" && !(err instanceof Error) ? err : {
+          status: request.status,
+          message: "DASH request error at URL: " + request.uri,
+          response: request.response,
+          // MEDIA_ERR_NETWORK
+          code: 2
+        };
+        if (startingState) {
+          this.state = startingState;
+        }
+        this.trigger("error");
+        return true;
+      }
+    }
+    /**
+     * Verify that the container of the sidx segment can be parsed
+     * and if it can, get and parse that segment.
+     */
+    addSidxSegments_(playlist, startingState, cb) {
+      const sidxKey = playlist.sidx && generateSidxKey(playlist.sidx);
+      if (!playlist.sidx || !sidxKey || this.mainPlaylistLoader_.sidxMapping_[sidxKey]) {
+        this.mediaRequest_ = import_window8.default.setTimeout(() => cb(false), 0);
+        return;
+      }
+      const uri = resolveManifestRedirect2(playlist.sidx.resolvedUri);
+      const fin = (err, request) => {
+        if (this.requestErrored_(err, request, startingState)) {
+          return;
+        }
+        const sidxMapping = this.mainPlaylistLoader_.sidxMapping_;
+        let sidx;
+        try {
+          sidx = (0, import_parse_sidx2.default)(toUint8(request.response).subarray(8));
+        } catch (e2) {
+          this.requestErrored_(e2, request, startingState);
+          return;
+        }
+        sidxMapping[sidxKey] = {
+          sidxInfo: playlist.sidx,
+          sidx
+        };
+        addSidxSegmentsToPlaylist$1(playlist, sidx, playlist.sidx.resolvedUri);
+        return cb(true);
+      };
+      this.request = containerRequest2(uri, this.vhs_.xhr, (err, request, container, bytes) => {
+        if (err) {
+          return fin(err, request);
+        }
+        if (!container || container !== "mp4") {
+          return fin({
+            status: request.status,
+            message: `Unsupported ${container || "unknown"} container type for sidx segment at URL: ${uri}`,
+            // response is just bytes in this case
+            // but we really don't want to return that.
+            response: "",
+            playlist,
+            internal: true,
+            playlistExclusionDuration: Infinity,
+            // MEDIA_ERR_NETWORK
+            code: 2
+          }, request);
+        }
+        const {
+          offset,
+          length
+        } = playlist.sidx.byterange;
+        if (bytes.length >= length + offset) {
+          return fin(err, {
+            response: bytes.subarray(offset, offset + length),
+            status: request.status,
+            uri: request.uri
+          });
+        }
+        this.request = this.vhs_.xhr({
+          uri,
+          responseType: "arraybuffer",
+          headers: segmentXhrHeaders2({
+            byterange: playlist.sidx.byterange
+          })
+        }, fin);
+      });
+    }
+    dispose() {
+      this.trigger("dispose");
+      this.stopRequest();
+      this.loadedPlaylists_ = {};
+      import_window8.default.clearTimeout(this.minimumUpdatePeriodTimeout_);
+      import_window8.default.clearTimeout(this.mediaRequest_);
+      import_window8.default.clearTimeout(this.mediaUpdateTimeout);
+      this.mediaUpdateTimeout = null;
+      this.mediaRequest_ = null;
+      this.minimumUpdatePeriodTimeout_ = null;
+      if (this.mainPlaylistLoader_.createMupOnMedia_) {
+        this.off("loadedmetadata", this.mainPlaylistLoader_.createMupOnMedia_);
+        this.mainPlaylistLoader_.createMupOnMedia_ = null;
+      }
+      this.off();
+    }
+    hasPendingRequest() {
+      return this.request || this.mediaRequest_;
+    }
+    stopRequest() {
+      if (this.request) {
+        const oldRequest = this.request;
+        this.request = null;
+        oldRequest.onreadystatechange = null;
+        oldRequest.abort();
+      }
+    }
+    media(playlist) {
+      if (!playlist) {
+        return this.media_;
+      }
+      if (this.state === "HAVE_NOTHING") {
+        throw new Error("Cannot switch media playlist from " + this.state);
+      }
+      const startingState = this.state;
+      if (typeof playlist === "string") {
+        if (!this.mainPlaylistLoader_.main.playlists[playlist]) {
+          throw new Error("Unknown playlist URI: " + playlist);
+        }
+        playlist = this.mainPlaylistLoader_.main.playlists[playlist];
+      }
+      const mediaChange = !this.media_ || playlist.id !== this.media_.id;
+      if (mediaChange && this.loadedPlaylists_[playlist.id] && this.loadedPlaylists_[playlist.id].endList) {
+        this.state = "HAVE_METADATA";
+        this.media_ = playlist;
+        if (mediaChange) {
+          this.trigger("mediachanging");
+          this.trigger("mediachange");
+        }
+        return;
+      }
+      if (!mediaChange) {
+        return;
+      }
+      if (this.media_) {
+        this.trigger("mediachanging");
+      }
+      this.addSidxSegments_(playlist, startingState, (sidxChanged) => {
+        this.haveMetadata({
+          startingState,
+          playlist
+        });
+      });
+    }
+    haveMetadata({
+      startingState,
+      playlist
+    }) {
+      this.state = "HAVE_METADATA";
+      this.loadedPlaylists_[playlist.id] = playlist;
+      this.mediaRequest_ = null;
+      this.refreshMedia_(playlist.id);
+      if (startingState === "HAVE_MAIN_MANIFEST") {
+        this.trigger("loadedmetadata");
+      } else {
+        this.trigger("mediachange");
+      }
+    }
+    pause() {
+      if (this.mainPlaylistLoader_.createMupOnMedia_) {
+        this.off("loadedmetadata", this.mainPlaylistLoader_.createMupOnMedia_);
+        this.mainPlaylistLoader_.createMupOnMedia_ = null;
+      }
+      this.stopRequest();
+      import_window8.default.clearTimeout(this.mediaUpdateTimeout);
+      this.mediaUpdateTimeout = null;
+      if (this.isMain_) {
+        import_window8.default.clearTimeout(this.mainPlaylistLoader_.minimumUpdatePeriodTimeout_);
+        this.mainPlaylistLoader_.minimumUpdatePeriodTimeout_ = null;
+      }
+      if (this.state === "HAVE_NOTHING") {
+        this.started = false;
+      }
+    }
+    load(isFinalRendition) {
+      import_window8.default.clearTimeout(this.mediaUpdateTimeout);
+      this.mediaUpdateTimeout = null;
+      const media = this.media();
+      if (isFinalRendition) {
+        const delay = media ? media.targetDuration / 2 * 1e3 : 5 * 1e3;
+        this.mediaUpdateTimeout = import_window8.default.setTimeout(() => this.load(), delay);
+        return;
+      }
+      if (!this.started) {
+        this.start();
+        return;
+      }
+      if (media && !media.endList) {
+        if (this.isMain_ && !this.minimumUpdatePeriodTimeout_) {
+          this.trigger("minimumUpdatePeriod");
+          this.updateMinimumUpdatePeriodTimeout_();
+        }
+        this.trigger("mediaupdatetimeout");
+      } else {
+        this.trigger("loadedplaylist");
+      }
+    }
+    start() {
+      this.started = true;
+      if (!this.isMain_) {
+        this.mediaRequest_ = import_window8.default.setTimeout(() => this.haveMain_(), 0);
+        return;
+      }
+      this.requestMain_((req, mainChanged) => {
+        this.haveMain_();
+        if (!this.hasPendingRequest() && !this.media_) {
+          this.media(this.mainPlaylistLoader_.main.playlists[0]);
+        }
+      });
+    }
+    requestMain_(cb) {
+      this.request = this.vhs_.xhr({
+        uri: this.mainPlaylistLoader_.srcUrl,
+        withCredentials: this.withCredentials
+      }, (error, req) => {
+        if (this.requestErrored_(error, req)) {
+          if (this.state === "HAVE_NOTHING") {
+            this.started = false;
+          }
+          return;
+        }
+        const mainChanged = req.responseText !== this.mainPlaylistLoader_.mainXml_;
+        this.mainPlaylistLoader_.mainXml_ = req.responseText;
+        if (req.responseHeaders && req.responseHeaders.date) {
+          this.mainLoaded_ = Date.parse(req.responseHeaders.date);
+        } else {
+          this.mainLoaded_ = Date.now();
+        }
+        this.mainPlaylistLoader_.srcUrl = resolveManifestRedirect2(this.mainPlaylistLoader_.srcUrl, req);
+        if (mainChanged) {
+          this.handleMain_();
+          this.syncClientServerClock_(() => {
+            return cb(req, mainChanged);
+          });
+          return;
+        }
+        return cb(req, mainChanged);
+      });
+    }
+    /**
+     * Parses the main xml for UTCTiming node to sync the client clock to the server
+     * clock. If the UTCTiming node requires a HEAD or GET request, that request is made.
+     *
+     * @param {Function} done
+     *        Function to call when clock sync has completed
+     */
+    syncClientServerClock_(done) {
+      const utcTiming = parseUTCTiming(this.mainPlaylistLoader_.mainXml_);
+      if (utcTiming === null) {
+        this.mainPlaylistLoader_.clientOffset_ = this.mainLoaded_ - Date.now();
+        return done();
+      }
+      if (utcTiming.method === "DIRECT") {
+        this.mainPlaylistLoader_.clientOffset_ = utcTiming.value - Date.now();
+        return done();
+      }
+      this.request = this.vhs_.xhr({
+        uri: resolveUrl4(this.mainPlaylistLoader_.srcUrl, utcTiming.value),
+        method: utcTiming.method,
+        withCredentials: this.withCredentials
+      }, (error, req) => {
+        if (!this.request) {
+          return;
+        }
+        if (error) {
+          this.mainPlaylistLoader_.clientOffset_ = this.mainLoaded_ - Date.now();
+          return done();
+        }
+        let serverTime;
+        if (utcTiming.method === "HEAD") {
+          if (!req.responseHeaders || !req.responseHeaders.date) {
+            serverTime = this.mainLoaded_;
+          } else {
+            serverTime = Date.parse(req.responseHeaders.date);
+          }
+        } else {
+          serverTime = Date.parse(req.responseText);
+        }
+        this.mainPlaylistLoader_.clientOffset_ = serverTime - Date.now();
+        done();
+      });
+    }
+    haveMain_() {
+      this.state = "HAVE_MAIN_MANIFEST";
+      if (this.isMain_) {
+        this.trigger("loadedplaylist");
+      } else if (!this.media_) {
+        this.media(this.childPlaylist_);
+      }
+    }
+    handleMain_() {
+      this.mediaRequest_ = null;
+      const oldMain = this.mainPlaylistLoader_.main;
+      let newMain = parseMainXml2({
+        mainXml: this.mainPlaylistLoader_.mainXml_,
+        srcUrl: this.mainPlaylistLoader_.srcUrl,
+        clientOffset: this.mainPlaylistLoader_.clientOffset_,
+        sidxMapping: this.mainPlaylistLoader_.sidxMapping_,
+        previousManifest: oldMain
+      });
+      if (oldMain) {
+        newMain = updateMain2(oldMain, newMain, this.mainPlaylistLoader_.sidxMapping_);
+      }
+      this.mainPlaylistLoader_.main = newMain ? newMain : oldMain;
+      const location2 = this.mainPlaylistLoader_.main.locations && this.mainPlaylistLoader_.main.locations[0];
+      if (location2 && location2 !== this.mainPlaylistLoader_.srcUrl) {
+        this.mainPlaylistLoader_.srcUrl = location2;
+      }
+      if (!oldMain || newMain && newMain.minimumUpdatePeriod !== oldMain.minimumUpdatePeriod) {
+        this.updateMinimumUpdatePeriodTimeout_();
+      }
+      this.addEventStreamToMetadataTrack_(newMain);
+      return Boolean(newMain);
+    }
+    updateMinimumUpdatePeriodTimeout_() {
+      const mpl = this.mainPlaylistLoader_;
+      if (mpl.createMupOnMedia_) {
+        mpl.off("loadedmetadata", mpl.createMupOnMedia_);
+        mpl.createMupOnMedia_ = null;
+      }
+      if (mpl.minimumUpdatePeriodTimeout_) {
+        import_window8.default.clearTimeout(mpl.minimumUpdatePeriodTimeout_);
+        mpl.minimumUpdatePeriodTimeout_ = null;
+      }
+      let mup = mpl.main && mpl.main.minimumUpdatePeriod;
+      if (mup === 0) {
+        if (mpl.media()) {
+          mup = mpl.media().targetDuration * 1e3;
+        } else {
+          mpl.createMupOnMedia_ = mpl.updateMinimumUpdatePeriodTimeout_;
+          mpl.one("loadedmetadata", mpl.createMupOnMedia_);
+        }
+      }
+      if (typeof mup !== "number" || mup <= 0) {
+        if (mup < 0) {
+          this.logger_(`found invalid minimumUpdatePeriod of ${mup}, not setting a timeout`);
+        }
+        return;
+      }
+      this.createMUPTimeout_(mup);
+    }
+    createMUPTimeout_(mup) {
+      const mpl = this.mainPlaylistLoader_;
+      mpl.minimumUpdatePeriodTimeout_ = import_window8.default.setTimeout(() => {
+        mpl.minimumUpdatePeriodTimeout_ = null;
+        mpl.trigger("minimumUpdatePeriod");
+        mpl.createMUPTimeout_(mup);
+      }, mup);
+    }
+    /**
+     * Sends request to refresh the main xml and updates the parsed main manifest
+     */
+    refreshXml_() {
+      this.requestMain_((req, mainChanged) => {
+        if (!mainChanged) {
+          return;
+        }
+        if (this.media_) {
+          this.media_ = this.mainPlaylistLoader_.main.playlists[this.media_.id];
+        }
+        this.mainPlaylistLoader_.sidxMapping_ = filterChangedSidxMappings2(this.mainPlaylistLoader_.main, this.mainPlaylistLoader_.sidxMapping_);
+        this.addSidxSegments_(this.media(), this.state, (sidxChanged) => {
+          this.refreshMedia_(this.media().id);
+        });
+      });
+    }
+    /**
+     * Refreshes the media playlist by re-parsing the main xml and updating playlist
+     * references. If this is an alternate loader, the updated parsed manifest is retrieved
+     * from the main loader.
+     */
+    refreshMedia_(mediaID) {
+      if (!mediaID) {
+        throw new Error("refreshMedia_ must take a media id");
+      }
+      if (this.media_ && this.isMain_) {
+        this.handleMain_();
+      }
+      const playlists = this.mainPlaylistLoader_.main.playlists;
+      const mediaChanged = !this.media_ || this.media_ !== playlists[mediaID];
+      if (mediaChanged) {
+        this.media_ = playlists[mediaID];
+      } else {
+        this.trigger("playlistunchanged");
+      }
+      if (!this.mediaUpdateTimeout) {
+        const createMediaUpdateTimeout = () => {
+          if (this.media().endList) {
+            return;
+          }
+          this.mediaUpdateTimeout = import_window8.default.setTimeout(() => {
+            this.trigger("mediaupdatetimeout");
+            createMediaUpdateTimeout();
+          }, refreshDelay2(this.media(), Boolean(mediaChanged)));
+        };
+        createMediaUpdateTimeout();
+      }
+      this.trigger("loadedplaylist");
+    }
+    /**
+     * Takes eventstream data from a parsed DASH manifest and adds it to the metadata text track.
+     *
+     * @param {manifest} newMain the newly parsed manifest
+     */
+    addEventStreamToMetadataTrack_(newMain) {
+      if (newMain && this.mainPlaylistLoader_.main.eventStream) {
+        const metadataArray = this.mainPlaylistLoader_.main.eventStream.map((eventStreamNode) => {
+          return {
+            cueTime: eventStreamNode.start,
+            frames: [{
+              data: eventStreamNode.messageData
+            }]
+          };
+        });
+        this.addMetadataToTextTrack("EventStream", metadataArray, this.mainPlaylistLoader_.main.duration);
+      }
+    }
+    /**
+     * Returns the key ID set from a playlist
+     *
+     * @param {playlist} playlist to fetch the key ID set from.
+     * @return a Set of 32 digit hex strings that represent the unique keyIds for that playlist.
+     */
+    getKeyIdSet(playlist) {
+      if (playlist.contentProtection) {
+        const keyIds = /* @__PURE__ */ new Set();
+        for (const keysystem in playlist.contentProtection) {
+          const defaultKID = playlist.contentProtection[keysystem].attributes["cenc:default_KID"];
+          if (defaultKID) {
+            keyIds.add(defaultKID.replace(/-/g, "").toLowerCase());
+          }
+        }
+        return keyIds;
+      }
+    }
+  };
+  var Config2 = {
+    GOAL_BUFFER_LENGTH: 30,
+    MAX_GOAL_BUFFER_LENGTH: 60,
+    BACK_BUFFER_LENGTH: 30,
+    GOAL_BUFFER_LENGTH_RATE: 1,
+    // 0.5 MB/s
+    INITIAL_BANDWIDTH: 4194304,
+    // A fudge factor to apply to advertised playlist bitrates to account for
+    // temporary flucations in client bandwidth
+    BANDWIDTH_VARIANCE: 1.2,
+    // How much of the buffer must be filled before we consider upswitching
+    BUFFER_LOW_WATER_LINE: 0,
+    MAX_BUFFER_LOW_WATER_LINE: 30,
+    // TODO: Remove this when experimentalBufferBasedABR is removed
+    EXPERIMENTAL_MAX_BUFFER_LOW_WATER_LINE: 16,
+    BUFFER_LOW_WATER_LINE_RATE: 1,
+    // If the buffer is greater than the high water line, we won't switch down
+    BUFFER_HIGH_WATER_LINE: 30
+  };
+  var stringToArrayBuffer2 = (string) => {
+    const view = new Uint8Array(new ArrayBuffer(string.length));
+    for (let i2 = 0; i2 < string.length; i2++) {
+      view[i2] = string.charCodeAt(i2);
+    }
+    return view.buffer;
+  };
+  var browserWorkerPolyFill2 = function(workerObj) {
+    workerObj.on = workerObj.addEventListener;
+    workerObj.off = workerObj.removeEventListener;
+    return workerObj;
+  };
+  var createObjectURL2 = function(str) {
+    try {
+      return URL.createObjectURL(new Blob([str], {
+        type: "application/javascript"
+      }));
+    } catch (e2) {
+      const blob = new BlobBuilder();
+      blob.append(str);
+      return URL.createObjectURL(blob.getBlob());
+    }
+  };
+  var factory2 = function(code) {
+    return function() {
+      const objectUrl = createObjectURL2(code);
+      const worker = browserWorkerPolyFill2(new Worker(objectUrl));
+      worker.objURL = objectUrl;
+      const terminate = worker.terminate;
+      worker.on = worker.addEventListener;
+      worker.off = worker.removeEventListener;
+      worker.terminate = function() {
+        URL.revokeObjectURL(objectUrl);
+        return terminate.call(this);
+      };
+      return worker;
+    };
+  };
+  var transform2 = function(code) {
+    return `var browserWorkerPolyFill = ${browserWorkerPolyFill2.toString()};
+browserWorkerPolyFill(self);
+` + code;
+  };
+  var getWorkerString2 = function(fn) {
+    return fn.toString().replace(/^function.+?{/, "").slice(0, -1);
+  };
+  var workerCode$12 = transform2(getWorkerString2(function() {
+    var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+    var Stream$8 = function() {
+      this.init = function() {
+        var listeners = {};
+        this.on = function(type2, listener) {
+          if (!listeners[type2]) {
+            listeners[type2] = [];
+          }
+          listeners[type2] = listeners[type2].concat(listener);
+        };
+        this.off = function(type2, listener) {
+          var index;
+          if (!listeners[type2]) {
+            return false;
+          }
+          index = listeners[type2].indexOf(listener);
+          listeners[type2] = listeners[type2].slice();
+          listeners[type2].splice(index, 1);
+          return index > -1;
+        };
+        this.trigger = function(type2) {
+          var callbacks, i2, length, args;
+          callbacks = listeners[type2];
+          if (!callbacks) {
+            return;
+          }
+          if (arguments.length === 2) {
+            length = callbacks.length;
+            for (i2 = 0; i2 < length; ++i2) {
+              callbacks[i2].call(this, arguments[1]);
+            }
+          } else {
+            args = [];
+            i2 = arguments.length;
+            for (i2 = 1; i2 < arguments.length; ++i2) {
+              args.push(arguments[i2]);
+            }
+            length = callbacks.length;
+            for (i2 = 0; i2 < length; ++i2) {
+              callbacks[i2].apply(this, args);
+            }
+          }
+        };
+        this.dispose = function() {
+          listeners = {};
+        };
+      };
+    };
+    Stream$8.prototype.pipe = function(destination) {
+      this.on("data", function(data) {
+        destination.push(data);
+      });
+      this.on("done", function(flushSource) {
+        destination.flush(flushSource);
+      });
+      this.on("partialdone", function(flushSource) {
+        destination.partialFlush(flushSource);
+      });
+      this.on("endedtimeline", function(flushSource) {
+        destination.endTimeline(flushSource);
+      });
+      this.on("reset", function(flushSource) {
+        destination.reset(flushSource);
+      });
+      return destination;
+    };
+    Stream$8.prototype.push = function(data) {
+      this.trigger("data", data);
+    };
+    Stream$8.prototype.flush = function(flushSource) {
+      this.trigger("done", flushSource);
+    };
+    Stream$8.prototype.partialFlush = function(flushSource) {
+      this.trigger("partialdone", flushSource);
+    };
+    Stream$8.prototype.endTimeline = function(flushSource) {
+      this.trigger("endedtimeline", flushSource);
+    };
+    Stream$8.prototype.reset = function(flushSource) {
+      this.trigger("reset", flushSource);
+    };
+    var stream = Stream$8;
+    var MAX_UINT32$1 = Math.pow(2, 32);
+    var getUint64$3 = function(uint8) {
+      var dv = new DataView(uint8.buffer, uint8.byteOffset, uint8.byteLength);
+      var value;
+      if (dv.getBigUint64) {
+        value = dv.getBigUint64(0);
+        if (value < Number.MAX_SAFE_INTEGER) {
+          return Number(value);
+        }
+        return value;
+      }
+      return dv.getUint32(0) * MAX_UINT32$1 + dv.getUint32(4);
+    };
+    var numbers = {
+      getUint64: getUint64$3,
+      MAX_UINT32: MAX_UINT32$1
+    };
+    var MAX_UINT32 = numbers.MAX_UINT32;
+    var box, dinf, esds, ftyp, mdat, mfhd, minf, moof, moov, mvex, mvhd, trak, tkhd, mdia, mdhd, hdlr, sdtp, stbl, stsd, traf, trex, trun$1, types, MAJOR_BRAND, MINOR_VERSION, AVC1_BRAND, VIDEO_HDLR, AUDIO_HDLR, HDLR_TYPES, VMHD, SMHD, DREF, STCO, STSC, STSZ, STTS;
+    (function() {
+      var i2;
+      types = {
+        avc1: [],
+        // codingname
+        avcC: [],
+        btrt: [],
+        dinf: [],
+        dref: [],
+        esds: [],
+        ftyp: [],
+        hdlr: [],
+        mdat: [],
+        mdhd: [],
+        mdia: [],
+        mfhd: [],
+        minf: [],
+        moof: [],
+        moov: [],
+        mp4a: [],
+        // codingname
+        mvex: [],
+        mvhd: [],
+        pasp: [],
+        sdtp: [],
+        smhd: [],
+        stbl: [],
+        stco: [],
+        stsc: [],
+        stsd: [],
+        stsz: [],
+        stts: [],
+        styp: [],
+        tfdt: [],
+        tfhd: [],
+        traf: [],
+        trak: [],
+        trun: [],
+        trex: [],
+        tkhd: [],
+        vmhd: []
+      };
+      if (typeof Uint8Array === "undefined") {
+        return;
+      }
+      for (i2 in types) {
+        if (types.hasOwnProperty(i2)) {
+          types[i2] = [i2.charCodeAt(0), i2.charCodeAt(1), i2.charCodeAt(2), i2.charCodeAt(3)];
+        }
+      }
+      MAJOR_BRAND = new Uint8Array(["i".charCodeAt(0), "s".charCodeAt(0), "o".charCodeAt(0), "m".charCodeAt(0)]);
+      AVC1_BRAND = new Uint8Array(["a".charCodeAt(0), "v".charCodeAt(0), "c".charCodeAt(0), "1".charCodeAt(0)]);
+      MINOR_VERSION = new Uint8Array([0, 0, 0, 1]);
+      VIDEO_HDLR = new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        0,
+        0,
+        // pre_defined
+        118,
+        105,
+        100,
+        101,
+        // handler_type: 'vide'
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        86,
+        105,
+        100,
+        101,
+        111,
+        72,
+        97,
+        110,
+        100,
+        108,
+        101,
+        114,
+        0
+        // name: 'VideoHandler'
+      ]);
+      AUDIO_HDLR = new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        0,
+        0,
+        // pre_defined
+        115,
+        111,
+        117,
+        110,
+        // handler_type: 'soun'
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        83,
+        111,
+        117,
+        110,
+        100,
+        72,
+        97,
+        110,
+        100,
+        108,
+        101,
+        114,
+        0
+        // name: 'SoundHandler'
+      ]);
+      HDLR_TYPES = {
+        video: VIDEO_HDLR,
+        audio: AUDIO_HDLR
+      };
+      DREF = new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        0,
+        1,
+        // entry_count
+        0,
+        0,
+        0,
+        12,
+        // entry_size
+        117,
+        114,
+        108,
+        32,
+        // 'url' type
+        0,
+        // version 0
+        0,
+        0,
+        1
+        // entry_flags
+      ]);
+      SMHD = new Uint8Array([
+        0,
+        // version
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        // balance, 0 means centered
+        0,
+        0
+        // reserved
+      ]);
+      STCO = new Uint8Array([
+        0,
+        // version
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        0,
+        0
+        // entry_count
+      ]);
+      STSC = STCO;
+      STSZ = new Uint8Array([
+        0,
+        // version
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        0,
+        0,
+        // sample_size
+        0,
+        0,
+        0,
+        0
+        // sample_count
+      ]);
+      STTS = STCO;
+      VMHD = new Uint8Array([
+        0,
+        // version
+        0,
+        0,
+        1,
+        // flags
+        0,
+        0,
+        // graphicsmode
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+        // opcolor
+      ]);
+    })();
+    box = function(type2) {
+      var payload = [], size = 0, i2, result, view;
+      for (i2 = 1; i2 < arguments.length; i2++) {
+        payload.push(arguments[i2]);
+      }
+      i2 = payload.length;
+      while (i2--) {
+        size += payload[i2].byteLength;
+      }
+      result = new Uint8Array(size + 8);
+      view = new DataView(result.buffer, result.byteOffset, result.byteLength);
+      view.setUint32(0, result.byteLength);
+      result.set(type2, 4);
+      for (i2 = 0, size = 8; i2 < payload.length; i2++) {
+        result.set(payload[i2], size);
+        size += payload[i2].byteLength;
+      }
+      return result;
+    };
+    dinf = function() {
+      return box(types.dinf, box(types.dref, DREF));
+    };
+    esds = function(track) {
+      return box(types.esds, new Uint8Array([
+        0,
+        // version
+        0,
+        0,
+        0,
+        // flags
+        // ES_Descriptor
+        3,
+        // tag, ES_DescrTag
+        25,
+        // length
+        0,
+        0,
+        // ES_ID
+        0,
+        // streamDependenceFlag, URL_flag, reserved, streamPriority
+        // DecoderConfigDescriptor
+        4,
+        // tag, DecoderConfigDescrTag
+        17,
+        // length
+        64,
+        // object type
+        21,
+        // streamType
+        0,
+        6,
+        0,
+        // bufferSizeDB
+        0,
+        0,
+        218,
+        192,
+        // maxBitrate
+        0,
+        0,
+        218,
+        192,
+        // avgBitrate
+        // DecoderSpecificInfo
+        5,
+        // tag, DecoderSpecificInfoTag
+        2,
+        // length
+        // ISO/IEC 14496-3, AudioSpecificConfig
+        // for samplingFrequencyIndex see ISO/IEC 13818-7:2006, 8.1.3.2.2, Table 35
+        track.audioobjecttype << 3 | track.samplingfrequencyindex >>> 1,
+        track.samplingfrequencyindex << 7 | track.channelcount << 3,
+        6,
+        1,
+        2
+        // GASpecificConfig
+      ]));
+    };
+    ftyp = function() {
+      return box(types.ftyp, MAJOR_BRAND, MINOR_VERSION, MAJOR_BRAND, AVC1_BRAND);
+    };
+    hdlr = function(type2) {
+      return box(types.hdlr, HDLR_TYPES[type2]);
+    };
+    mdat = function(data) {
+      return box(types.mdat, data);
+    };
+    mdhd = function(track) {
+      var result = new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        0,
+        2,
+        // creation_time
+        0,
+        0,
+        0,
+        3,
+        // modification_time
+        0,
+        1,
+        95,
+        144,
+        // timescale, 90,000 "ticks" per second
+        track.duration >>> 24 & 255,
+        track.duration >>> 16 & 255,
+        track.duration >>> 8 & 255,
+        track.duration & 255,
+        // duration
+        85,
+        196,
+        // 'und' language (undetermined)
+        0,
+        0
+      ]);
+      if (track.samplerate) {
+        result[12] = track.samplerate >>> 24 & 255;
+        result[13] = track.samplerate >>> 16 & 255;
+        result[14] = track.samplerate >>> 8 & 255;
+        result[15] = track.samplerate & 255;
+      }
+      return box(types.mdhd, result);
+    };
+    mdia = function(track) {
+      return box(types.mdia, mdhd(track), hdlr(track.type), minf(track));
+    };
+    mfhd = function(sequenceNumber) {
+      return box(types.mfhd, new Uint8Array([
+        0,
+        0,
+        0,
+        0,
+        // flags
+        (sequenceNumber & 4278190080) >> 24,
+        (sequenceNumber & 16711680) >> 16,
+        (sequenceNumber & 65280) >> 8,
+        sequenceNumber & 255
+        // sequence_number
+      ]));
+    };
+    minf = function(track) {
+      return box(types.minf, track.type === "video" ? box(types.vmhd, VMHD) : box(types.smhd, SMHD), dinf(), stbl(track));
+    };
+    moof = function(sequenceNumber, tracks) {
+      var trackFragments = [], i2 = tracks.length;
+      while (i2--) {
+        trackFragments[i2] = traf(tracks[i2]);
+      }
+      return box.apply(null, [types.moof, mfhd(sequenceNumber)].concat(trackFragments));
+    };
+    moov = function(tracks) {
+      var i2 = tracks.length, boxes = [];
+      while (i2--) {
+        boxes[i2] = trak(tracks[i2]);
+      }
+      return box.apply(null, [types.moov, mvhd(4294967295)].concat(boxes).concat(mvex(tracks)));
+    };
+    mvex = function(tracks) {
+      var i2 = tracks.length, boxes = [];
+      while (i2--) {
+        boxes[i2] = trex(tracks[i2]);
+      }
+      return box.apply(null, [types.mvex].concat(boxes));
+    };
+    mvhd = function(duration3) {
+      var bytes = new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        0,
+        // flags
+        0,
+        0,
+        0,
+        1,
+        // creation_time
+        0,
+        0,
+        0,
+        2,
+        // modification_time
+        0,
+        1,
+        95,
+        144,
+        // timescale, 90,000 "ticks" per second
+        (duration3 & 4278190080) >> 24,
+        (duration3 & 16711680) >> 16,
+        (duration3 & 65280) >> 8,
+        duration3 & 255,
+        // duration
+        0,
+        1,
+        0,
+        0,
+        // 1.0 rate
+        1,
+        0,
+        // 1.0 volume
+        0,
+        0,
+        // reserved
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        0,
+        0,
+        // transformation: unity matrix
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        // pre_defined
+        255,
+        255,
+        255,
+        255
+        // next_track_ID
+      ]);
+      return box(types.mvhd, bytes);
+    };
+    sdtp = function(track) {
+      var samples = track.samples || [], bytes = new Uint8Array(4 + samples.length), flags, i2;
+      for (i2 = 0; i2 < samples.length; i2++) {
+        flags = samples[i2].flags;
+        bytes[i2 + 4] = flags.dependsOn << 4 | flags.isDependedOn << 2 | flags.hasRedundancy;
+      }
+      return box(types.sdtp, bytes);
+    };
+    stbl = function(track) {
+      return box(types.stbl, stsd(track), box(types.stts, STTS), box(types.stsc, STSC), box(types.stsz, STSZ), box(types.stco, STCO));
+    };
+    (function() {
+      var videoSample, audioSample;
+      stsd = function(track) {
+        return box(types.stsd, new Uint8Array([
+          0,
+          // version 0
+          0,
+          0,
+          0,
+          // flags
+          0,
+          0,
+          0,
+          1
+        ]), track.type === "video" ? videoSample(track) : audioSample(track));
+      };
+      videoSample = function(track) {
+        var sps = track.sps || [], pps = track.pps || [], sequenceParameterSets = [], pictureParameterSets = [], i2, avc1Box;
+        for (i2 = 0; i2 < sps.length; i2++) {
+          sequenceParameterSets.push((sps[i2].byteLength & 65280) >>> 8);
+          sequenceParameterSets.push(sps[i2].byteLength & 255);
+          sequenceParameterSets = sequenceParameterSets.concat(Array.prototype.slice.call(sps[i2]));
+        }
+        for (i2 = 0; i2 < pps.length; i2++) {
+          pictureParameterSets.push((pps[i2].byteLength & 65280) >>> 8);
+          pictureParameterSets.push(pps[i2].byteLength & 255);
+          pictureParameterSets = pictureParameterSets.concat(Array.prototype.slice.call(pps[i2]));
+        }
+        avc1Box = [types.avc1, new Uint8Array([
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          // reserved
+          0,
+          1,
+          // data_reference_index
+          0,
+          0,
+          // pre_defined
+          0,
+          0,
+          // reserved
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          // pre_defined
+          (track.width & 65280) >> 8,
+          track.width & 255,
+          // width
+          (track.height & 65280) >> 8,
+          track.height & 255,
+          // height
+          0,
+          72,
+          0,
+          0,
+          // horizresolution
+          0,
+          72,
+          0,
+          0,
+          // vertresolution
+          0,
+          0,
+          0,
+          0,
+          // reserved
+          0,
+          1,
+          // frame_count
+          19,
+          118,
+          105,
+          100,
+          101,
+          111,
+          106,
+          115,
+          45,
+          99,
+          111,
+          110,
+          116,
+          114,
+          105,
+          98,
+          45,
+          104,
+          108,
+          115,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          // compressorname
+          0,
+          24,
+          // depth = 24
+          17,
+          17
+          // pre_defined = -1
+        ]), box(types.avcC, new Uint8Array([
+          1,
+          // configurationVersion
+          track.profileIdc,
+          // AVCProfileIndication
+          track.profileCompatibility,
+          // profile_compatibility
+          track.levelIdc,
+          // AVCLevelIndication
+          255
+          // lengthSizeMinusOne, hard-coded to 4 bytes
+        ].concat(
+          [sps.length],
+          // numOfSequenceParameterSets
+          sequenceParameterSets,
+          // "SPS"
+          [pps.length],
+          // numOfPictureParameterSets
+          pictureParameterSets
+          // "PPS"
+        ))), box(types.btrt, new Uint8Array([
+          0,
+          28,
+          156,
+          128,
+          // bufferSizeDB
+          0,
+          45,
+          198,
+          192,
+          // maxBitrate
+          0,
+          45,
+          198,
+          192
+          // avgBitrate
+        ]))];
+        if (track.sarRatio) {
+          var hSpacing = track.sarRatio[0], vSpacing = track.sarRatio[1];
+          avc1Box.push(box(types.pasp, new Uint8Array([(hSpacing & 4278190080) >> 24, (hSpacing & 16711680) >> 16, (hSpacing & 65280) >> 8, hSpacing & 255, (vSpacing & 4278190080) >> 24, (vSpacing & 16711680) >> 16, (vSpacing & 65280) >> 8, vSpacing & 255])));
+        }
+        return box.apply(null, avc1Box);
+      };
+      audioSample = function(track) {
+        return box(types.mp4a, new Uint8Array([
+          // SampleEntry, ISO/IEC 14496-12
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          // reserved
+          0,
+          1,
+          // data_reference_index
+          // AudioSampleEntry, ISO/IEC 14496-12
+          0,
+          0,
+          0,
+          0,
+          // reserved
+          0,
+          0,
+          0,
+          0,
+          // reserved
+          (track.channelcount & 65280) >> 8,
+          track.channelcount & 255,
+          // channelcount
+          (track.samplesize & 65280) >> 8,
+          track.samplesize & 255,
+          // samplesize
+          0,
+          0,
+          // pre_defined
+          0,
+          0,
+          // reserved
+          (track.samplerate & 65280) >> 8,
+          track.samplerate & 255,
+          0,
+          0
+          // samplerate, 16.16
+          // MP4AudioSampleEntry, ISO/IEC 14496-14
+        ]), esds(track));
+      };
+    })();
+    tkhd = function(track) {
+      var result = new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        7,
+        // flags
+        0,
+        0,
+        0,
+        0,
+        // creation_time
+        0,
+        0,
+        0,
+        0,
+        // modification_time
+        (track.id & 4278190080) >> 24,
+        (track.id & 16711680) >> 16,
+        (track.id & 65280) >> 8,
+        track.id & 255,
+        // track_ID
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        (track.duration & 4278190080) >> 24,
+        (track.duration & 16711680) >> 16,
+        (track.duration & 65280) >> 8,
+        track.duration & 255,
+        // duration
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        // reserved
+        0,
+        0,
+        // layer
+        0,
+        0,
+        // alternate_group
+        1,
+        0,
+        // non-audio track volume
+        0,
+        0,
+        // reserved
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        0,
+        0,
+        // transformation: unity matrix
+        (track.width & 65280) >> 8,
+        track.width & 255,
+        0,
+        0,
+        // width
+        (track.height & 65280) >> 8,
+        track.height & 255,
+        0,
+        0
+        // height
+      ]);
+      return box(types.tkhd, result);
+    };
+    traf = function(track) {
+      var trackFragmentHeader, trackFragmentDecodeTime, trackFragmentRun, sampleDependencyTable, dataOffset, upperWordBaseMediaDecodeTime, lowerWordBaseMediaDecodeTime;
+      trackFragmentHeader = box(types.tfhd, new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        58,
+        // flags
+        (track.id & 4278190080) >> 24,
+        (track.id & 16711680) >> 16,
+        (track.id & 65280) >> 8,
+        track.id & 255,
+        // track_ID
+        0,
+        0,
+        0,
+        1,
+        // sample_description_index
+        0,
+        0,
+        0,
+        0,
+        // default_sample_duration
+        0,
+        0,
+        0,
+        0,
+        // default_sample_size
+        0,
+        0,
+        0,
+        0
+        // default_sample_flags
+      ]));
+      upperWordBaseMediaDecodeTime = Math.floor(track.baseMediaDecodeTime / MAX_UINT32);
+      lowerWordBaseMediaDecodeTime = Math.floor(track.baseMediaDecodeTime % MAX_UINT32);
+      trackFragmentDecodeTime = box(types.tfdt, new Uint8Array([
+        1,
+        // version 1
+        0,
+        0,
+        0,
+        // flags
+        // baseMediaDecodeTime
+        upperWordBaseMediaDecodeTime >>> 24 & 255,
+        upperWordBaseMediaDecodeTime >>> 16 & 255,
+        upperWordBaseMediaDecodeTime >>> 8 & 255,
+        upperWordBaseMediaDecodeTime & 255,
+        lowerWordBaseMediaDecodeTime >>> 24 & 255,
+        lowerWordBaseMediaDecodeTime >>> 16 & 255,
+        lowerWordBaseMediaDecodeTime >>> 8 & 255,
+        lowerWordBaseMediaDecodeTime & 255
+      ]));
+      dataOffset = 32 + // tfhd
+      20 + // tfdt
+      8 + // traf header
+      16 + // mfhd
+      8 + // moof header
+      8;
+      if (track.type === "audio") {
+        trackFragmentRun = trun$1(track, dataOffset);
+        return box(types.traf, trackFragmentHeader, trackFragmentDecodeTime, trackFragmentRun);
+      }
+      sampleDependencyTable = sdtp(track);
+      trackFragmentRun = trun$1(track, sampleDependencyTable.length + dataOffset);
+      return box(types.traf, trackFragmentHeader, trackFragmentDecodeTime, trackFragmentRun, sampleDependencyTable);
+    };
+    trak = function(track) {
+      track.duration = track.duration || 4294967295;
+      return box(types.trak, tkhd(track), mdia(track));
+    };
+    trex = function(track) {
+      var result = new Uint8Array([
+        0,
+        // version 0
+        0,
+        0,
+        0,
+        // flags
+        (track.id & 4278190080) >> 24,
+        (track.id & 16711680) >> 16,
+        (track.id & 65280) >> 8,
+        track.id & 255,
+        // track_ID
+        0,
+        0,
+        0,
+        1,
+        // default_sample_description_index
+        0,
+        0,
+        0,
+        0,
+        // default_sample_duration
+        0,
+        0,
+        0,
+        0,
+        // default_sample_size
+        0,
+        1,
+        0,
+        1
+        // default_sample_flags
+      ]);
+      if (track.type !== "video") {
+        result[result.length - 1] = 0;
+      }
+      return box(types.trex, result);
+    };
+    (function() {
+      var audioTrun, videoTrun, trunHeader;
+      trunHeader = function(samples, offset) {
+        var durationPresent = 0, sizePresent = 0, flagsPresent = 0, compositionTimeOffset = 0;
+        if (samples.length) {
+          if (samples[0].duration !== void 0) {
+            durationPresent = 1;
+          }
+          if (samples[0].size !== void 0) {
+            sizePresent = 2;
+          }
+          if (samples[0].flags !== void 0) {
+            flagsPresent = 4;
+          }
+          if (samples[0].compositionTimeOffset !== void 0) {
+            compositionTimeOffset = 8;
+          }
+        }
+        return [
+          0,
+          // version 0
+          0,
+          durationPresent | sizePresent | flagsPresent | compositionTimeOffset,
+          1,
+          // flags
+          (samples.length & 4278190080) >>> 24,
+          (samples.length & 16711680) >>> 16,
+          (samples.length & 65280) >>> 8,
+          samples.length & 255,
+          // sample_count
+          (offset & 4278190080) >>> 24,
+          (offset & 16711680) >>> 16,
+          (offset & 65280) >>> 8,
+          offset & 255
+          // data_offset
+        ];
+      };
+      videoTrun = function(track, offset) {
+        var bytesOffest, bytes, header, samples, sample, i2;
+        samples = track.samples || [];
+        offset += 8 + 12 + 16 * samples.length;
+        header = trunHeader(samples, offset);
+        bytes = new Uint8Array(header.length + samples.length * 16);
+        bytes.set(header);
+        bytesOffest = header.length;
+        for (i2 = 0; i2 < samples.length; i2++) {
+          sample = samples[i2];
+          bytes[bytesOffest++] = (sample.duration & 4278190080) >>> 24;
+          bytes[bytesOffest++] = (sample.duration & 16711680) >>> 16;
+          bytes[bytesOffest++] = (sample.duration & 65280) >>> 8;
+          bytes[bytesOffest++] = sample.duration & 255;
+          bytes[bytesOffest++] = (sample.size & 4278190080) >>> 24;
+          bytes[bytesOffest++] = (sample.size & 16711680) >>> 16;
+          bytes[bytesOffest++] = (sample.size & 65280) >>> 8;
+          bytes[bytesOffest++] = sample.size & 255;
+          bytes[bytesOffest++] = sample.flags.isLeading << 2 | sample.flags.dependsOn;
+          bytes[bytesOffest++] = sample.flags.isDependedOn << 6 | sample.flags.hasRedundancy << 4 | sample.flags.paddingValue << 1 | sample.flags.isNonSyncSample;
+          bytes[bytesOffest++] = sample.flags.degradationPriority & 240 << 8;
+          bytes[bytesOffest++] = sample.flags.degradationPriority & 15;
+          bytes[bytesOffest++] = (sample.compositionTimeOffset & 4278190080) >>> 24;
+          bytes[bytesOffest++] = (sample.compositionTimeOffset & 16711680) >>> 16;
+          bytes[bytesOffest++] = (sample.compositionTimeOffset & 65280) >>> 8;
+          bytes[bytesOffest++] = sample.compositionTimeOffset & 255;
+        }
+        return box(types.trun, bytes);
+      };
+      audioTrun = function(track, offset) {
+        var bytes, bytesOffest, header, samples, sample, i2;
+        samples = track.samples || [];
+        offset += 8 + 12 + 8 * samples.length;
+        header = trunHeader(samples, offset);
+        bytes = new Uint8Array(header.length + samples.length * 8);
+        bytes.set(header);
+        bytesOffest = header.length;
+        for (i2 = 0; i2 < samples.length; i2++) {
+          sample = samples[i2];
+          bytes[bytesOffest++] = (sample.duration & 4278190080) >>> 24;
+          bytes[bytesOffest++] = (sample.duration & 16711680) >>> 16;
+          bytes[bytesOffest++] = (sample.duration & 65280) >>> 8;
+          bytes[bytesOffest++] = sample.duration & 255;
+          bytes[bytesOffest++] = (sample.size & 4278190080) >>> 24;
+          bytes[bytesOffest++] = (sample.size & 16711680) >>> 16;
+          bytes[bytesOffest++] = (sample.size & 65280) >>> 8;
+          bytes[bytesOffest++] = sample.size & 255;
+        }
+        return box(types.trun, bytes);
+      };
+      trun$1 = function(track, offset) {
+        if (track.type === "audio") {
+          return audioTrun(track, offset);
+        }
+        return videoTrun(track, offset);
+      };
+    })();
+    var mp4Generator = {
+      ftyp,
+      mdat,
+      moof,
+      moov,
+      initSegment: function(tracks) {
+        var fileType = ftyp(), movie = moov(tracks), result;
+        result = new Uint8Array(fileType.byteLength + movie.byteLength);
+        result.set(fileType);
+        result.set(movie, fileType.byteLength);
+        return result;
+      }
+    };
+    var groupNalsIntoFrames = function(nalUnits) {
+      var i2, currentNal, currentFrame = [], frames = [];
+      frames.byteLength = 0;
+      frames.nalCount = 0;
+      frames.duration = 0;
+      currentFrame.byteLength = 0;
+      for (i2 = 0; i2 < nalUnits.length; i2++) {
+        currentNal = nalUnits[i2];
+        if (currentNal.nalUnitType === "access_unit_delimiter_rbsp") {
+          if (currentFrame.length) {
+            currentFrame.duration = currentNal.dts - currentFrame.dts;
+            frames.byteLength += currentFrame.byteLength;
+            frames.nalCount += currentFrame.length;
+            frames.duration += currentFrame.duration;
+            frames.push(currentFrame);
+          }
+          currentFrame = [currentNal];
+          currentFrame.byteLength = currentNal.data.byteLength;
+          currentFrame.pts = currentNal.pts;
+          currentFrame.dts = currentNal.dts;
+        } else {
+          if (currentNal.nalUnitType === "slice_layer_without_partitioning_rbsp_idr") {
+            currentFrame.keyFrame = true;
+          }
+          currentFrame.duration = currentNal.dts - currentFrame.dts;
+          currentFrame.byteLength += currentNal.data.byteLength;
+          currentFrame.push(currentNal);
+        }
+      }
+      if (frames.length && (!currentFrame.duration || currentFrame.duration <= 0)) {
+        currentFrame.duration = frames[frames.length - 1].duration;
+      }
+      frames.byteLength += currentFrame.byteLength;
+      frames.nalCount += currentFrame.length;
+      frames.duration += currentFrame.duration;
+      frames.push(currentFrame);
+      return frames;
+    };
+    var groupFramesIntoGops = function(frames) {
+      var i2, currentFrame, currentGop = [], gops = [];
+      currentGop.byteLength = 0;
+      currentGop.nalCount = 0;
+      currentGop.duration = 0;
+      currentGop.pts = frames[0].pts;
+      currentGop.dts = frames[0].dts;
+      gops.byteLength = 0;
+      gops.nalCount = 0;
+      gops.duration = 0;
+      gops.pts = frames[0].pts;
+      gops.dts = frames[0].dts;
+      for (i2 = 0; i2 < frames.length; i2++) {
+        currentFrame = frames[i2];
+        if (currentFrame.keyFrame) {
+          if (currentGop.length) {
+            gops.push(currentGop);
+            gops.byteLength += currentGop.byteLength;
+            gops.nalCount += currentGop.nalCount;
+            gops.duration += currentGop.duration;
+          }
+          currentGop = [currentFrame];
+          currentGop.nalCount = currentFrame.length;
+          currentGop.byteLength = currentFrame.byteLength;
+          currentGop.pts = currentFrame.pts;
+          currentGop.dts = currentFrame.dts;
+          currentGop.duration = currentFrame.duration;
+        } else {
+          currentGop.duration += currentFrame.duration;
+          currentGop.nalCount += currentFrame.length;
+          currentGop.byteLength += currentFrame.byteLength;
+          currentGop.push(currentFrame);
+        }
+      }
+      if (gops.length && currentGop.duration <= 0) {
+        currentGop.duration = gops[gops.length - 1].duration;
+      }
+      gops.byteLength += currentGop.byteLength;
+      gops.nalCount += currentGop.nalCount;
+      gops.duration += currentGop.duration;
+      gops.push(currentGop);
+      return gops;
+    };
+    var extendFirstKeyFrame = function(gops) {
+      var currentGop;
+      if (!gops[0][0].keyFrame && gops.length > 1) {
+        currentGop = gops.shift();
+        gops.byteLength -= currentGop.byteLength;
+        gops.nalCount -= currentGop.nalCount;
+        gops[0][0].dts = currentGop.dts;
+        gops[0][0].pts = currentGop.pts;
+        gops[0][0].duration += currentGop.duration;
+      }
+      return gops;
+    };
+    var createDefaultSample = function() {
+      return {
+        size: 0,
+        flags: {
+          isLeading: 0,
+          dependsOn: 1,
+          isDependedOn: 0,
+          hasRedundancy: 0,
+          degradationPriority: 0,
+          isNonSyncSample: 1
+        }
+      };
+    };
+    var sampleForFrame = function(frame, dataOffset) {
+      var sample = createDefaultSample();
+      sample.dataOffset = dataOffset;
+      sample.compositionTimeOffset = frame.pts - frame.dts;
+      sample.duration = frame.duration;
+      sample.size = 4 * frame.length;
+      sample.size += frame.byteLength;
+      if (frame.keyFrame) {
+        sample.flags.dependsOn = 2;
+        sample.flags.isNonSyncSample = 0;
+      }
+      return sample;
+    };
+    var generateSampleTable$1 = function(gops, baseDataOffset) {
+      var h2, i2, sample, currentGop, currentFrame, dataOffset = baseDataOffset || 0, samples = [];
+      for (h2 = 0; h2 < gops.length; h2++) {
+        currentGop = gops[h2];
+        for (i2 = 0; i2 < currentGop.length; i2++) {
+          currentFrame = currentGop[i2];
+          sample = sampleForFrame(currentFrame, dataOffset);
+          dataOffset += sample.size;
+          samples.push(sample);
+        }
+      }
+      return samples;
+    };
+    var concatenateNalData = function(gops) {
+      var h2, i2, j2, currentGop, currentFrame, currentNal, dataOffset = 0, nalsByteLength = gops.byteLength, numberOfNals = gops.nalCount, totalByteLength = nalsByteLength + 4 * numberOfNals, data = new Uint8Array(totalByteLength), view = new DataView(data.buffer);
+      for (h2 = 0; h2 < gops.length; h2++) {
+        currentGop = gops[h2];
+        for (i2 = 0; i2 < currentGop.length; i2++) {
+          currentFrame = currentGop[i2];
+          for (j2 = 0; j2 < currentFrame.length; j2++) {
+            currentNal = currentFrame[j2];
+            view.setUint32(dataOffset, currentNal.data.byteLength);
+            dataOffset += 4;
+            data.set(currentNal.data, dataOffset);
+            dataOffset += currentNal.data.byteLength;
+          }
+        }
+      }
+      return data;
+    };
+    var generateSampleTableForFrame = function(frame, baseDataOffset) {
+      var sample, dataOffset = baseDataOffset || 0, samples = [];
+      sample = sampleForFrame(frame, dataOffset);
+      samples.push(sample);
+      return samples;
+    };
+    var concatenateNalDataForFrame = function(frame) {
+      var i2, currentNal, dataOffset = 0, nalsByteLength = frame.byteLength, numberOfNals = frame.length, totalByteLength = nalsByteLength + 4 * numberOfNals, data = new Uint8Array(totalByteLength), view = new DataView(data.buffer);
+      for (i2 = 0; i2 < frame.length; i2++) {
+        currentNal = frame[i2];
+        view.setUint32(dataOffset, currentNal.data.byteLength);
+        dataOffset += 4;
+        data.set(currentNal.data, dataOffset);
+        dataOffset += currentNal.data.byteLength;
+      }
+      return data;
+    };
+    var frameUtils$1 = {
+      groupNalsIntoFrames,
+      groupFramesIntoGops,
+      extendFirstKeyFrame,
+      generateSampleTable: generateSampleTable$1,
+      concatenateNalData,
+      generateSampleTableForFrame,
+      concatenateNalDataForFrame
+    };
+    var highPrefix = [33, 16, 5, 32, 164, 27];
+    var lowPrefix = [33, 65, 108, 84, 1, 2, 4, 8, 168, 2, 4, 8, 17, 191, 252];
+    var zeroFill = function(count) {
+      var a2 = [];
+      while (count--) {
+        a2.push(0);
+      }
+      return a2;
+    };
+    var makeTable = function(metaTable) {
+      return Object.keys(metaTable).reduce(function(obj, key) {
+        obj[key] = new Uint8Array(metaTable[key].reduce(function(arr, part) {
+          return arr.concat(part);
+        }, []));
+        return obj;
+      }, {});
+    };
+    var silence;
+    var silence_1 = function() {
+      if (!silence) {
+        var coneOfSilence2 = {
+          96e3: [highPrefix, [227, 64], zeroFill(154), [56]],
+          88200: [highPrefix, [231], zeroFill(170), [56]],
+          64e3: [highPrefix, [248, 192], zeroFill(240), [56]],
+          48e3: [highPrefix, [255, 192], zeroFill(268), [55, 148, 128], zeroFill(54), [112]],
+          44100: [highPrefix, [255, 192], zeroFill(268), [55, 163, 128], zeroFill(84), [112]],
+          32e3: [highPrefix, [255, 192], zeroFill(268), [55, 234], zeroFill(226), [112]],
+          24e3: [highPrefix, [255, 192], zeroFill(268), [55, 255, 128], zeroFill(268), [111, 112], zeroFill(126), [224]],
+          16e3: [highPrefix, [255, 192], zeroFill(268), [55, 255, 128], zeroFill(268), [111, 255], zeroFill(269), [223, 108], zeroFill(195), [1, 192]],
+          12e3: [lowPrefix, zeroFill(268), [3, 127, 248], zeroFill(268), [6, 255, 240], zeroFill(268), [13, 255, 224], zeroFill(268), [27, 253, 128], zeroFill(259), [56]],
+          11025: [lowPrefix, zeroFill(268), [3, 127, 248], zeroFill(268), [6, 255, 240], zeroFill(268), [13, 255, 224], zeroFill(268), [27, 255, 192], zeroFill(268), [55, 175, 128], zeroFill(108), [112]],
+          8e3: [lowPrefix, zeroFill(268), [3, 121, 16], zeroFill(47), [7]]
+        };
+        silence = makeTable(coneOfSilence2);
+      }
+      return silence;
+    };
+    var ONE_SECOND_IN_TS$4 = 9e4, secondsToVideoTs, secondsToAudioTs, videoTsToSeconds, audioTsToSeconds, audioTsToVideoTs, videoTsToAudioTs, metadataTsToSeconds;
+    secondsToVideoTs = function(seconds) {
+      return seconds * ONE_SECOND_IN_TS$4;
+    };
+    secondsToAudioTs = function(seconds, sampleRate) {
+      return seconds * sampleRate;
+    };
+    videoTsToSeconds = function(timestamp) {
+      return timestamp / ONE_SECOND_IN_TS$4;
+    };
+    audioTsToSeconds = function(timestamp, sampleRate) {
+      return timestamp / sampleRate;
+    };
+    audioTsToVideoTs = function(timestamp, sampleRate) {
+      return secondsToVideoTs(audioTsToSeconds(timestamp, sampleRate));
+    };
+    videoTsToAudioTs = function(timestamp, sampleRate) {
+      return secondsToAudioTs(videoTsToSeconds(timestamp), sampleRate);
+    };
+    metadataTsToSeconds = function(timestamp, timelineStartPts, keepOriginalTimestamps) {
+      return videoTsToSeconds(keepOriginalTimestamps ? timestamp : timestamp - timelineStartPts);
+    };
+    var clock$2 = {
+      ONE_SECOND_IN_TS: ONE_SECOND_IN_TS$4,
+      secondsToVideoTs,
+      secondsToAudioTs,
+      videoTsToSeconds,
+      audioTsToSeconds,
+      audioTsToVideoTs,
+      videoTsToAudioTs,
+      metadataTsToSeconds
+    };
+    var coneOfSilence = silence_1;
+    var clock$1 = clock$2;
+    var sumFrameByteLengths = function(array) {
+      var i2, currentObj, sum = 0;
+      for (i2 = 0; i2 < array.length; i2++) {
+        currentObj = array[i2];
+        sum += currentObj.data.byteLength;
+      }
+      return sum;
+    };
+    var prefixWithSilence = function(track, frames, audioAppendStartTs, videoBaseMediaDecodeTime) {
+      var baseMediaDecodeTimeTs, frameDuration = 0, audioGapDuration = 0, audioFillFrameCount = 0, audioFillDuration = 0, silentFrame, i2, firstFrame;
+      if (!frames.length) {
+        return;
+      }
+      baseMediaDecodeTimeTs = clock$1.audioTsToVideoTs(track.baseMediaDecodeTime, track.samplerate);
+      frameDuration = Math.ceil(clock$1.ONE_SECOND_IN_TS / (track.samplerate / 1024));
+      if (audioAppendStartTs && videoBaseMediaDecodeTime) {
+        audioGapDuration = baseMediaDecodeTimeTs - Math.max(audioAppendStartTs, videoBaseMediaDecodeTime);
+        audioFillFrameCount = Math.floor(audioGapDuration / frameDuration);
+        audioFillDuration = audioFillFrameCount * frameDuration;
+      }
+      if (audioFillFrameCount < 1 || audioFillDuration > clock$1.ONE_SECOND_IN_TS / 2) {
+        return;
+      }
+      silentFrame = coneOfSilence()[track.samplerate];
+      if (!silentFrame) {
+        silentFrame = frames[0].data;
+      }
+      for (i2 = 0; i2 < audioFillFrameCount; i2++) {
+        firstFrame = frames[0];
+        frames.splice(0, 0, {
+          data: silentFrame,
+          dts: firstFrame.dts - frameDuration,
+          pts: firstFrame.pts - frameDuration
+        });
+      }
+      track.baseMediaDecodeTime -= Math.floor(clock$1.videoTsToAudioTs(audioFillDuration, track.samplerate));
+      return audioFillDuration;
+    };
+    var trimAdtsFramesByEarliestDts = function(adtsFrames, track, earliestAllowedDts) {
+      if (track.minSegmentDts >= earliestAllowedDts) {
+        return adtsFrames;
+      }
+      track.minSegmentDts = Infinity;
+      return adtsFrames.filter(function(currentFrame) {
+        if (currentFrame.dts >= earliestAllowedDts) {
+          track.minSegmentDts = Math.min(track.minSegmentDts, currentFrame.dts);
+          track.minSegmentPts = track.minSegmentDts;
+          return true;
+        }
+        return false;
+      });
+    };
+    var generateSampleTable = function(frames) {
+      var i2, currentFrame, samples = [];
+      for (i2 = 0; i2 < frames.length; i2++) {
+        currentFrame = frames[i2];
+        samples.push({
+          size: currentFrame.data.byteLength,
+          duration: 1024
+          // For AAC audio, all samples contain 1024 samples
+        });
+      }
+      return samples;
+    };
+    var concatenateFrameData = function(frames) {
+      var i2, currentFrame, dataOffset = 0, data = new Uint8Array(sumFrameByteLengths(frames));
+      for (i2 = 0; i2 < frames.length; i2++) {
+        currentFrame = frames[i2];
+        data.set(currentFrame.data, dataOffset);
+        dataOffset += currentFrame.data.byteLength;
+      }
+      return data;
+    };
+    var audioFrameUtils$1 = {
+      prefixWithSilence,
+      trimAdtsFramesByEarliestDts,
+      generateSampleTable,
+      concatenateFrameData
+    };
+    var ONE_SECOND_IN_TS$3 = clock$2.ONE_SECOND_IN_TS;
+    var collectDtsInfo = function(track, data) {
+      if (typeof data.pts === "number") {
+        if (track.timelineStartInfo.pts === void 0) {
+          track.timelineStartInfo.pts = data.pts;
+        }
+        if (track.minSegmentPts === void 0) {
+          track.minSegmentPts = data.pts;
+        } else {
+          track.minSegmentPts = Math.min(track.minSegmentPts, data.pts);
+        }
+        if (track.maxSegmentPts === void 0) {
+          track.maxSegmentPts = data.pts;
+        } else {
+          track.maxSegmentPts = Math.max(track.maxSegmentPts, data.pts);
+        }
+      }
+      if (typeof data.dts === "number") {
+        if (track.timelineStartInfo.dts === void 0) {
+          track.timelineStartInfo.dts = data.dts;
+        }
+        if (track.minSegmentDts === void 0) {
+          track.minSegmentDts = data.dts;
+        } else {
+          track.minSegmentDts = Math.min(track.minSegmentDts, data.dts);
+        }
+        if (track.maxSegmentDts === void 0) {
+          track.maxSegmentDts = data.dts;
+        } else {
+          track.maxSegmentDts = Math.max(track.maxSegmentDts, data.dts);
+        }
+      }
+    };
+    var clearDtsInfo = function(track) {
+      delete track.minSegmentDts;
+      delete track.maxSegmentDts;
+      delete track.minSegmentPts;
+      delete track.maxSegmentPts;
+    };
+    var calculateTrackBaseMediaDecodeTime = function(track, keepOriginalTimestamps) {
+      var baseMediaDecodeTime, scale, minSegmentDts = track.minSegmentDts;
+      if (!keepOriginalTimestamps) {
+        minSegmentDts -= track.timelineStartInfo.dts;
+      }
+      baseMediaDecodeTime = track.timelineStartInfo.baseMediaDecodeTime;
+      baseMediaDecodeTime += minSegmentDts;
+      baseMediaDecodeTime = Math.max(0, baseMediaDecodeTime);
+      if (track.type === "audio") {
+        scale = track.samplerate / ONE_SECOND_IN_TS$3;
+        baseMediaDecodeTime *= scale;
+        baseMediaDecodeTime = Math.floor(baseMediaDecodeTime);
+      }
+      return baseMediaDecodeTime;
+    };
+    var trackDecodeInfo$1 = {
+      clearDtsInfo,
+      calculateTrackBaseMediaDecodeTime,
+      collectDtsInfo
+    };
+    var USER_DATA_REGISTERED_ITU_T_T35 = 4, RBSP_TRAILING_BITS = 128;
+    var parseSei = function(bytes) {
+      var i2 = 0, result = {
+        payloadType: -1,
+        payloadSize: 0
+      }, payloadType = 0, payloadSize = 0;
+      while (i2 < bytes.byteLength) {
+        if (bytes[i2] === RBSP_TRAILING_BITS) {
+          break;
+        }
+        while (bytes[i2] === 255) {
+          payloadType += 255;
+          i2++;
+        }
+        payloadType += bytes[i2++];
+        while (bytes[i2] === 255) {
+          payloadSize += 255;
+          i2++;
+        }
+        payloadSize += bytes[i2++];
+        if (!result.payload && payloadType === USER_DATA_REGISTERED_ITU_T_T35) {
+          var userIdentifier = String.fromCharCode(bytes[i2 + 3], bytes[i2 + 4], bytes[i2 + 5], bytes[i2 + 6]);
+          if (userIdentifier === "GA94") {
+            result.payloadType = payloadType;
+            result.payloadSize = payloadSize;
+            result.payload = bytes.subarray(i2, i2 + payloadSize);
+            break;
+          } else {
+            result.payload = void 0;
+          }
+        }
+        i2 += payloadSize;
+        payloadType = 0;
+        payloadSize = 0;
+      }
+      return result;
+    };
+    var parseUserData = function(sei) {
+      if (sei.payload[0] !== 181) {
+        return null;
+      }
+      if ((sei.payload[1] << 8 | sei.payload[2]) !== 49) {
+        return null;
+      }
+      if (String.fromCharCode(sei.payload[3], sei.payload[4], sei.payload[5], sei.payload[6]) !== "GA94") {
+        return null;
+      }
+      if (sei.payload[7] !== 3) {
+        return null;
+      }
+      return sei.payload.subarray(8, sei.payload.length - 1);
+    };
+    var parseCaptionPackets = function(pts, userData) {
+      var results = [], i2, count, offset, data;
+      if (!(userData[0] & 64)) {
+        return results;
+      }
+      count = userData[0] & 31;
+      for (i2 = 0; i2 < count; i2++) {
+        offset = i2 * 3;
+        data = {
+          type: userData[offset + 2] & 3,
+          pts
+        };
+        if (userData[offset + 2] & 4) {
+          data.ccData = userData[offset + 3] << 8 | userData[offset + 4];
+          results.push(data);
+        }
+      }
+      return results;
+    };
+    var discardEmulationPreventionBytes$1 = function(data) {
+      var length = data.byteLength, emulationPreventionBytesPositions = [], i2 = 1, newLength, newData;
+      while (i2 < length - 2) {
+        if (data[i2] === 0 && data[i2 + 1] === 0 && data[i2 + 2] === 3) {
+          emulationPreventionBytesPositions.push(i2 + 2);
+          i2 += 2;
+        } else {
+          i2++;
+        }
+      }
+      if (emulationPreventionBytesPositions.length === 0) {
+        return data;
+      }
+      newLength = length - emulationPreventionBytesPositions.length;
+      newData = new Uint8Array(newLength);
+      var sourceIndex = 0;
+      for (i2 = 0; i2 < newLength; sourceIndex++, i2++) {
+        if (sourceIndex === emulationPreventionBytesPositions[0]) {
+          sourceIndex++;
+          emulationPreventionBytesPositions.shift();
+        }
+        newData[i2] = data[sourceIndex];
+      }
+      return newData;
+    };
+    var captionPacketParser = {
+      parseSei,
+      parseUserData,
+      parseCaptionPackets,
+      discardEmulationPreventionBytes: discardEmulationPreventionBytes$1,
+      USER_DATA_REGISTERED_ITU_T_T35
+    };
+    var Stream$7 = stream;
+    var cea708Parser = captionPacketParser;
+    var CaptionStream$2 = function(options) {
+      options = options || {};
+      CaptionStream$2.prototype.init.call(this);
+      this.parse708captions_ = typeof options.parse708captions === "boolean" ? options.parse708captions : true;
+      this.captionPackets_ = [];
+      this.ccStreams_ = [
+        new Cea608Stream(0, 0),
+        // eslint-disable-line no-use-before-define
+        new Cea608Stream(0, 1),
+        // eslint-disable-line no-use-before-define
+        new Cea608Stream(1, 0),
+        // eslint-disable-line no-use-before-define
+        new Cea608Stream(1, 1)
+        // eslint-disable-line no-use-before-define
+      ];
+      if (this.parse708captions_) {
+        this.cc708Stream_ = new Cea708Stream({
+          captionServices: options.captionServices
+        });
+      }
+      this.reset();
+      this.ccStreams_.forEach(function(cc) {
+        cc.on("data", this.trigger.bind(this, "data"));
+        cc.on("partialdone", this.trigger.bind(this, "partialdone"));
+        cc.on("done", this.trigger.bind(this, "done"));
+      }, this);
+      if (this.parse708captions_) {
+        this.cc708Stream_.on("data", this.trigger.bind(this, "data"));
+        this.cc708Stream_.on("partialdone", this.trigger.bind(this, "partialdone"));
+        this.cc708Stream_.on("done", this.trigger.bind(this, "done"));
+      }
+    };
+    CaptionStream$2.prototype = new Stream$7();
+    CaptionStream$2.prototype.push = function(event) {
+      var sei, userData, newCaptionPackets;
+      if (event.nalUnitType !== "sei_rbsp") {
+        return;
+      }
+      sei = cea708Parser.parseSei(event.escapedRBSP);
+      if (!sei.payload) {
+        return;
+      }
+      if (sei.payloadType !== cea708Parser.USER_DATA_REGISTERED_ITU_T_T35) {
+        return;
+      }
+      userData = cea708Parser.parseUserData(sei);
+      if (!userData) {
+        return;
+      }
+      if (event.dts < this.latestDts_) {
+        this.ignoreNextEqualDts_ = true;
+        return;
+      } else if (event.dts === this.latestDts_ && this.ignoreNextEqualDts_) {
+        this.numSameDts_--;
+        if (!this.numSameDts_) {
+          this.ignoreNextEqualDts_ = false;
+        }
+        return;
+      }
+      newCaptionPackets = cea708Parser.parseCaptionPackets(event.pts, userData);
+      this.captionPackets_ = this.captionPackets_.concat(newCaptionPackets);
+      if (this.latestDts_ !== event.dts) {
+        this.numSameDts_ = 0;
+      }
+      this.numSameDts_++;
+      this.latestDts_ = event.dts;
+    };
+    CaptionStream$2.prototype.flushCCStreams = function(flushType) {
+      this.ccStreams_.forEach(function(cc) {
+        return flushType === "flush" ? cc.flush() : cc.partialFlush();
+      }, this);
+    };
+    CaptionStream$2.prototype.flushStream = function(flushType) {
+      if (!this.captionPackets_.length) {
+        this.flushCCStreams(flushType);
+        return;
+      }
+      this.captionPackets_.forEach(function(elem, idx) {
+        elem.presortIndex = idx;
+      });
+      this.captionPackets_.sort(function(a2, b2) {
+        if (a2.pts === b2.pts) {
+          return a2.presortIndex - b2.presortIndex;
+        }
+        return a2.pts - b2.pts;
+      });
+      this.captionPackets_.forEach(function(packet) {
+        if (packet.type < 2) {
+          this.dispatchCea608Packet(packet);
+        } else {
+          this.dispatchCea708Packet(packet);
+        }
+      }, this);
+      this.captionPackets_.length = 0;
+      this.flushCCStreams(flushType);
+    };
+    CaptionStream$2.prototype.flush = function() {
+      return this.flushStream("flush");
+    };
+    CaptionStream$2.prototype.partialFlush = function() {
+      return this.flushStream("partialFlush");
+    };
+    CaptionStream$2.prototype.reset = function() {
+      this.latestDts_ = null;
+      this.ignoreNextEqualDts_ = false;
+      this.numSameDts_ = 0;
+      this.activeCea608Channel_ = [null, null];
+      this.ccStreams_.forEach(function(ccStream) {
+        ccStream.reset();
+      });
+    };
+    CaptionStream$2.prototype.dispatchCea608Packet = function(packet) {
+      if (this.setsTextOrXDSActive(packet)) {
+        this.activeCea608Channel_[packet.type] = null;
+      } else if (this.setsChannel1Active(packet)) {
+        this.activeCea608Channel_[packet.type] = 0;
+      } else if (this.setsChannel2Active(packet)) {
+        this.activeCea608Channel_[packet.type] = 1;
+      }
+      if (this.activeCea608Channel_[packet.type] === null) {
+        return;
+      }
+      this.ccStreams_[(packet.type << 1) + this.activeCea608Channel_[packet.type]].push(packet);
+    };
+    CaptionStream$2.prototype.setsChannel1Active = function(packet) {
+      return (packet.ccData & 30720) === 4096;
+    };
+    CaptionStream$2.prototype.setsChannel2Active = function(packet) {
+      return (packet.ccData & 30720) === 6144;
+    };
+    CaptionStream$2.prototype.setsTextOrXDSActive = function(packet) {
+      return (packet.ccData & 28928) === 256 || (packet.ccData & 30974) === 4138 || (packet.ccData & 30974) === 6186;
+    };
+    CaptionStream$2.prototype.dispatchCea708Packet = function(packet) {
+      if (this.parse708captions_) {
+        this.cc708Stream_.push(packet);
+      }
+    };
+    var CHARACTER_TRANSLATION_708 = {
+      127: 9834,
+      // ♪
+      4128: 32,
+      // Transparent Space
+      4129: 160,
+      // Nob-breaking Transparent Space
+      4133: 8230,
+      // …
+      4138: 352,
+      // Š
+      4140: 338,
+      // Œ
+      4144: 9608,
+      // █
+      4145: 8216,
+      // ‘
+      4146: 8217,
+      // ’
+      4147: 8220,
+      // “
+      4148: 8221,
+      // ”
+      4149: 8226,
+      // •
+      4153: 8482,
+      // ™
+      4154: 353,
+      // š
+      4156: 339,
+      // œ
+      4157: 8480,
+      // ℠
+      4159: 376,
+      // Ÿ
+      4214: 8539,
+      // ⅛
+      4215: 8540,
+      // ⅜
+      4216: 8541,
+      // ⅝
+      4217: 8542,
+      // ⅞
+      4218: 9168,
+      // ⏐
+      4219: 9124,
+      // ⎤
+      4220: 9123,
+      // ⎣
+      4221: 9135,
+      // ⎯
+      4222: 9126,
+      // ⎦
+      4223: 9121,
+      // ⎡
+      4256: 12600
+      // ㄸ (CC char)
+    };
+    var get708CharFromCode = function(code) {
+      var newCode = CHARACTER_TRANSLATION_708[code] || code;
+      if (code & 4096 && code === newCode) {
+        return "";
+      }
+      return String.fromCharCode(newCode);
+    };
+    var within708TextBlock = function(b2) {
+      return 32 <= b2 && b2 <= 127 || 160 <= b2 && b2 <= 255;
+    };
+    var Cea708Window = function(windowNum) {
+      this.windowNum = windowNum;
+      this.reset();
+    };
+    Cea708Window.prototype.reset = function() {
+      this.clearText();
+      this.pendingNewLine = false;
+      this.winAttr = {};
+      this.penAttr = {};
+      this.penLoc = {};
+      this.penColor = {};
+      this.visible = 0;
+      this.rowLock = 0;
+      this.columnLock = 0;
+      this.priority = 0;
+      this.relativePositioning = 0;
+      this.anchorVertical = 0;
+      this.anchorHorizontal = 0;
+      this.anchorPoint = 0;
+      this.rowCount = 1;
+      this.virtualRowCount = this.rowCount + 1;
+      this.columnCount = 41;
+      this.windowStyle = 0;
+      this.penStyle = 0;
+    };
+    Cea708Window.prototype.getText = function() {
+      return this.rows.join("\n");
+    };
+    Cea708Window.prototype.clearText = function() {
+      this.rows = [""];
+      this.rowIdx = 0;
+    };
+    Cea708Window.prototype.newLine = function(pts) {
+      if (this.rows.length >= this.virtualRowCount && typeof this.beforeRowOverflow === "function") {
+        this.beforeRowOverflow(pts);
+      }
+      if (this.rows.length > 0) {
+        this.rows.push("");
+        this.rowIdx++;
+      }
+      while (this.rows.length > this.virtualRowCount) {
+        this.rows.shift();
+        this.rowIdx--;
+      }
+    };
+    Cea708Window.prototype.isEmpty = function() {
+      if (this.rows.length === 0) {
+        return true;
+      } else if (this.rows.length === 1) {
+        return this.rows[0] === "";
+      }
+      return false;
+    };
+    Cea708Window.prototype.addText = function(text) {
+      this.rows[this.rowIdx] += text;
+    };
+    Cea708Window.prototype.backspace = function() {
+      if (!this.isEmpty()) {
+        var row = this.rows[this.rowIdx];
+        this.rows[this.rowIdx] = row.substr(0, row.length - 1);
+      }
+    };
+    var Cea708Service = function(serviceNum, encoding, stream2) {
+      this.serviceNum = serviceNum;
+      this.text = "";
+      this.currentWindow = new Cea708Window(-1);
+      this.windows = [];
+      this.stream = stream2;
+      if (typeof encoding === "string") {
+        this.createTextDecoder(encoding);
+      }
+    };
+    Cea708Service.prototype.init = function(pts, beforeRowOverflow) {
+      this.startPts = pts;
+      for (var win2 = 0; win2 < 8; win2++) {
+        this.windows[win2] = new Cea708Window(win2);
+        if (typeof beforeRowOverflow === "function") {
+          this.windows[win2].beforeRowOverflow = beforeRowOverflow;
+        }
+      }
+    };
+    Cea708Service.prototype.setCurrentWindow = function(windowNum) {
+      this.currentWindow = this.windows[windowNum];
+    };
+    Cea708Service.prototype.createTextDecoder = function(encoding) {
+      if (typeof TextDecoder === "undefined") {
+        this.stream.trigger("log", {
+          level: "warn",
+          message: "The `encoding` option is unsupported without TextDecoder support"
+        });
+      } else {
+        try {
+          this.textDecoder_ = new TextDecoder(encoding);
+        } catch (error) {
+          this.stream.trigger("log", {
+            level: "warn",
+            message: "TextDecoder could not be created with " + encoding + " encoding. " + error
+          });
+        }
+      }
+    };
+    var Cea708Stream = function(options) {
+      options = options || {};
+      Cea708Stream.prototype.init.call(this);
+      var self2 = this;
+      var captionServices = options.captionServices || {};
+      var captionServiceEncodings = {};
+      var serviceProps;
+      Object.keys(captionServices).forEach((serviceName) => {
+        serviceProps = captionServices[serviceName];
+        if (/^SERVICE/.test(serviceName)) {
+          captionServiceEncodings[serviceName] = serviceProps.encoding;
+        }
+      });
+      this.serviceEncodings = captionServiceEncodings;
+      this.current708Packet = null;
+      this.services = {};
+      this.push = function(packet) {
+        if (packet.type === 3) {
+          self2.new708Packet();
+          self2.add708Bytes(packet);
+        } else {
+          if (self2.current708Packet === null) {
+            self2.new708Packet();
+          }
+          self2.add708Bytes(packet);
+        }
+      };
+    };
+    Cea708Stream.prototype = new Stream$7();
+    Cea708Stream.prototype.new708Packet = function() {
+      if (this.current708Packet !== null) {
+        this.push708Packet();
+      }
+      this.current708Packet = {
+        data: [],
+        ptsVals: []
+      };
+    };
+    Cea708Stream.prototype.add708Bytes = function(packet) {
+      var data = packet.ccData;
+      var byte0 = data >>> 8;
+      var byte1 = data & 255;
+      this.current708Packet.ptsVals.push(packet.pts);
+      this.current708Packet.data.push(byte0);
+      this.current708Packet.data.push(byte1);
+    };
+    Cea708Stream.prototype.push708Packet = function() {
+      var packet708 = this.current708Packet;
+      var packetData = packet708.data;
+      var serviceNum = null;
+      var blockSize = null;
+      var i2 = 0;
+      var b2 = packetData[i2++];
+      packet708.seq = b2 >> 6;
+      packet708.sizeCode = b2 & 63;
+      for (; i2 < packetData.length; i2++) {
+        b2 = packetData[i2++];
+        serviceNum = b2 >> 5;
+        blockSize = b2 & 31;
+        if (serviceNum === 7 && blockSize > 0) {
+          b2 = packetData[i2++];
+          serviceNum = b2;
+        }
+        this.pushServiceBlock(serviceNum, i2, blockSize);
+        if (blockSize > 0) {
+          i2 += blockSize - 1;
+        }
+      }
+    };
+    Cea708Stream.prototype.pushServiceBlock = function(serviceNum, start, size) {
+      var b2;
+      var i2 = start;
+      var packetData = this.current708Packet.data;
+      var service = this.services[serviceNum];
+      if (!service) {
+        service = this.initService(serviceNum, i2);
+      }
+      for (; i2 < start + size && i2 < packetData.length; i2++) {
+        b2 = packetData[i2];
+        if (within708TextBlock(b2)) {
+          i2 = this.handleText(i2, service);
+        } else if (b2 === 24) {
+          i2 = this.multiByteCharacter(i2, service);
+        } else if (b2 === 16) {
+          i2 = this.extendedCommands(i2, service);
+        } else if (128 <= b2 && b2 <= 135) {
+          i2 = this.setCurrentWindow(i2, service);
+        } else if (152 <= b2 && b2 <= 159) {
+          i2 = this.defineWindow(i2, service);
+        } else if (b2 === 136) {
+          i2 = this.clearWindows(i2, service);
+        } else if (b2 === 140) {
+          i2 = this.deleteWindows(i2, service);
+        } else if (b2 === 137) {
+          i2 = this.displayWindows(i2, service);
+        } else if (b2 === 138) {
+          i2 = this.hideWindows(i2, service);
+        } else if (b2 === 139) {
+          i2 = this.toggleWindows(i2, service);
+        } else if (b2 === 151) {
+          i2 = this.setWindowAttributes(i2, service);
+        } else if (b2 === 144) {
+          i2 = this.setPenAttributes(i2, service);
+        } else if (b2 === 145) {
+          i2 = this.setPenColor(i2, service);
+        } else if (b2 === 146) {
+          i2 = this.setPenLocation(i2, service);
+        } else if (b2 === 143) {
+          service = this.reset(i2, service);
+        } else if (b2 === 8) {
+          service.currentWindow.backspace();
+        } else if (b2 === 12) {
+          service.currentWindow.clearText();
+        } else if (b2 === 13) {
+          service.currentWindow.pendingNewLine = true;
+        } else if (b2 === 14) {
+          service.currentWindow.clearText();
+        } else if (b2 === 141) {
+          i2++;
+        } else
+          ;
+      }
+    };
+    Cea708Stream.prototype.extendedCommands = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[++i2];
+      if (within708TextBlock(b2)) {
+        i2 = this.handleText(i2, service, {
+          isExtended: true
+        });
+      }
+      return i2;
+    };
+    Cea708Stream.prototype.getPts = function(byteIndex) {
+      return this.current708Packet.ptsVals[Math.floor(byteIndex / 2)];
+    };
+    Cea708Stream.prototype.initService = function(serviceNum, i2) {
+      var serviceName = "SERVICE" + serviceNum;
+      var self2 = this;
+      var serviceName;
+      var encoding;
+      if (serviceName in this.serviceEncodings) {
+        encoding = this.serviceEncodings[serviceName];
+      }
+      this.services[serviceNum] = new Cea708Service(serviceNum, encoding, self2);
+      this.services[serviceNum].init(this.getPts(i2), function(pts) {
+        self2.flushDisplayed(pts, self2.services[serviceNum]);
+      });
+      return this.services[serviceNum];
+    };
+    Cea708Stream.prototype.handleText = function(i2, service, options) {
+      var isExtended = options && options.isExtended;
+      var isMultiByte = options && options.isMultiByte;
+      var packetData = this.current708Packet.data;
+      var extended = isExtended ? 4096 : 0;
+      var currentByte = packetData[i2];
+      var nextByte = packetData[i2 + 1];
+      var win2 = service.currentWindow;
+      var char;
+      var charCodeArray;
+      function toHexString3(byteArray) {
+        return byteArray.map((byte) => {
+          return ("0" + (byte & 255).toString(16)).slice(-2);
+        }).join("");
+      }
+      if (isMultiByte) {
+        charCodeArray = [currentByte, nextByte];
+        i2++;
+      } else {
+        charCodeArray = [currentByte];
+      }
+      if (service.textDecoder_ && !isExtended) {
+        char = service.textDecoder_.decode(new Uint8Array(charCodeArray));
+      } else {
+        if (isMultiByte) {
+          const unicode = toHexString3(charCodeArray);
+          char = String.fromCharCode(parseInt(unicode, 16));
+        } else {
+          char = get708CharFromCode(extended | currentByte);
+        }
+      }
+      if (win2.pendingNewLine && !win2.isEmpty()) {
+        win2.newLine(this.getPts(i2));
+      }
+      win2.pendingNewLine = false;
+      win2.addText(char);
+      return i2;
+    };
+    Cea708Stream.prototype.multiByteCharacter = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var firstByte = packetData[i2 + 1];
+      var secondByte = packetData[i2 + 2];
+      if (within708TextBlock(firstByte) && within708TextBlock(secondByte)) {
+        i2 = this.handleText(++i2, service, {
+          isMultiByte: true
+        });
+      }
+      return i2;
+    };
+    Cea708Stream.prototype.setCurrentWindow = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[i2];
+      var windowNum = b2 & 7;
+      service.setCurrentWindow(windowNum);
+      return i2;
+    };
+    Cea708Stream.prototype.defineWindow = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[i2];
+      var windowNum = b2 & 7;
+      service.setCurrentWindow(windowNum);
+      var win2 = service.currentWindow;
+      b2 = packetData[++i2];
+      win2.visible = (b2 & 32) >> 5;
+      win2.rowLock = (b2 & 16) >> 4;
+      win2.columnLock = (b2 & 8) >> 3;
+      win2.priority = b2 & 7;
+      b2 = packetData[++i2];
+      win2.relativePositioning = (b2 & 128) >> 7;
+      win2.anchorVertical = b2 & 127;
+      b2 = packetData[++i2];
+      win2.anchorHorizontal = b2;
+      b2 = packetData[++i2];
+      win2.anchorPoint = (b2 & 240) >> 4;
+      win2.rowCount = b2 & 15;
+      b2 = packetData[++i2];
+      win2.columnCount = b2 & 63;
+      b2 = packetData[++i2];
+      win2.windowStyle = (b2 & 56) >> 3;
+      win2.penStyle = b2 & 7;
+      win2.virtualRowCount = win2.rowCount + 1;
+      return i2;
+    };
+    Cea708Stream.prototype.setWindowAttributes = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[i2];
+      var winAttr = service.currentWindow.winAttr;
+      b2 = packetData[++i2];
+      winAttr.fillOpacity = (b2 & 192) >> 6;
+      winAttr.fillRed = (b2 & 48) >> 4;
+      winAttr.fillGreen = (b2 & 12) >> 2;
+      winAttr.fillBlue = b2 & 3;
+      b2 = packetData[++i2];
+      winAttr.borderType = (b2 & 192) >> 6;
+      winAttr.borderRed = (b2 & 48) >> 4;
+      winAttr.borderGreen = (b2 & 12) >> 2;
+      winAttr.borderBlue = b2 & 3;
+      b2 = packetData[++i2];
+      winAttr.borderType += (b2 & 128) >> 5;
+      winAttr.wordWrap = (b2 & 64) >> 6;
+      winAttr.printDirection = (b2 & 48) >> 4;
+      winAttr.scrollDirection = (b2 & 12) >> 2;
+      winAttr.justify = b2 & 3;
+      b2 = packetData[++i2];
+      winAttr.effectSpeed = (b2 & 240) >> 4;
+      winAttr.effectDirection = (b2 & 12) >> 2;
+      winAttr.displayEffect = b2 & 3;
+      return i2;
+    };
+    Cea708Stream.prototype.flushDisplayed = function(pts, service) {
+      var displayedText = [];
+      for (var winId = 0; winId < 8; winId++) {
+        if (service.windows[winId].visible && !service.windows[winId].isEmpty()) {
+          displayedText.push(service.windows[winId].getText());
+        }
+      }
+      service.endPts = pts;
+      service.text = displayedText.join("\n\n");
+      this.pushCaption(service);
+      service.startPts = pts;
+    };
+    Cea708Stream.prototype.pushCaption = function(service) {
+      if (service.text !== "") {
+        this.trigger("data", {
+          startPts: service.startPts,
+          endPts: service.endPts,
+          text: service.text,
+          stream: "cc708_" + service.serviceNum
+        });
+        service.text = "";
+        service.startPts = service.endPts;
+      }
+    };
+    Cea708Stream.prototype.displayWindows = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[++i2];
+      var pts = this.getPts(i2);
+      this.flushDisplayed(pts, service);
+      for (var winId = 0; winId < 8; winId++) {
+        if (b2 & 1 << winId) {
+          service.windows[winId].visible = 1;
+        }
+      }
+      return i2;
+    };
+    Cea708Stream.prototype.hideWindows = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[++i2];
+      var pts = this.getPts(i2);
+      this.flushDisplayed(pts, service);
+      for (var winId = 0; winId < 8; winId++) {
+        if (b2 & 1 << winId) {
+          service.windows[winId].visible = 0;
+        }
+      }
+      return i2;
+    };
+    Cea708Stream.prototype.toggleWindows = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[++i2];
+      var pts = this.getPts(i2);
+      this.flushDisplayed(pts, service);
+      for (var winId = 0; winId < 8; winId++) {
+        if (b2 & 1 << winId) {
+          service.windows[winId].visible ^= 1;
+        }
+      }
+      return i2;
+    };
+    Cea708Stream.prototype.clearWindows = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[++i2];
+      var pts = this.getPts(i2);
+      this.flushDisplayed(pts, service);
+      for (var winId = 0; winId < 8; winId++) {
+        if (b2 & 1 << winId) {
+          service.windows[winId].clearText();
+        }
+      }
+      return i2;
+    };
+    Cea708Stream.prototype.deleteWindows = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[++i2];
+      var pts = this.getPts(i2);
+      this.flushDisplayed(pts, service);
+      for (var winId = 0; winId < 8; winId++) {
+        if (b2 & 1 << winId) {
+          service.windows[winId].reset();
+        }
+      }
+      return i2;
+    };
+    Cea708Stream.prototype.setPenAttributes = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[i2];
+      var penAttr = service.currentWindow.penAttr;
+      b2 = packetData[++i2];
+      penAttr.textTag = (b2 & 240) >> 4;
+      penAttr.offset = (b2 & 12) >> 2;
+      penAttr.penSize = b2 & 3;
+      b2 = packetData[++i2];
+      penAttr.italics = (b2 & 128) >> 7;
+      penAttr.underline = (b2 & 64) >> 6;
+      penAttr.edgeType = (b2 & 56) >> 3;
+      penAttr.fontStyle = b2 & 7;
+      return i2;
+    };
+    Cea708Stream.prototype.setPenColor = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[i2];
+      var penColor = service.currentWindow.penColor;
+      b2 = packetData[++i2];
+      penColor.fgOpacity = (b2 & 192) >> 6;
+      penColor.fgRed = (b2 & 48) >> 4;
+      penColor.fgGreen = (b2 & 12) >> 2;
+      penColor.fgBlue = b2 & 3;
+      b2 = packetData[++i2];
+      penColor.bgOpacity = (b2 & 192) >> 6;
+      penColor.bgRed = (b2 & 48) >> 4;
+      penColor.bgGreen = (b2 & 12) >> 2;
+      penColor.bgBlue = b2 & 3;
+      b2 = packetData[++i2];
+      penColor.edgeRed = (b2 & 48) >> 4;
+      penColor.edgeGreen = (b2 & 12) >> 2;
+      penColor.edgeBlue = b2 & 3;
+      return i2;
+    };
+    Cea708Stream.prototype.setPenLocation = function(i2, service) {
+      var packetData = this.current708Packet.data;
+      var b2 = packetData[i2];
+      var penLoc = service.currentWindow.penLoc;
+      service.currentWindow.pendingNewLine = true;
+      b2 = packetData[++i2];
+      penLoc.row = b2 & 15;
+      b2 = packetData[++i2];
+      penLoc.column = b2 & 63;
+      return i2;
+    };
+    Cea708Stream.prototype.reset = function(i2, service) {
+      var pts = this.getPts(i2);
+      this.flushDisplayed(pts, service);
+      return this.initService(service.serviceNum, i2);
+    };
+    var CHARACTER_TRANSLATION = {
+      42: 225,
+      // á
+      92: 233,
+      // é
+      94: 237,
+      // í
+      95: 243,
+      // ó
+      96: 250,
+      // ú
+      123: 231,
+      // ç
+      124: 247,
+      // ÷
+      125: 209,
+      // Ñ
+      126: 241,
+      // ñ
+      127: 9608,
+      // █
+      304: 174,
+      // ®
+      305: 176,
+      // °
+      306: 189,
+      // ½
+      307: 191,
+      // ¿
+      308: 8482,
+      // ™
+      309: 162,
+      // ¢
+      310: 163,
+      // £
+      311: 9834,
+      // ♪
+      312: 224,
+      // à
+      313: 160,
+      //
+      314: 232,
+      // è
+      315: 226,
+      // â
+      316: 234,
+      // ê
+      317: 238,
+      // î
+      318: 244,
+      // ô
+      319: 251,
+      // û
+      544: 193,
+      // Á
+      545: 201,
+      // É
+      546: 211,
+      // Ó
+      547: 218,
+      // Ú
+      548: 220,
+      // Ü
+      549: 252,
+      // ü
+      550: 8216,
+      // ‘
+      551: 161,
+      // ¡
+      552: 42,
+      // *
+      553: 39,
+      // '
+      554: 8212,
+      // —
+      555: 169,
+      // ©
+      556: 8480,
+      // ℠
+      557: 8226,
+      // •
+      558: 8220,
+      // “
+      559: 8221,
+      // ”
+      560: 192,
+      // À
+      561: 194,
+      // Â
+      562: 199,
+      // Ç
+      563: 200,
+      // È
+      564: 202,
+      // Ê
+      565: 203,
+      // Ë
+      566: 235,
+      // ë
+      567: 206,
+      // Î
+      568: 207,
+      // Ï
+      569: 239,
+      // ï
+      570: 212,
+      // Ô
+      571: 217,
+      // Ù
+      572: 249,
+      // ù
+      573: 219,
+      // Û
+      574: 171,
+      // «
+      575: 187,
+      // »
+      800: 195,
+      // Ã
+      801: 227,
+      // ã
+      802: 205,
+      // Í
+      803: 204,
+      // Ì
+      804: 236,
+      // ì
+      805: 210,
+      // Ò
+      806: 242,
+      // ò
+      807: 213,
+      // Õ
+      808: 245,
+      // õ
+      809: 123,
+      // {
+      810: 125,
+      // }
+      811: 92,
+      // \
+      812: 94,
+      // ^
+      813: 95,
+      // _
+      814: 124,
+      // |
+      815: 126,
+      // ~
+      816: 196,
+      // Ä
+      817: 228,
+      // ä
+      818: 214,
+      // Ö
+      819: 246,
+      // ö
+      820: 223,
+      // ß
+      821: 165,
+      // ¥
+      822: 164,
+      // ¤
+      823: 9474,
+      // │
+      824: 197,
+      // Å
+      825: 229,
+      // å
+      826: 216,
+      // Ø
+      827: 248,
+      // ø
+      828: 9484,
+      // ┌
+      829: 9488,
+      // ┐
+      830: 9492,
+      // └
+      831: 9496
+      // ┘
+    };
+    var getCharFromCode = function(code) {
+      if (code === null) {
+        return "";
+      }
+      code = CHARACTER_TRANSLATION[code] || code;
+      return String.fromCharCode(code);
+    };
+    var BOTTOM_ROW = 14;
+    var ROWS = [4352, 4384, 4608, 4640, 5376, 5408, 5632, 5664, 5888, 5920, 4096, 4864, 4896, 5120, 5152];
+    var createDisplayBuffer = function() {
+      var result = [], i2 = BOTTOM_ROW + 1;
+      while (i2--) {
+        result.push({
+          text: "",
+          indent: 0,
+          offset: 0
+        });
+      }
+      return result;
+    };
+    var Cea608Stream = function(field, dataChannel) {
+      Cea608Stream.prototype.init.call(this);
+      this.field_ = field || 0;
+      this.dataChannel_ = dataChannel || 0;
+      this.name_ = "CC" + ((this.field_ << 1 | this.dataChannel_) + 1);
+      this.setConstants();
+      this.reset();
+      this.push = function(packet) {
+        var data, swap, char0, char1, text;
+        data = packet.ccData & 32639;
+        if (data === this.lastControlCode_) {
+          this.lastControlCode_ = null;
+          return;
+        }
+        if ((data & 61440) === 4096) {
+          this.lastControlCode_ = data;
+        } else if (data !== this.PADDING_) {
+          this.lastControlCode_ = null;
+        }
+        char0 = data >>> 8;
+        char1 = data & 255;
+        if (data === this.PADDING_) {
+          return;
+        } else if (data === this.RESUME_CAPTION_LOADING_) {
+          this.mode_ = "popOn";
+        } else if (data === this.END_OF_CAPTION_) {
+          this.mode_ = "popOn";
+          this.clearFormatting(packet.pts);
+          this.flushDisplayed(packet.pts);
+          swap = this.displayed_;
+          this.displayed_ = this.nonDisplayed_;
+          this.nonDisplayed_ = swap;
+          this.startPts_ = packet.pts;
+        } else if (data === this.ROLL_UP_2_ROWS_) {
+          this.rollUpRows_ = 2;
+          this.setRollUp(packet.pts);
+        } else if (data === this.ROLL_UP_3_ROWS_) {
+          this.rollUpRows_ = 3;
+          this.setRollUp(packet.pts);
+        } else if (data === this.ROLL_UP_4_ROWS_) {
+          this.rollUpRows_ = 4;
+          this.setRollUp(packet.pts);
+        } else if (data === this.CARRIAGE_RETURN_) {
+          this.clearFormatting(packet.pts);
+          this.flushDisplayed(packet.pts);
+          this.shiftRowsUp_();
+          this.startPts_ = packet.pts;
+        } else if (data === this.BACKSPACE_) {
+          if (this.mode_ === "popOn") {
+            this.nonDisplayed_[this.row_].text = this.nonDisplayed_[this.row_].text.slice(0, -1);
+          } else {
+            this.displayed_[this.row_].text = this.displayed_[this.row_].text.slice(0, -1);
+          }
+        } else if (data === this.ERASE_DISPLAYED_MEMORY_) {
+          this.flushDisplayed(packet.pts);
+          this.displayed_ = createDisplayBuffer();
+        } else if (data === this.ERASE_NON_DISPLAYED_MEMORY_) {
+          this.nonDisplayed_ = createDisplayBuffer();
+        } else if (data === this.RESUME_DIRECT_CAPTIONING_) {
+          if (this.mode_ !== "paintOn") {
+            this.flushDisplayed(packet.pts);
+            this.displayed_ = createDisplayBuffer();
+          }
+          this.mode_ = "paintOn";
+          this.startPts_ = packet.pts;
+        } else if (this.isSpecialCharacter(char0, char1)) {
+          char0 = (char0 & 3) << 8;
+          text = getCharFromCode(char0 | char1);
+          this[this.mode_](packet.pts, text);
+          this.column_++;
+        } else if (this.isExtCharacter(char0, char1)) {
+          if (this.mode_ === "popOn") {
+            this.nonDisplayed_[this.row_].text = this.nonDisplayed_[this.row_].text.slice(0, -1);
+          } else {
+            this.displayed_[this.row_].text = this.displayed_[this.row_].text.slice(0, -1);
+          }
+          char0 = (char0 & 3) << 8;
+          text = getCharFromCode(char0 | char1);
+          this[this.mode_](packet.pts, text);
+          this.column_++;
+        } else if (this.isMidRowCode(char0, char1)) {
+          this.clearFormatting(packet.pts);
+          this[this.mode_](packet.pts, " ");
+          this.column_++;
+          if ((char1 & 14) === 14) {
+            this.addFormatting(packet.pts, ["i"]);
+          }
+          if ((char1 & 1) === 1) {
+            this.addFormatting(packet.pts, ["u"]);
+          }
+        } else if (this.isOffsetControlCode(char0, char1)) {
+          const offset = char1 & 3;
+          this.nonDisplayed_[this.row_].offset = offset;
+          this.column_ += offset;
+        } else if (this.isPAC(char0, char1)) {
+          var row = ROWS.indexOf(data & 7968);
+          if (this.mode_ === "rollUp") {
+            if (row - this.rollUpRows_ + 1 < 0) {
+              row = this.rollUpRows_ - 1;
+            }
+            this.setRollUp(packet.pts, row);
+          }
+          if (row !== this.row_) {
+            this.clearFormatting(packet.pts);
+            this.row_ = row;
+          }
+          if (char1 & 1 && this.formatting_.indexOf("u") === -1) {
+            this.addFormatting(packet.pts, ["u"]);
+          }
+          if ((data & 16) === 16) {
+            const indentations = (data & 14) >> 1;
+            this.column_ = indentations * 4;
+            this.nonDisplayed_[this.row_].indent += indentations;
+          }
+          if (this.isColorPAC(char1)) {
+            if ((char1 & 14) === 14) {
+              this.addFormatting(packet.pts, ["i"]);
+            }
+          }
+        } else if (this.isNormalChar(char0)) {
+          if (char1 === 0) {
+            char1 = null;
+          }
+          text = getCharFromCode(char0);
+          text += getCharFromCode(char1);
+          this[this.mode_](packet.pts, text);
+          this.column_ += text.length;
+        }
+      };
+    };
+    Cea608Stream.prototype = new Stream$7();
+    Cea608Stream.prototype.flushDisplayed = function(pts) {
+      const logWarning = (index) => {
+        this.trigger("log", {
+          level: "warn",
+          message: "Skipping a malformed 608 caption at index " + index + "."
+        });
+      };
+      const content = [];
+      this.displayed_.forEach((row, i2) => {
+        if (row && row.text && row.text.length) {
+          try {
+            row.text = row.text.trim();
+          } catch (e2) {
+            logWarning(i2);
+          }
+          if (row.text.length) {
+            content.push({
+              // The text to be displayed in the caption from this specific row, with whitespace removed.
+              text: row.text,
+              // Value between 1 and 15 representing the PAC row used to calculate line height.
+              line: i2 + 1,
+              // A number representing the indent position by percentage (CEA-608 PAC indent code).
+              // The value will be a number between 10 and 80. Offset is used to add an aditional
+              // value to the position if necessary.
+              position: 10 + Math.min(70, row.indent * 10) + row.offset * 2.5
+            });
+          }
+        } else if (row === void 0 || row === null) {
+          logWarning(i2);
+        }
+      });
+      if (content.length) {
+        this.trigger("data", {
+          startPts: this.startPts_,
+          endPts: pts,
+          content,
+          stream: this.name_
+        });
+      }
+    };
+    Cea608Stream.prototype.reset = function() {
+      this.mode_ = "popOn";
+      this.topRow_ = 0;
+      this.startPts_ = 0;
+      this.displayed_ = createDisplayBuffer();
+      this.nonDisplayed_ = createDisplayBuffer();
+      this.lastControlCode_ = null;
+      this.column_ = 0;
+      this.row_ = BOTTOM_ROW;
+      this.rollUpRows_ = 2;
+      this.formatting_ = [];
+    };
+    Cea608Stream.prototype.setConstants = function() {
+      if (this.dataChannel_ === 0) {
+        this.BASE_ = 16;
+        this.EXT_ = 17;
+        this.CONTROL_ = (20 | this.field_) << 8;
+        this.OFFSET_ = 23;
+      } else if (this.dataChannel_ === 1) {
+        this.BASE_ = 24;
+        this.EXT_ = 25;
+        this.CONTROL_ = (28 | this.field_) << 8;
+        this.OFFSET_ = 31;
+      }
+      this.PADDING_ = 0;
+      this.RESUME_CAPTION_LOADING_ = this.CONTROL_ | 32;
+      this.END_OF_CAPTION_ = this.CONTROL_ | 47;
+      this.ROLL_UP_2_ROWS_ = this.CONTROL_ | 37;
+      this.ROLL_UP_3_ROWS_ = this.CONTROL_ | 38;
+      this.ROLL_UP_4_ROWS_ = this.CONTROL_ | 39;
+      this.CARRIAGE_RETURN_ = this.CONTROL_ | 45;
+      this.RESUME_DIRECT_CAPTIONING_ = this.CONTROL_ | 41;
+      this.BACKSPACE_ = this.CONTROL_ | 33;
+      this.ERASE_DISPLAYED_MEMORY_ = this.CONTROL_ | 44;
+      this.ERASE_NON_DISPLAYED_MEMORY_ = this.CONTROL_ | 46;
+    };
+    Cea608Stream.prototype.isSpecialCharacter = function(char0, char1) {
+      return char0 === this.EXT_ && char1 >= 48 && char1 <= 63;
+    };
+    Cea608Stream.prototype.isExtCharacter = function(char0, char1) {
+      return (char0 === this.EXT_ + 1 || char0 === this.EXT_ + 2) && char1 >= 32 && char1 <= 63;
+    };
+    Cea608Stream.prototype.isMidRowCode = function(char0, char1) {
+      return char0 === this.EXT_ && char1 >= 32 && char1 <= 47;
+    };
+    Cea608Stream.prototype.isOffsetControlCode = function(char0, char1) {
+      return char0 === this.OFFSET_ && char1 >= 33 && char1 <= 35;
+    };
+    Cea608Stream.prototype.isPAC = function(char0, char1) {
+      return char0 >= this.BASE_ && char0 < this.BASE_ + 8 && char1 >= 64 && char1 <= 127;
+    };
+    Cea608Stream.prototype.isColorPAC = function(char1) {
+      return char1 >= 64 && char1 <= 79 || char1 >= 96 && char1 <= 127;
+    };
+    Cea608Stream.prototype.isNormalChar = function(char) {
+      return char >= 32 && char <= 127;
+    };
+    Cea608Stream.prototype.setRollUp = function(pts, newBaseRow) {
+      if (this.mode_ !== "rollUp") {
+        this.row_ = BOTTOM_ROW;
+        this.mode_ = "rollUp";
+        this.flushDisplayed(pts);
+        this.nonDisplayed_ = createDisplayBuffer();
+        this.displayed_ = createDisplayBuffer();
+      }
+      if (newBaseRow !== void 0 && newBaseRow !== this.row_) {
+        for (var i2 = 0; i2 < this.rollUpRows_; i2++) {
+          this.displayed_[newBaseRow - i2] = this.displayed_[this.row_ - i2];
+          this.displayed_[this.row_ - i2] = {
+            text: "",
+            indent: 0,
+            offset: 0
+          };
+        }
+      }
+      if (newBaseRow === void 0) {
+        newBaseRow = this.row_;
+      }
+      this.topRow_ = newBaseRow - this.rollUpRows_ + 1;
+    };
+    Cea608Stream.prototype.addFormatting = function(pts, format) {
+      this.formatting_ = this.formatting_.concat(format);
+      var text = format.reduce(function(text2, format2) {
+        return text2 + "<" + format2 + ">";
+      }, "");
+      this[this.mode_](pts, text);
+    };
+    Cea608Stream.prototype.clearFormatting = function(pts) {
+      if (!this.formatting_.length) {
+        return;
+      }
+      var text = this.formatting_.reverse().reduce(function(text2, format) {
+        return text2 + "</" + format + ">";
+      }, "");
+      this.formatting_ = [];
+      this[this.mode_](pts, text);
+    };
+    Cea608Stream.prototype.popOn = function(pts, text) {
+      var baseRow = this.nonDisplayed_[this.row_].text;
+      baseRow += text;
+      this.nonDisplayed_[this.row_].text = baseRow;
+    };
+    Cea608Stream.prototype.rollUp = function(pts, text) {
+      var baseRow = this.displayed_[this.row_].text;
+      baseRow += text;
+      this.displayed_[this.row_].text = baseRow;
+    };
+    Cea608Stream.prototype.shiftRowsUp_ = function() {
+      var i2;
+      for (i2 = 0; i2 < this.topRow_; i2++) {
+        this.displayed_[i2] = {
+          text: "",
+          indent: 0,
+          offset: 0
+        };
+      }
+      for (i2 = this.row_ + 1; i2 < BOTTOM_ROW + 1; i2++) {
+        this.displayed_[i2] = {
+          text: "",
+          indent: 0,
+          offset: 0
+        };
+      }
+      for (i2 = this.topRow_; i2 < this.row_; i2++) {
+        this.displayed_[i2] = this.displayed_[i2 + 1];
+      }
+      this.displayed_[this.row_] = {
+        text: "",
+        indent: 0,
+        offset: 0
+      };
+    };
+    Cea608Stream.prototype.paintOn = function(pts, text) {
+      var baseRow = this.displayed_[this.row_].text;
+      baseRow += text;
+      this.displayed_[this.row_].text = baseRow;
+    };
+    var captionStream = {
+      CaptionStream: CaptionStream$2,
+      Cea608Stream,
+      Cea708Stream
+    };
+    var streamTypes = {
+      H264_STREAM_TYPE: 27,
+      ADTS_STREAM_TYPE: 15,
+      METADATA_STREAM_TYPE: 21
+    };
+    var Stream$6 = stream;
+    var MAX_TS = 8589934592;
+    var RO_THRESH = 4294967296;
+    var TYPE_SHARED = "shared";
+    var handleRollover$1 = function(value, reference) {
+      var direction = 1;
+      if (value > reference) {
+        direction = -1;
+      }
+      while (Math.abs(reference - value) > RO_THRESH) {
+        value += direction * MAX_TS;
+      }
+      return value;
+    };
+    var TimestampRolloverStream$1 = function(type2) {
+      var lastDTS, referenceDTS;
+      TimestampRolloverStream$1.prototype.init.call(this);
+      this.type_ = type2 || TYPE_SHARED;
+      this.push = function(data) {
+        if (data.type === "metadata") {
+          this.trigger("data", data);
+          return;
+        }
+        if (this.type_ !== TYPE_SHARED && data.type !== this.type_) {
+          return;
+        }
+        if (referenceDTS === void 0) {
+          referenceDTS = data.dts;
+        }
+        data.dts = handleRollover$1(data.dts, referenceDTS);
+        data.pts = handleRollover$1(data.pts, referenceDTS);
+        lastDTS = data.dts;
+        this.trigger("data", data);
+      };
+      this.flush = function() {
+        referenceDTS = lastDTS;
+        this.trigger("done");
+      };
+      this.endTimeline = function() {
+        this.flush();
+        this.trigger("endedtimeline");
+      };
+      this.discontinuity = function() {
+        referenceDTS = void 0;
+        lastDTS = void 0;
+      };
+      this.reset = function() {
+        this.discontinuity();
+        this.trigger("reset");
+      };
+    };
+    TimestampRolloverStream$1.prototype = new Stream$6();
+    var timestampRolloverStream = {
+      TimestampRolloverStream: TimestampRolloverStream$1,
+      handleRollover: handleRollover$1
+    };
+    var typedArrayIndexOf$1 = (typedArray2, element, fromIndex) => {
+      if (!typedArray2) {
+        return -1;
+      }
+      var currentIndex = fromIndex;
+      for (; currentIndex < typedArray2.length; currentIndex++) {
+        if (typedArray2[currentIndex] === element) {
+          return currentIndex;
+        }
+      }
+      return -1;
+    };
+    var typedArray = {
+      typedArrayIndexOf: typedArrayIndexOf$1
+    };
+    var typedArrayIndexOf = typedArray.typedArrayIndexOf, textEncodingDescriptionByte = {
+      Iso88591: 0,
+      // ISO-8859-1, terminated with \0.
+      Utf16: 1,
+      // UTF-16 encoded Unicode BOM, terminated with \0\0
+      Utf16be: 2,
+      // UTF-16BE encoded Unicode, without BOM, terminated with \0\0
+      Utf8: 3
+      // UTF-8 encoded Unicode, terminated with \0
+    }, percentEncode$1 = function(bytes, start, end) {
+      var i2, result = "";
+      for (i2 = start; i2 < end; i2++) {
+        result += "%" + ("00" + bytes[i2].toString(16)).slice(-2);
+      }
+      return result;
+    }, parseUtf8 = function(bytes, start, end) {
+      return decodeURIComponent(percentEncode$1(bytes, start, end));
+    }, parseIso88591$1 = function(bytes, start, end) {
+      return unescape(percentEncode$1(bytes, start, end));
+    }, parseSyncSafeInteger$1 = function(data) {
+      return data[0] << 21 | data[1] << 14 | data[2] << 7 | data[3];
+    }, frameParsers = {
+      "APIC": function(frame) {
+        var i2 = 1, mimeTypeEndIndex, descriptionEndIndex, LINK_MIME_TYPE = "-->";
+        if (frame.data[0] !== textEncodingDescriptionByte.Utf8) {
+          return;
+        }
+        mimeTypeEndIndex = typedArrayIndexOf(frame.data, 0, i2);
+        if (mimeTypeEndIndex < 0) {
+          return;
+        }
+        frame.mimeType = parseIso88591$1(frame.data, i2, mimeTypeEndIndex);
+        i2 = mimeTypeEndIndex + 1;
+        frame.pictureType = frame.data[i2];
+        i2++;
+        descriptionEndIndex = typedArrayIndexOf(frame.data, 0, i2);
+        if (descriptionEndIndex < 0) {
+          return;
+        }
+        frame.description = parseUtf8(frame.data, i2, descriptionEndIndex);
+        i2 = descriptionEndIndex + 1;
+        if (frame.mimeType === LINK_MIME_TYPE) {
+          frame.url = parseIso88591$1(frame.data, i2, frame.data.length);
+        } else {
+          frame.pictureData = frame.data.subarray(i2, frame.data.length);
+        }
+      },
+      "T*": function(frame) {
+        if (frame.data[0] !== textEncodingDescriptionByte.Utf8) {
+          return;
+        }
+        frame.value = parseUtf8(frame.data, 1, frame.data.length).replace(/\0*$/, "");
+        frame.values = frame.value.split("\0");
+      },
+      "TXXX": function(frame) {
+        var descriptionEndIndex;
+        if (frame.data[0] !== textEncodingDescriptionByte.Utf8) {
+          return;
+        }
+        descriptionEndIndex = typedArrayIndexOf(frame.data, 0, 1);
+        if (descriptionEndIndex === -1) {
+          return;
+        }
+        frame.description = parseUtf8(frame.data, 1, descriptionEndIndex);
+        frame.value = parseUtf8(frame.data, descriptionEndIndex + 1, frame.data.length).replace(/\0*$/, "");
+        frame.data = frame.value;
+      },
+      "W*": function(frame) {
+        frame.url = parseIso88591$1(frame.data, 0, frame.data.length).replace(/\0.*$/, "");
+      },
+      "WXXX": function(frame) {
+        var descriptionEndIndex;
+        if (frame.data[0] !== textEncodingDescriptionByte.Utf8) {
+          return;
+        }
+        descriptionEndIndex = typedArrayIndexOf(frame.data, 0, 1);
+        if (descriptionEndIndex === -1) {
+          return;
+        }
+        frame.description = parseUtf8(frame.data, 1, descriptionEndIndex);
+        frame.url = parseIso88591$1(frame.data, descriptionEndIndex + 1, frame.data.length).replace(/\0.*$/, "");
+      },
+      "PRIV": function(frame) {
+        var i2;
+        for (i2 = 0; i2 < frame.data.length; i2++) {
+          if (frame.data[i2] === 0) {
+            frame.owner = parseIso88591$1(frame.data, 0, i2);
+            break;
+          }
+        }
+        frame.privateData = frame.data.subarray(i2 + 1);
+        frame.data = frame.privateData;
+      }
+    };
+    var parseId3Frames$1 = function(data) {
+      var frameSize, frameHeader, frameStart = 10, tagSize = 0, frames = [];
+      if (data.length < 10 || data[0] !== "I".charCodeAt(0) || data[1] !== "D".charCodeAt(0) || data[2] !== "3".charCodeAt(0)) {
+        return;
+      }
+      tagSize = parseSyncSafeInteger$1(data.subarray(6, 10));
+      tagSize += 10;
+      var hasExtendedHeader = data[5] & 64;
+      if (hasExtendedHeader) {
+        frameStart += 4;
+        frameStart += parseSyncSafeInteger$1(data.subarray(10, 14));
+        tagSize -= parseSyncSafeInteger$1(data.subarray(16, 20));
+      }
+      do {
+        frameSize = parseSyncSafeInteger$1(data.subarray(frameStart + 4, frameStart + 8));
+        if (frameSize < 1) {
+          break;
+        }
+        frameHeader = String.fromCharCode(data[frameStart], data[frameStart + 1], data[frameStart + 2], data[frameStart + 3]);
+        var frame = {
+          id: frameHeader,
+          data: data.subarray(frameStart + 10, frameStart + frameSize + 10)
+        };
+        frame.key = frame.id;
+        if (frameParsers[frame.id]) {
+          frameParsers[frame.id](frame);
+        } else if (frame.id[0] === "T") {
+          frameParsers["T*"](frame);
+        } else if (frame.id[0] === "W") {
+          frameParsers["W*"](frame);
+        }
+        frames.push(frame);
+        frameStart += 10;
+        frameStart += frameSize;
+      } while (frameStart < tagSize);
+      return frames;
+    };
+    var parseId3 = {
+      parseId3Frames: parseId3Frames$1,
+      parseSyncSafeInteger: parseSyncSafeInteger$1,
+      frameParsers
+    };
+    var Stream$5 = stream, StreamTypes$3 = streamTypes, id3 = parseId3, MetadataStream;
+    MetadataStream = function(options) {
+      var settings = {
+        // the bytes of the program-level descriptor field in MP2T
+        // see ISO/IEC 13818-1:2013 (E), section 2.6 "Program and
+        // program element descriptors"
+        descriptor: options && options.descriptor
+      }, tagSize = 0, buffer = [], bufferSize = 0, i2;
+      MetadataStream.prototype.init.call(this);
+      this.dispatchType = StreamTypes$3.METADATA_STREAM_TYPE.toString(16);
+      if (settings.descriptor) {
+        for (i2 = 0; i2 < settings.descriptor.length; i2++) {
+          this.dispatchType += ("00" + settings.descriptor[i2].toString(16)).slice(-2);
+        }
+      }
+      this.push = function(chunk) {
+        var tag, frameStart, frameSize, frame, i3, frameHeader;
+        if (chunk.type !== "timed-metadata") {
+          return;
+        }
+        if (chunk.dataAlignmentIndicator) {
+          bufferSize = 0;
+          buffer.length = 0;
+        }
+        if (buffer.length === 0 && (chunk.data.length < 10 || chunk.data[0] !== "I".charCodeAt(0) || chunk.data[1] !== "D".charCodeAt(0) || chunk.data[2] !== "3".charCodeAt(0))) {
+          this.trigger("log", {
+            level: "warn",
+            message: "Skipping unrecognized metadata packet"
+          });
+          return;
+        }
+        buffer.push(chunk);
+        bufferSize += chunk.data.byteLength;
+        if (buffer.length === 1) {
+          tagSize = id3.parseSyncSafeInteger(chunk.data.subarray(6, 10));
+          tagSize += 10;
+        }
+        if (bufferSize < tagSize) {
+          return;
+        }
+        tag = {
+          data: new Uint8Array(tagSize),
+          frames: [],
+          pts: buffer[0].pts,
+          dts: buffer[0].dts
+        };
+        for (i3 = 0; i3 < tagSize; ) {
+          tag.data.set(buffer[0].data.subarray(0, tagSize - i3), i3);
+          i3 += buffer[0].data.byteLength;
+          bufferSize -= buffer[0].data.byteLength;
+          buffer.shift();
+        }
+        frameStart = 10;
+        if (tag.data[5] & 64) {
+          frameStart += 4;
+          frameStart += id3.parseSyncSafeInteger(tag.data.subarray(10, 14));
+          tagSize -= id3.parseSyncSafeInteger(tag.data.subarray(16, 20));
+        }
+        do {
+          frameSize = id3.parseSyncSafeInteger(tag.data.subarray(frameStart + 4, frameStart + 8));
+          if (frameSize < 1) {
+            this.trigger("log", {
+              level: "warn",
+              message: "Malformed ID3 frame encountered. Skipping remaining metadata parsing."
+            });
+            break;
+          }
+          frameHeader = String.fromCharCode(tag.data[frameStart], tag.data[frameStart + 1], tag.data[frameStart + 2], tag.data[frameStart + 3]);
+          frame = {
+            id: frameHeader,
+            data: tag.data.subarray(frameStart + 10, frameStart + frameSize + 10)
+          };
+          frame.key = frame.id;
+          if (id3.frameParsers[frame.id]) {
+            id3.frameParsers[frame.id](frame);
+          } else if (frame.id[0] === "T") {
+            id3.frameParsers["T*"](frame);
+          } else if (frame.id[0] === "W") {
+            id3.frameParsers["W*"](frame);
+          }
+          if (frame.owner === "com.apple.streaming.transportStreamTimestamp") {
+            var d2 = frame.data, size = (d2[3] & 1) << 30 | d2[4] << 22 | d2[5] << 14 | d2[6] << 6 | d2[7] >>> 2;
+            size *= 4;
+            size += d2[7] & 3;
+            frame.timeStamp = size;
+            if (tag.pts === void 0 && tag.dts === void 0) {
+              tag.pts = frame.timeStamp;
+              tag.dts = frame.timeStamp;
+            }
+            this.trigger("timestamp", frame);
+          }
+          tag.frames.push(frame);
+          frameStart += 10;
+          frameStart += frameSize;
+        } while (frameStart < tagSize);
+        this.trigger("data", tag);
+      };
+    };
+    MetadataStream.prototype = new Stream$5();
+    var metadataStream = MetadataStream;
+    var Stream$4 = stream, CaptionStream$1 = captionStream, StreamTypes$2 = streamTypes, TimestampRolloverStream = timestampRolloverStream.TimestampRolloverStream;
+    var TransportPacketStream, TransportParseStream, ElementaryStream;
+    var MP2T_PACKET_LENGTH$1 = 188, SYNC_BYTE$1 = 71;
+    TransportPacketStream = function() {
+      var buffer = new Uint8Array(MP2T_PACKET_LENGTH$1), bytesInBuffer = 0;
+      TransportPacketStream.prototype.init.call(this);
+      this.push = function(bytes) {
+        var startIndex = 0, endIndex = MP2T_PACKET_LENGTH$1, everything;
+        if (bytesInBuffer) {
+          everything = new Uint8Array(bytes.byteLength + bytesInBuffer);
+          everything.set(buffer.subarray(0, bytesInBuffer));
+          everything.set(bytes, bytesInBuffer);
+          bytesInBuffer = 0;
+        } else {
+          everything = bytes;
+        }
+        while (endIndex < everything.byteLength) {
+          if (everything[startIndex] === SYNC_BYTE$1 && everything[endIndex] === SYNC_BYTE$1) {
+            this.trigger("data", everything.subarray(startIndex, endIndex));
+            startIndex += MP2T_PACKET_LENGTH$1;
+            endIndex += MP2T_PACKET_LENGTH$1;
+            continue;
+          }
+          startIndex++;
+          endIndex++;
+        }
+        if (startIndex < everything.byteLength) {
+          buffer.set(everything.subarray(startIndex), 0);
+          bytesInBuffer = everything.byteLength - startIndex;
+        }
+      };
+      this.flush = function() {
+        if (bytesInBuffer === MP2T_PACKET_LENGTH$1 && buffer[0] === SYNC_BYTE$1) {
+          this.trigger("data", buffer);
+          bytesInBuffer = 0;
+        }
+        this.trigger("done");
+      };
+      this.endTimeline = function() {
+        this.flush();
+        this.trigger("endedtimeline");
+      };
+      this.reset = function() {
+        bytesInBuffer = 0;
+        this.trigger("reset");
+      };
+    };
+    TransportPacketStream.prototype = new Stream$4();
+    TransportParseStream = function() {
+      var parsePsi, parsePat2, parsePmt2, self2;
+      TransportParseStream.prototype.init.call(this);
+      self2 = this;
+      this.packetsWaitingForPmt = [];
+      this.programMapTable = void 0;
+      parsePsi = function(payload, psi) {
+        var offset = 0;
+        if (psi.payloadUnitStartIndicator) {
+          offset += payload[offset] + 1;
+        }
+        if (psi.type === "pat") {
+          parsePat2(payload.subarray(offset), psi);
+        } else {
+          parsePmt2(payload.subarray(offset), psi);
+        }
+      };
+      parsePat2 = function(payload, pat) {
+        pat.section_number = payload[7];
+        pat.last_section_number = payload[8];
+        self2.pmtPid = (payload[10] & 31) << 8 | payload[11];
+        pat.pmtPid = self2.pmtPid;
+      };
+      parsePmt2 = function(payload, pmt) {
+        var sectionLength, tableEnd, programInfoLength, offset;
+        if (!(payload[5] & 1)) {
+          return;
+        }
+        self2.programMapTable = {
+          video: null,
+          audio: null,
+          "timed-metadata": {}
+        };
+        sectionLength = (payload[1] & 15) << 8 | payload[2];
+        tableEnd = 3 + sectionLength - 4;
+        programInfoLength = (payload[10] & 15) << 8 | payload[11];
+        offset = 12 + programInfoLength;
+        while (offset < tableEnd) {
+          var streamType = payload[offset];
+          var pid = (payload[offset + 1] & 31) << 8 | payload[offset + 2];
+          if (streamType === StreamTypes$2.H264_STREAM_TYPE && self2.programMapTable.video === null) {
+            self2.programMapTable.video = pid;
+          } else if (streamType === StreamTypes$2.ADTS_STREAM_TYPE && self2.programMapTable.audio === null) {
+            self2.programMapTable.audio = pid;
+          } else if (streamType === StreamTypes$2.METADATA_STREAM_TYPE) {
+            self2.programMapTable["timed-metadata"][pid] = streamType;
+          }
+          offset += ((payload[offset + 3] & 15) << 8 | payload[offset + 4]) + 5;
+        }
+        pmt.programMapTable = self2.programMapTable;
+      };
+      this.push = function(packet) {
+        var result = {}, offset = 4;
+        result.payloadUnitStartIndicator = !!(packet[1] & 64);
+        result.pid = packet[1] & 31;
+        result.pid <<= 8;
+        result.pid |= packet[2];
+        if ((packet[3] & 48) >>> 4 > 1) {
+          offset += packet[offset] + 1;
+        }
+        if (result.pid === 0) {
+          result.type = "pat";
+          parsePsi(packet.subarray(offset), result);
+          this.trigger("data", result);
+        } else if (result.pid === this.pmtPid) {
+          result.type = "pmt";
+          parsePsi(packet.subarray(offset), result);
+          this.trigger("data", result);
+          while (this.packetsWaitingForPmt.length) {
+            this.processPes_.apply(this, this.packetsWaitingForPmt.shift());
+          }
+        } else if (this.programMapTable === void 0) {
+          this.packetsWaitingForPmt.push([packet, offset, result]);
+        } else {
+          this.processPes_(packet, offset, result);
+        }
+      };
+      this.processPes_ = function(packet, offset, result) {
+        if (result.pid === this.programMapTable.video) {
+          result.streamType = StreamTypes$2.H264_STREAM_TYPE;
+        } else if (result.pid === this.programMapTable.audio) {
+          result.streamType = StreamTypes$2.ADTS_STREAM_TYPE;
+        } else {
+          result.streamType = this.programMapTable["timed-metadata"][result.pid];
+        }
+        result.type = "pes";
+        result.data = packet.subarray(offset);
+        this.trigger("data", result);
+      };
+    };
+    TransportParseStream.prototype = new Stream$4();
+    TransportParseStream.STREAM_TYPES = {
+      h264: 27,
+      adts: 15
+    };
+    ElementaryStream = function() {
+      var self2 = this, segmentHadPmt = false, video = {
+        data: [],
+        size: 0
+      }, audio = {
+        data: [],
+        size: 0
+      }, timedMetadata = {
+        data: [],
+        size: 0
+      }, programMapTable, parsePes = function(payload, pes) {
+        var ptsDtsFlags;
+        const startPrefix = payload[0] << 16 | payload[1] << 8 | payload[2];
+        pes.data = new Uint8Array();
+        if (startPrefix !== 1) {
+          return;
+        }
+        pes.packetLength = 6 + (payload[4] << 8 | payload[5]);
+        pes.dataAlignmentIndicator = (payload[6] & 4) !== 0;
+        ptsDtsFlags = payload[7];
+        if (ptsDtsFlags & 192) {
+          pes.pts = (payload[9] & 14) << 27 | (payload[10] & 255) << 20 | (payload[11] & 254) << 12 | (payload[12] & 255) << 5 | (payload[13] & 254) >>> 3;
+          pes.pts *= 4;
+          pes.pts += (payload[13] & 6) >>> 1;
+          pes.dts = pes.pts;
+          if (ptsDtsFlags & 64) {
+            pes.dts = (payload[14] & 14) << 27 | (payload[15] & 255) << 20 | (payload[16] & 254) << 12 | (payload[17] & 255) << 5 | (payload[18] & 254) >>> 3;
+            pes.dts *= 4;
+            pes.dts += (payload[18] & 6) >>> 1;
+          }
+        }
+        pes.data = payload.subarray(9 + payload[8]);
+      }, flushStream = function(stream2, type2, forceFlush) {
+        var packetData = new Uint8Array(stream2.size), event = {
+          type: type2
+        }, i2 = 0, offset = 0, packetFlushable = false, fragment;
+        if (!stream2.data.length || stream2.size < 9) {
+          return;
+        }
+        event.trackId = stream2.data[0].pid;
+        for (i2 = 0; i2 < stream2.data.length; i2++) {
+          fragment = stream2.data[i2];
+          packetData.set(fragment.data, offset);
+          offset += fragment.data.byteLength;
+        }
+        parsePes(packetData, event);
+        packetFlushable = type2 === "video" || event.packetLength <= stream2.size;
+        if (forceFlush || packetFlushable) {
+          stream2.size = 0;
+          stream2.data.length = 0;
+        }
+        if (packetFlushable) {
+          self2.trigger("data", event);
+        }
+      };
+      ElementaryStream.prototype.init.call(this);
+      this.push = function(data) {
+        ({
+          pat: function() {
+          },
+          pes: function() {
+            var stream2, streamType;
+            switch (data.streamType) {
+              case StreamTypes$2.H264_STREAM_TYPE:
+                stream2 = video;
+                streamType = "video";
+                break;
+              case StreamTypes$2.ADTS_STREAM_TYPE:
+                stream2 = audio;
+                streamType = "audio";
+                break;
+              case StreamTypes$2.METADATA_STREAM_TYPE:
+                stream2 = timedMetadata;
+                streamType = "timed-metadata";
+                break;
+              default:
+                return;
+            }
+            if (data.payloadUnitStartIndicator) {
+              flushStream(stream2, streamType, true);
+            }
+            stream2.data.push(data);
+            stream2.size += data.data.byteLength;
+          },
+          pmt: function() {
+            var event = {
+              type: "metadata",
+              tracks: []
+            };
+            programMapTable = data.programMapTable;
+            if (programMapTable.video !== null) {
+              event.tracks.push({
+                timelineStartInfo: {
+                  baseMediaDecodeTime: 0
+                },
+                id: +programMapTable.video,
+                codec: "avc",
+                type: "video"
+              });
+            }
+            if (programMapTable.audio !== null) {
+              event.tracks.push({
+                timelineStartInfo: {
+                  baseMediaDecodeTime: 0
+                },
+                id: +programMapTable.audio,
+                codec: "adts",
+                type: "audio"
+              });
+            }
+            segmentHadPmt = true;
+            self2.trigger("data", event);
+          }
+        })[data.type]();
+      };
+      this.reset = function() {
+        video.size = 0;
+        video.data.length = 0;
+        audio.size = 0;
+        audio.data.length = 0;
+        this.trigger("reset");
+      };
+      this.flushStreams_ = function() {
+        flushStream(video, "video");
+        flushStream(audio, "audio");
+        flushStream(timedMetadata, "timed-metadata");
+      };
+      this.flush = function() {
+        if (!segmentHadPmt && programMapTable) {
+          var pmt = {
+            type: "metadata",
+            tracks: []
+          };
+          if (programMapTable.video !== null) {
+            pmt.tracks.push({
+              timelineStartInfo: {
+                baseMediaDecodeTime: 0
+              },
+              id: +programMapTable.video,
+              codec: "avc",
+              type: "video"
+            });
+          }
+          if (programMapTable.audio !== null) {
+            pmt.tracks.push({
+              timelineStartInfo: {
+                baseMediaDecodeTime: 0
+              },
+              id: +programMapTable.audio,
+              codec: "adts",
+              type: "audio"
+            });
+          }
+          self2.trigger("data", pmt);
+        }
+        segmentHadPmt = false;
+        this.flushStreams_();
+        this.trigger("done");
+      };
+    };
+    ElementaryStream.prototype = new Stream$4();
+    var m2ts$1 = {
+      PAT_PID: 0,
+      MP2T_PACKET_LENGTH: MP2T_PACKET_LENGTH$1,
+      TransportPacketStream,
+      TransportParseStream,
+      ElementaryStream,
+      TimestampRolloverStream,
+      CaptionStream: CaptionStream$1.CaptionStream,
+      Cea608Stream: CaptionStream$1.Cea608Stream,
+      Cea708Stream: CaptionStream$1.Cea708Stream,
+      MetadataStream: metadataStream
+    };
+    for (var type in StreamTypes$2) {
+      if (StreamTypes$2.hasOwnProperty(type)) {
+        m2ts$1[type] = StreamTypes$2[type];
+      }
+    }
+    var m2ts_1 = m2ts$1;
+    var Stream$3 = stream;
+    var ONE_SECOND_IN_TS$2 = clock$2.ONE_SECOND_IN_TS;
+    var AdtsStream$1;
+    var ADTS_SAMPLING_FREQUENCIES$1 = [96e3, 88200, 64e3, 48e3, 44100, 32e3, 24e3, 22050, 16e3, 12e3, 11025, 8e3, 7350];
+    AdtsStream$1 = function(handlePartialSegments) {
+      var buffer, frameNum = 0;
+      AdtsStream$1.prototype.init.call(this);
+      this.skipWarn_ = function(start, end) {
+        this.trigger("log", {
+          level: "warn",
+          message: `adts skiping bytes ${start} to ${end} in frame ${frameNum} outside syncword`
+        });
+      };
+      this.push = function(packet) {
+        var i2 = 0, frameLength, protectionSkipBytes, oldBuffer, sampleCount, adtsFrameDuration;
+        if (!handlePartialSegments) {
+          frameNum = 0;
+        }
+        if (packet.type !== "audio") {
+          return;
+        }
+        if (buffer && buffer.length) {
+          oldBuffer = buffer;
+          buffer = new Uint8Array(oldBuffer.byteLength + packet.data.byteLength);
+          buffer.set(oldBuffer);
+          buffer.set(packet.data, oldBuffer.byteLength);
+        } else {
+          buffer = packet.data;
+        }
+        var skip;
+        while (i2 + 7 < buffer.length) {
+          if (buffer[i2] !== 255 || (buffer[i2 + 1] & 246) !== 240) {
+            if (typeof skip !== "number") {
+              skip = i2;
+            }
+            i2++;
+            continue;
+          }
+          if (typeof skip === "number") {
+            this.skipWarn_(skip, i2);
+            skip = null;
+          }
+          protectionSkipBytes = (~buffer[i2 + 1] & 1) * 2;
+          frameLength = (buffer[i2 + 3] & 3) << 11 | buffer[i2 + 4] << 3 | (buffer[i2 + 5] & 224) >> 5;
+          sampleCount = ((buffer[i2 + 6] & 3) + 1) * 1024;
+          adtsFrameDuration = sampleCount * ONE_SECOND_IN_TS$2 / ADTS_SAMPLING_FREQUENCIES$1[(buffer[i2 + 2] & 60) >>> 2];
+          if (buffer.byteLength - i2 < frameLength) {
+            break;
+          }
+          this.trigger("data", {
+            pts: packet.pts + frameNum * adtsFrameDuration,
+            dts: packet.dts + frameNum * adtsFrameDuration,
+            sampleCount,
+            audioobjecttype: (buffer[i2 + 2] >>> 6 & 3) + 1,
+            channelcount: (buffer[i2 + 2] & 1) << 2 | (buffer[i2 + 3] & 192) >>> 6,
+            samplerate: ADTS_SAMPLING_FREQUENCIES$1[(buffer[i2 + 2] & 60) >>> 2],
+            samplingfrequencyindex: (buffer[i2 + 2] & 60) >>> 2,
+            // assume ISO/IEC 14496-12 AudioSampleEntry default of 16
+            samplesize: 16,
+            // data is the frame without it's header
+            data: buffer.subarray(i2 + 7 + protectionSkipBytes, i2 + frameLength)
+          });
+          frameNum++;
+          i2 += frameLength;
+        }
+        if (typeof skip === "number") {
+          this.skipWarn_(skip, i2);
+          skip = null;
+        }
+        buffer = buffer.subarray(i2);
+      };
+      this.flush = function() {
+        frameNum = 0;
+        this.trigger("done");
+      };
+      this.reset = function() {
+        buffer = void 0;
+        this.trigger("reset");
+      };
+      this.endTimeline = function() {
+        buffer = void 0;
+        this.trigger("endedtimeline");
+      };
+    };
+    AdtsStream$1.prototype = new Stream$3();
+    var adts = AdtsStream$1;
+    var ExpGolomb$1;
+    ExpGolomb$1 = function(workingData) {
+      var workingBytesAvailable = workingData.byteLength, workingWord = 0, workingBitsAvailable = 0;
+      this.length = function() {
+        return 8 * workingBytesAvailable;
+      };
+      this.bitsAvailable = function() {
+        return 8 * workingBytesAvailable + workingBitsAvailable;
+      };
+      this.loadWord = function() {
+        var position = workingData.byteLength - workingBytesAvailable, workingBytes = new Uint8Array(4), availableBytes = Math.min(4, workingBytesAvailable);
+        if (availableBytes === 0) {
+          throw new Error("no bytes available");
+        }
+        workingBytes.set(workingData.subarray(position, position + availableBytes));
+        workingWord = new DataView(workingBytes.buffer).getUint32(0);
+        workingBitsAvailable = availableBytes * 8;
+        workingBytesAvailable -= availableBytes;
+      };
+      this.skipBits = function(count) {
+        var skipBytes;
+        if (workingBitsAvailable > count) {
+          workingWord <<= count;
+          workingBitsAvailable -= count;
+        } else {
+          count -= workingBitsAvailable;
+          skipBytes = Math.floor(count / 8);
+          count -= skipBytes * 8;
+          workingBytesAvailable -= skipBytes;
+          this.loadWord();
+          workingWord <<= count;
+          workingBitsAvailable -= count;
+        }
+      };
+      this.readBits = function(size) {
+        var bits = Math.min(workingBitsAvailable, size), valu = workingWord >>> 32 - bits;
+        workingBitsAvailable -= bits;
+        if (workingBitsAvailable > 0) {
+          workingWord <<= bits;
+        } else if (workingBytesAvailable > 0) {
+          this.loadWord();
+        }
+        bits = size - bits;
+        if (bits > 0) {
+          return valu << bits | this.readBits(bits);
+        }
+        return valu;
+      };
+      this.skipLeadingZeros = function() {
+        var leadingZeroCount;
+        for (leadingZeroCount = 0; leadingZeroCount < workingBitsAvailable; ++leadingZeroCount) {
+          if ((workingWord & 2147483648 >>> leadingZeroCount) !== 0) {
+            workingWord <<= leadingZeroCount;
+            workingBitsAvailable -= leadingZeroCount;
+            return leadingZeroCount;
+          }
+        }
+        this.loadWord();
+        return leadingZeroCount + this.skipLeadingZeros();
+      };
+      this.skipUnsignedExpGolomb = function() {
+        this.skipBits(1 + this.skipLeadingZeros());
+      };
+      this.skipExpGolomb = function() {
+        this.skipBits(1 + this.skipLeadingZeros());
+      };
+      this.readUnsignedExpGolomb = function() {
+        var clz = this.skipLeadingZeros();
+        return this.readBits(clz + 1) - 1;
+      };
+      this.readExpGolomb = function() {
+        var valu = this.readUnsignedExpGolomb();
+        if (1 & valu) {
+          return 1 + valu >>> 1;
+        }
+        return -1 * (valu >>> 1);
+      };
+      this.readBoolean = function() {
+        return this.readBits(1) === 1;
+      };
+      this.readUnsignedByte = function() {
+        return this.readBits(8);
+      };
+      this.loadWord();
+    };
+    var expGolomb = ExpGolomb$1;
+    var Stream$2 = stream;
+    var ExpGolomb = expGolomb;
+    var H264Stream$1, NalByteStream;
+    var PROFILES_WITH_OPTIONAL_SPS_DATA;
+    NalByteStream = function() {
+      var syncPoint = 0, i2, buffer;
+      NalByteStream.prototype.init.call(this);
+      this.push = function(data) {
+        var swapBuffer;
+        if (!buffer) {
+          buffer = data.data;
+        } else {
+          swapBuffer = new Uint8Array(buffer.byteLength + data.data.byteLength);
+          swapBuffer.set(buffer);
+          swapBuffer.set(data.data, buffer.byteLength);
+          buffer = swapBuffer;
+        }
+        var len = buffer.byteLength;
+        for (; syncPoint < len - 3; syncPoint++) {
+          if (buffer[syncPoint + 2] === 1) {
+            i2 = syncPoint + 5;
+            break;
+          }
+        }
+        while (i2 < len) {
+          switch (buffer[i2]) {
+            case 0:
+              if (buffer[i2 - 1] !== 0) {
+                i2 += 2;
+                break;
+              } else if (buffer[i2 - 2] !== 0) {
+                i2++;
+                break;
+              }
+              if (syncPoint + 3 !== i2 - 2) {
+                this.trigger("data", buffer.subarray(syncPoint + 3, i2 - 2));
+              }
+              do {
+                i2++;
+              } while (buffer[i2] !== 1 && i2 < len);
+              syncPoint = i2 - 2;
+              i2 += 3;
+              break;
+            case 1:
+              if (buffer[i2 - 1] !== 0 || buffer[i2 - 2] !== 0) {
+                i2 += 3;
+                break;
+              }
+              this.trigger("data", buffer.subarray(syncPoint + 3, i2 - 2));
+              syncPoint = i2 - 2;
+              i2 += 3;
+              break;
+            default:
+              i2 += 3;
+              break;
+          }
+        }
+        buffer = buffer.subarray(syncPoint);
+        i2 -= syncPoint;
+        syncPoint = 0;
+      };
+      this.reset = function() {
+        buffer = null;
+        syncPoint = 0;
+        this.trigger("reset");
+      };
+      this.flush = function() {
+        if (buffer && buffer.byteLength > 3) {
+          this.trigger("data", buffer.subarray(syncPoint + 3));
+        }
+        buffer = null;
+        syncPoint = 0;
+        this.trigger("done");
+      };
+      this.endTimeline = function() {
+        this.flush();
+        this.trigger("endedtimeline");
+      };
+    };
+    NalByteStream.prototype = new Stream$2();
+    PROFILES_WITH_OPTIONAL_SPS_DATA = {
+      100: true,
+      110: true,
+      122: true,
+      244: true,
+      44: true,
+      83: true,
+      86: true,
+      118: true,
+      128: true,
+      // TODO: the three profiles below don't
+      // appear to have sps data in the specificiation anymore?
+      138: true,
+      139: true,
+      134: true
+    };
+    H264Stream$1 = function() {
+      var nalByteStream = new NalByteStream(), self2, trackId, currentPts, currentDts, discardEmulationPreventionBytes4, readSequenceParameterSet, skipScalingList;
+      H264Stream$1.prototype.init.call(this);
+      self2 = this;
+      this.push = function(packet) {
+        if (packet.type !== "video") {
+          return;
+        }
+        trackId = packet.trackId;
+        currentPts = packet.pts;
+        currentDts = packet.dts;
+        nalByteStream.push(packet);
+      };
+      nalByteStream.on("data", function(data) {
+        var event = {
+          trackId,
+          pts: currentPts,
+          dts: currentDts,
+          data,
+          nalUnitTypeCode: data[0] & 31
+        };
+        switch (event.nalUnitTypeCode) {
+          case 5:
+            event.nalUnitType = "slice_layer_without_partitioning_rbsp_idr";
+            break;
+          case 6:
+            event.nalUnitType = "sei_rbsp";
+            event.escapedRBSP = discardEmulationPreventionBytes4(data.subarray(1));
+            break;
+          case 7:
+            event.nalUnitType = "seq_parameter_set_rbsp";
+            event.escapedRBSP = discardEmulationPreventionBytes4(data.subarray(1));
+            event.config = readSequenceParameterSet(event.escapedRBSP);
+            break;
+          case 8:
+            event.nalUnitType = "pic_parameter_set_rbsp";
+            break;
+          case 9:
+            event.nalUnitType = "access_unit_delimiter_rbsp";
+            break;
+        }
+        self2.trigger("data", event);
+      });
+      nalByteStream.on("done", function() {
+        self2.trigger("done");
+      });
+      nalByteStream.on("partialdone", function() {
+        self2.trigger("partialdone");
+      });
+      nalByteStream.on("reset", function() {
+        self2.trigger("reset");
+      });
+      nalByteStream.on("endedtimeline", function() {
+        self2.trigger("endedtimeline");
+      });
+      this.flush = function() {
+        nalByteStream.flush();
+      };
+      this.partialFlush = function() {
+        nalByteStream.partialFlush();
+      };
+      this.reset = function() {
+        nalByteStream.reset();
+      };
+      this.endTimeline = function() {
+        nalByteStream.endTimeline();
+      };
+      skipScalingList = function(count, expGolombDecoder) {
+        var lastScale = 8, nextScale = 8, j2, deltaScale;
+        for (j2 = 0; j2 < count; j2++) {
+          if (nextScale !== 0) {
+            deltaScale = expGolombDecoder.readExpGolomb();
+            nextScale = (lastScale + deltaScale + 256) % 256;
+          }
+          lastScale = nextScale === 0 ? lastScale : nextScale;
+        }
+      };
+      discardEmulationPreventionBytes4 = function(data) {
+        var length = data.byteLength, emulationPreventionBytesPositions = [], i2 = 1, newLength, newData;
+        while (i2 < length - 2) {
+          if (data[i2] === 0 && data[i2 + 1] === 0 && data[i2 + 2] === 3) {
+            emulationPreventionBytesPositions.push(i2 + 2);
+            i2 += 2;
+          } else {
+            i2++;
+          }
+        }
+        if (emulationPreventionBytesPositions.length === 0) {
+          return data;
+        }
+        newLength = length - emulationPreventionBytesPositions.length;
+        newData = new Uint8Array(newLength);
+        var sourceIndex = 0;
+        for (i2 = 0; i2 < newLength; sourceIndex++, i2++) {
+          if (sourceIndex === emulationPreventionBytesPositions[0]) {
+            sourceIndex++;
+            emulationPreventionBytesPositions.shift();
+          }
+          newData[i2] = data[sourceIndex];
+        }
+        return newData;
+      };
+      readSequenceParameterSet = function(data) {
+        var frameCropLeftOffset = 0, frameCropRightOffset = 0, frameCropTopOffset = 0, frameCropBottomOffset = 0, expGolombDecoder, profileIdc, levelIdc, profileCompatibility, chromaFormatIdc, picOrderCntType, numRefFramesInPicOrderCntCycle, picWidthInMbsMinus1, picHeightInMapUnitsMinus1, frameMbsOnlyFlag, scalingListCount, sarRatio = [1, 1], aspectRatioIdc, i2;
+        expGolombDecoder = new ExpGolomb(data);
+        profileIdc = expGolombDecoder.readUnsignedByte();
+        profileCompatibility = expGolombDecoder.readUnsignedByte();
+        levelIdc = expGolombDecoder.readUnsignedByte();
+        expGolombDecoder.skipUnsignedExpGolomb();
+        if (PROFILES_WITH_OPTIONAL_SPS_DATA[profileIdc]) {
+          chromaFormatIdc = expGolombDecoder.readUnsignedExpGolomb();
+          if (chromaFormatIdc === 3) {
+            expGolombDecoder.skipBits(1);
+          }
+          expGolombDecoder.skipUnsignedExpGolomb();
+          expGolombDecoder.skipUnsignedExpGolomb();
+          expGolombDecoder.skipBits(1);
+          if (expGolombDecoder.readBoolean()) {
+            scalingListCount = chromaFormatIdc !== 3 ? 8 : 12;
+            for (i2 = 0; i2 < scalingListCount; i2++) {
+              if (expGolombDecoder.readBoolean()) {
+                if (i2 < 6) {
+                  skipScalingList(16, expGolombDecoder);
+                } else {
+                  skipScalingList(64, expGolombDecoder);
+                }
+              }
+            }
+          }
+        }
+        expGolombDecoder.skipUnsignedExpGolomb();
+        picOrderCntType = expGolombDecoder.readUnsignedExpGolomb();
+        if (picOrderCntType === 0) {
+          expGolombDecoder.readUnsignedExpGolomb();
+        } else if (picOrderCntType === 1) {
+          expGolombDecoder.skipBits(1);
+          expGolombDecoder.skipExpGolomb();
+          expGolombDecoder.skipExpGolomb();
+          numRefFramesInPicOrderCntCycle = expGolombDecoder.readUnsignedExpGolomb();
+          for (i2 = 0; i2 < numRefFramesInPicOrderCntCycle; i2++) {
+            expGolombDecoder.skipExpGolomb();
+          }
+        }
+        expGolombDecoder.skipUnsignedExpGolomb();
+        expGolombDecoder.skipBits(1);
+        picWidthInMbsMinus1 = expGolombDecoder.readUnsignedExpGolomb();
+        picHeightInMapUnitsMinus1 = expGolombDecoder.readUnsignedExpGolomb();
+        frameMbsOnlyFlag = expGolombDecoder.readBits(1);
+        if (frameMbsOnlyFlag === 0) {
+          expGolombDecoder.skipBits(1);
+        }
+        expGolombDecoder.skipBits(1);
+        if (expGolombDecoder.readBoolean()) {
+          frameCropLeftOffset = expGolombDecoder.readUnsignedExpGolomb();
+          frameCropRightOffset = expGolombDecoder.readUnsignedExpGolomb();
+          frameCropTopOffset = expGolombDecoder.readUnsignedExpGolomb();
+          frameCropBottomOffset = expGolombDecoder.readUnsignedExpGolomb();
+        }
+        if (expGolombDecoder.readBoolean()) {
+          if (expGolombDecoder.readBoolean()) {
+            aspectRatioIdc = expGolombDecoder.readUnsignedByte();
+            switch (aspectRatioIdc) {
+              case 1:
+                sarRatio = [1, 1];
+                break;
+              case 2:
+                sarRatio = [12, 11];
+                break;
+              case 3:
+                sarRatio = [10, 11];
+                break;
+              case 4:
+                sarRatio = [16, 11];
+                break;
+              case 5:
+                sarRatio = [40, 33];
+                break;
+              case 6:
+                sarRatio = [24, 11];
+                break;
+              case 7:
+                sarRatio = [20, 11];
+                break;
+              case 8:
+                sarRatio = [32, 11];
+                break;
+              case 9:
+                sarRatio = [80, 33];
+                break;
+              case 10:
+                sarRatio = [18, 11];
+                break;
+              case 11:
+                sarRatio = [15, 11];
+                break;
+              case 12:
+                sarRatio = [64, 33];
+                break;
+              case 13:
+                sarRatio = [160, 99];
+                break;
+              case 14:
+                sarRatio = [4, 3];
+                break;
+              case 15:
+                sarRatio = [3, 2];
+                break;
+              case 16:
+                sarRatio = [2, 1];
+                break;
+              case 255: {
+                sarRatio = [expGolombDecoder.readUnsignedByte() << 8 | expGolombDecoder.readUnsignedByte(), expGolombDecoder.readUnsignedByte() << 8 | expGolombDecoder.readUnsignedByte()];
+                break;
+              }
+            }
+            if (sarRatio) {
+              sarRatio[0] / sarRatio[1];
+            }
+          }
+        }
+        return {
+          profileIdc,
+          levelIdc,
+          profileCompatibility,
+          width: (picWidthInMbsMinus1 + 1) * 16 - frameCropLeftOffset * 2 - frameCropRightOffset * 2,
+          height: (2 - frameMbsOnlyFlag) * (picHeightInMapUnitsMinus1 + 1) * 16 - frameCropTopOffset * 2 - frameCropBottomOffset * 2,
+          // sar is sample aspect ratio
+          sarRatio
+        };
+      };
+    };
+    H264Stream$1.prototype = new Stream$2();
+    var h2642 = {
+      H264Stream: H264Stream$1,
+      NalByteStream
+    };
+    var ADTS_SAMPLING_FREQUENCIES = [96e3, 88200, 64e3, 48e3, 44100, 32e3, 24e3, 22050, 16e3, 12e3, 11025, 8e3, 7350];
+    var parseId3TagSize = function(header, byteIndex) {
+      var returnSize = header[byteIndex + 6] << 21 | header[byteIndex + 7] << 14 | header[byteIndex + 8] << 7 | header[byteIndex + 9], flags = header[byteIndex + 5], footerPresent = (flags & 16) >> 4;
+      returnSize = returnSize >= 0 ? returnSize : 0;
+      if (footerPresent) {
+        return returnSize + 20;
+      }
+      return returnSize + 10;
+    };
+    var getId3Offset3 = function(data, offset) {
+      if (data.length - offset < 10 || data[offset] !== "I".charCodeAt(0) || data[offset + 1] !== "D".charCodeAt(0) || data[offset + 2] !== "3".charCodeAt(0)) {
+        return offset;
+      }
+      offset += parseId3TagSize(data, offset);
+      return getId3Offset3(data, offset);
+    };
+    var isLikelyAacData$1 = function(data) {
+      var offset = getId3Offset3(data, 0);
+      return data.length >= offset + 2 && (data[offset] & 255) === 255 && (data[offset + 1] & 240) === 240 && // verify that the 2 layer bits are 0, aka this
+      // is not mp3 data but aac data.
+      (data[offset + 1] & 22) === 16;
+    };
+    var parseSyncSafeInteger = function(data) {
+      return data[0] << 21 | data[1] << 14 | data[2] << 7 | data[3];
+    };
+    var percentEncode = function(bytes, start, end) {
+      var i2, result = "";
+      for (i2 = start; i2 < end; i2++) {
+        result += "%" + ("00" + bytes[i2].toString(16)).slice(-2);
+      }
+      return result;
+    };
+    var parseIso88591 = function(bytes, start, end) {
+      return unescape(percentEncode(bytes, start, end));
+    };
+    var parseAdtsSize = function(header, byteIndex) {
+      var lowThree = (header[byteIndex + 5] & 224) >> 5, middle = header[byteIndex + 4] << 3, highTwo = header[byteIndex + 3] & 3 << 11;
+      return highTwo | middle | lowThree;
+    };
+    var parseType$4 = function(header, byteIndex) {
+      if (header[byteIndex] === "I".charCodeAt(0) && header[byteIndex + 1] === "D".charCodeAt(0) && header[byteIndex + 2] === "3".charCodeAt(0)) {
+        return "timed-metadata";
+      } else if (header[byteIndex] & true && (header[byteIndex + 1] & 240) === 240) {
+        return "audio";
+      }
+      return null;
+    };
+    var parseSampleRate = function(packet) {
+      var i2 = 0;
+      while (i2 + 5 < packet.length) {
+        if (packet[i2] !== 255 || (packet[i2 + 1] & 246) !== 240) {
+          i2++;
+          continue;
+        }
+        return ADTS_SAMPLING_FREQUENCIES[(packet[i2 + 2] & 60) >>> 2];
+      }
+      return null;
+    };
+    var parseAacTimestamp = function(packet) {
+      var frameStart, frameSize, frame, frameHeader;
+      frameStart = 10;
+      if (packet[5] & 64) {
+        frameStart += 4;
+        frameStart += parseSyncSafeInteger(packet.subarray(10, 14));
+      }
+      do {
+        frameSize = parseSyncSafeInteger(packet.subarray(frameStart + 4, frameStart + 8));
+        if (frameSize < 1) {
+          return null;
+        }
+        frameHeader = String.fromCharCode(packet[frameStart], packet[frameStart + 1], packet[frameStart + 2], packet[frameStart + 3]);
+        if (frameHeader === "PRIV") {
+          frame = packet.subarray(frameStart + 10, frameStart + frameSize + 10);
+          for (var i2 = 0; i2 < frame.byteLength; i2++) {
+            if (frame[i2] === 0) {
+              var owner = parseIso88591(frame, 0, i2);
+              if (owner === "com.apple.streaming.transportStreamTimestamp") {
+                var d2 = frame.subarray(i2 + 1);
+                var size = (d2[3] & 1) << 30 | d2[4] << 22 | d2[5] << 14 | d2[6] << 6 | d2[7] >>> 2;
+                size *= 4;
+                size += d2[7] & 3;
+                return size;
+              }
+              break;
+            }
+          }
+        }
+        frameStart += 10;
+        frameStart += frameSize;
+      } while (frameStart < packet.byteLength);
+      return null;
+    };
+    var utils3 = {
+      isLikelyAacData: isLikelyAacData$1,
+      parseId3TagSize,
+      parseAdtsSize,
+      parseType: parseType$4,
+      parseSampleRate,
+      parseAacTimestamp
+    };
+    var Stream$1 = stream;
+    var aacUtils = utils3;
+    var AacStream$1;
+    AacStream$1 = function() {
+      var everything = new Uint8Array(), timeStamp = 0;
+      AacStream$1.prototype.init.call(this);
+      this.setTimestamp = function(timestamp) {
+        timeStamp = timestamp;
+      };
+      this.push = function(bytes) {
+        var frameSize = 0, byteIndex = 0, bytesLeft, chunk, packet, tempLength;
+        if (everything.length) {
+          tempLength = everything.length;
+          everything = new Uint8Array(bytes.byteLength + tempLength);
+          everything.set(everything.subarray(0, tempLength));
+          everything.set(bytes, tempLength);
+        } else {
+          everything = bytes;
+        }
+        while (everything.length - byteIndex >= 3) {
+          if (everything[byteIndex] === "I".charCodeAt(0) && everything[byteIndex + 1] === "D".charCodeAt(0) && everything[byteIndex + 2] === "3".charCodeAt(0)) {
+            if (everything.length - byteIndex < 10) {
+              break;
+            }
+            frameSize = aacUtils.parseId3TagSize(everything, byteIndex);
+            if (byteIndex + frameSize > everything.length) {
+              break;
+            }
+            chunk = {
+              type: "timed-metadata",
+              data: everything.subarray(byteIndex, byteIndex + frameSize)
+            };
+            this.trigger("data", chunk);
+            byteIndex += frameSize;
+            continue;
+          } else if ((everything[byteIndex] & 255) === 255 && (everything[byteIndex + 1] & 240) === 240) {
+            if (everything.length - byteIndex < 7) {
+              break;
+            }
+            frameSize = aacUtils.parseAdtsSize(everything, byteIndex);
+            if (byteIndex + frameSize > everything.length) {
+              break;
+            }
+            packet = {
+              type: "audio",
+              data: everything.subarray(byteIndex, byteIndex + frameSize),
+              pts: timeStamp,
+              dts: timeStamp
+            };
+            this.trigger("data", packet);
+            byteIndex += frameSize;
+            continue;
+          }
+          byteIndex++;
+        }
+        bytesLeft = everything.length - byteIndex;
+        if (bytesLeft > 0) {
+          everything = everything.subarray(byteIndex);
+        } else {
+          everything = new Uint8Array();
+        }
+      };
+      this.reset = function() {
+        everything = new Uint8Array();
+        this.trigger("reset");
+      };
+      this.endTimeline = function() {
+        everything = new Uint8Array();
+        this.trigger("endedtimeline");
+      };
+    };
+    AacStream$1.prototype = new Stream$1();
+    var aac2 = AacStream$1;
+    var AUDIO_PROPERTIES$1 = ["audioobjecttype", "channelcount", "samplerate", "samplingfrequencyindex", "samplesize"];
+    var audioProperties = AUDIO_PROPERTIES$1;
+    var VIDEO_PROPERTIES$1 = ["width", "height", "profileIdc", "levelIdc", "profileCompatibility", "sarRatio"];
+    var videoProperties = VIDEO_PROPERTIES$1;
+    var Stream2 = stream;
+    var mp42 = mp4Generator;
+    var frameUtils = frameUtils$1;
+    var audioFrameUtils = audioFrameUtils$1;
+    var trackDecodeInfo = trackDecodeInfo$1;
+    var m2ts = m2ts_1;
+    var clock = clock$2;
+    var AdtsStream = adts;
+    var H264Stream = h2642.H264Stream;
+    var AacStream = aac2;
+    var isLikelyAacData = utils3.isLikelyAacData;
+    var ONE_SECOND_IN_TS$1 = clock$2.ONE_SECOND_IN_TS;
+    var AUDIO_PROPERTIES = audioProperties;
+    var VIDEO_PROPERTIES = videoProperties;
+    var VideoSegmentStream, AudioSegmentStream, Transmuxer, CoalesceStream;
+    var retriggerForStream = function(key, event) {
+      event.stream = key;
+      this.trigger("log", event);
+    };
+    var addPipelineLogRetriggers = function(transmuxer2, pipeline) {
+      var keys2 = Object.keys(pipeline);
+      for (var i2 = 0; i2 < keys2.length; i2++) {
+        var key = keys2[i2];
+        if (key === "headOfPipeline" || !pipeline[key].on) {
+          continue;
+        }
+        pipeline[key].on("log", retriggerForStream.bind(transmuxer2, key));
+      }
+    };
+    var arrayEquals = function(a2, b2) {
+      var i2;
+      if (a2.length !== b2.length) {
+        return false;
+      }
+      for (i2 = 0; i2 < a2.length; i2++) {
+        if (a2[i2] !== b2[i2]) {
+          return false;
+        }
+      }
+      return true;
+    };
+    var generateSegmentTimingInfo = function(baseMediaDecodeTime, startDts, startPts, endDts, endPts, prependedContentDuration) {
+      var ptsOffsetFromDts = startPts - startDts, decodeDuration = endDts - startDts, presentationDuration = endPts - startPts;
+      return {
+        start: {
+          dts: baseMediaDecodeTime,
+          pts: baseMediaDecodeTime + ptsOffsetFromDts
+        },
+        end: {
+          dts: baseMediaDecodeTime + decodeDuration,
+          pts: baseMediaDecodeTime + presentationDuration
+        },
+        prependedContentDuration,
+        baseMediaDecodeTime
+      };
+    };
+    AudioSegmentStream = function(track, options) {
+      var adtsFrames = [], sequenceNumber, earliestAllowedDts = 0, audioAppendStartTs = 0, videoBaseMediaDecodeTime = Infinity;
+      options = options || {};
+      sequenceNumber = options.firstSequenceNumber || 0;
+      AudioSegmentStream.prototype.init.call(this);
+      this.push = function(data) {
+        trackDecodeInfo.collectDtsInfo(track, data);
+        if (track) {
+          AUDIO_PROPERTIES.forEach(function(prop) {
+            track[prop] = data[prop];
+          });
+        }
+        adtsFrames.push(data);
+      };
+      this.setEarliestDts = function(earliestDts) {
+        earliestAllowedDts = earliestDts;
+      };
+      this.setVideoBaseMediaDecodeTime = function(baseMediaDecodeTime) {
+        videoBaseMediaDecodeTime = baseMediaDecodeTime;
+      };
+      this.setAudioAppendStart = function(timestamp) {
+        audioAppendStartTs = timestamp;
+      };
+      this.flush = function() {
+        var frames, moof2, mdat2, boxes, frameDuration, segmentDuration, videoClockCyclesOfSilencePrefixed;
+        if (adtsFrames.length === 0) {
+          this.trigger("done", "AudioSegmentStream");
+          return;
+        }
+        frames = audioFrameUtils.trimAdtsFramesByEarliestDts(adtsFrames, track, earliestAllowedDts);
+        track.baseMediaDecodeTime = trackDecodeInfo.calculateTrackBaseMediaDecodeTime(track, options.keepOriginalTimestamps);
+        videoClockCyclesOfSilencePrefixed = audioFrameUtils.prefixWithSilence(track, frames, audioAppendStartTs, videoBaseMediaDecodeTime);
+        track.samples = audioFrameUtils.generateSampleTable(frames);
+        mdat2 = mp42.mdat(audioFrameUtils.concatenateFrameData(frames));
+        adtsFrames = [];
+        moof2 = mp42.moof(sequenceNumber, [track]);
+        boxes = new Uint8Array(moof2.byteLength + mdat2.byteLength);
+        sequenceNumber++;
+        boxes.set(moof2);
+        boxes.set(mdat2, moof2.byteLength);
+        trackDecodeInfo.clearDtsInfo(track);
+        frameDuration = Math.ceil(ONE_SECOND_IN_TS$1 * 1024 / track.samplerate);
+        if (frames.length) {
+          segmentDuration = frames.length * frameDuration;
+          this.trigger("segmentTimingInfo", generateSegmentTimingInfo(
+            // The audio track's baseMediaDecodeTime is in audio clock cycles, but the
+            // frame info is in video clock cycles. Convert to match expectation of
+            // listeners (that all timestamps will be based on video clock cycles).
+            clock.audioTsToVideoTs(track.baseMediaDecodeTime, track.samplerate),
+            // frame times are already in video clock, as is segment duration
+            frames[0].dts,
+            frames[0].pts,
+            frames[0].dts + segmentDuration,
+            frames[0].pts + segmentDuration,
+            videoClockCyclesOfSilencePrefixed || 0
+          ));
+          this.trigger("timingInfo", {
+            start: frames[0].pts,
+            end: frames[0].pts + segmentDuration
+          });
+        }
+        this.trigger("data", {
+          track,
+          boxes
+        });
+        this.trigger("done", "AudioSegmentStream");
+      };
+      this.reset = function() {
+        trackDecodeInfo.clearDtsInfo(track);
+        adtsFrames = [];
+        this.trigger("reset");
+      };
+    };
+    AudioSegmentStream.prototype = new Stream2();
+    VideoSegmentStream = function(track, options) {
+      var sequenceNumber, nalUnits = [], gopsToAlignWith = [], config, pps;
+      options = options || {};
+      sequenceNumber = options.firstSequenceNumber || 0;
+      VideoSegmentStream.prototype.init.call(this);
+      delete track.minPTS;
+      this.gopCache_ = [];
+      this.push = function(nalUnit) {
+        trackDecodeInfo.collectDtsInfo(track, nalUnit);
+        if (nalUnit.nalUnitType === "seq_parameter_set_rbsp" && !config) {
+          config = nalUnit.config;
+          track.sps = [nalUnit.data];
+          VIDEO_PROPERTIES.forEach(function(prop) {
+            track[prop] = config[prop];
+          }, this);
+        }
+        if (nalUnit.nalUnitType === "pic_parameter_set_rbsp" && !pps) {
+          pps = nalUnit.data;
+          track.pps = [nalUnit.data];
+        }
+        nalUnits.push(nalUnit);
+      };
+      this.flush = function() {
+        var frames, gopForFusion, gops, moof2, mdat2, boxes, prependedContentDuration = 0, firstGop, lastGop;
+        while (nalUnits.length) {
+          if (nalUnits[0].nalUnitType === "access_unit_delimiter_rbsp") {
+            break;
+          }
+          nalUnits.shift();
+        }
+        if (nalUnits.length === 0) {
+          this.resetStream_();
+          this.trigger("done", "VideoSegmentStream");
+          return;
+        }
+        frames = frameUtils.groupNalsIntoFrames(nalUnits);
+        gops = frameUtils.groupFramesIntoGops(frames);
+        if (!gops[0][0].keyFrame) {
+          gopForFusion = this.getGopForFusion_(nalUnits[0], track);
+          if (gopForFusion) {
+            prependedContentDuration = gopForFusion.duration;
+            gops.unshift(gopForFusion);
+            gops.byteLength += gopForFusion.byteLength;
+            gops.nalCount += gopForFusion.nalCount;
+            gops.pts = gopForFusion.pts;
+            gops.dts = gopForFusion.dts;
+            gops.duration += gopForFusion.duration;
+          } else {
+            gops = frameUtils.extendFirstKeyFrame(gops);
+          }
+        }
+        if (gopsToAlignWith.length) {
+          var alignedGops;
+          if (options.alignGopsAtEnd) {
+            alignedGops = this.alignGopsAtEnd_(gops);
+          } else {
+            alignedGops = this.alignGopsAtStart_(gops);
+          }
+          if (!alignedGops) {
+            this.gopCache_.unshift({
+              gop: gops.pop(),
+              pps: track.pps,
+              sps: track.sps
+            });
+            this.gopCache_.length = Math.min(6, this.gopCache_.length);
+            nalUnits = [];
+            this.resetStream_();
+            this.trigger("done", "VideoSegmentStream");
+            return;
+          }
+          trackDecodeInfo.clearDtsInfo(track);
+          gops = alignedGops;
+        }
+        trackDecodeInfo.collectDtsInfo(track, gops);
+        track.samples = frameUtils.generateSampleTable(gops);
+        mdat2 = mp42.mdat(frameUtils.concatenateNalData(gops));
+        track.baseMediaDecodeTime = trackDecodeInfo.calculateTrackBaseMediaDecodeTime(track, options.keepOriginalTimestamps);
+        this.trigger("processedGopsInfo", gops.map(function(gop) {
+          return {
+            pts: gop.pts,
+            dts: gop.dts,
+            byteLength: gop.byteLength
+          };
+        }));
+        firstGop = gops[0];
+        lastGop = gops[gops.length - 1];
+        this.trigger("segmentTimingInfo", generateSegmentTimingInfo(track.baseMediaDecodeTime, firstGop.dts, firstGop.pts, lastGop.dts + lastGop.duration, lastGop.pts + lastGop.duration, prependedContentDuration));
+        this.trigger("timingInfo", {
+          start: gops[0].pts,
+          end: gops[gops.length - 1].pts + gops[gops.length - 1].duration
+        });
+        this.gopCache_.unshift({
+          gop: gops.pop(),
+          pps: track.pps,
+          sps: track.sps
+        });
+        this.gopCache_.length = Math.min(6, this.gopCache_.length);
+        nalUnits = [];
+        this.trigger("baseMediaDecodeTime", track.baseMediaDecodeTime);
+        this.trigger("timelineStartInfo", track.timelineStartInfo);
+        moof2 = mp42.moof(sequenceNumber, [track]);
+        boxes = new Uint8Array(moof2.byteLength + mdat2.byteLength);
+        sequenceNumber++;
+        boxes.set(moof2);
+        boxes.set(mdat2, moof2.byteLength);
+        this.trigger("data", {
+          track,
+          boxes
+        });
+        this.resetStream_();
+        this.trigger("done", "VideoSegmentStream");
+      };
+      this.reset = function() {
+        this.resetStream_();
+        nalUnits = [];
+        this.gopCache_.length = 0;
+        gopsToAlignWith.length = 0;
+        this.trigger("reset");
+      };
+      this.resetStream_ = function() {
+        trackDecodeInfo.clearDtsInfo(track);
+        config = void 0;
+        pps = void 0;
+      };
+      this.getGopForFusion_ = function(nalUnit) {
+        var halfSecond = 45e3, allowableOverlap = 1e4, nearestDistance = Infinity, dtsDistance, nearestGopObj, currentGop, currentGopObj, i2;
+        for (i2 = 0; i2 < this.gopCache_.length; i2++) {
+          currentGopObj = this.gopCache_[i2];
+          currentGop = currentGopObj.gop;
+          if (!(track.pps && arrayEquals(track.pps[0], currentGopObj.pps[0])) || !(track.sps && arrayEquals(track.sps[0], currentGopObj.sps[0]))) {
+            continue;
+          }
+          if (currentGop.dts < track.timelineStartInfo.dts) {
+            continue;
+          }
+          dtsDistance = nalUnit.dts - currentGop.dts - currentGop.duration;
+          if (dtsDistance >= -allowableOverlap && dtsDistance <= halfSecond) {
+            if (!nearestGopObj || nearestDistance > dtsDistance) {
+              nearestGopObj = currentGopObj;
+              nearestDistance = dtsDistance;
+            }
+          }
+        }
+        if (nearestGopObj) {
+          return nearestGopObj.gop;
+        }
+        return null;
+      };
+      this.alignGopsAtStart_ = function(gops) {
+        var alignIndex, gopIndex, align, gop, byteLength, nalCount, duration3, alignedGops;
+        byteLength = gops.byteLength;
+        nalCount = gops.nalCount;
+        duration3 = gops.duration;
+        alignIndex = gopIndex = 0;
+        while (alignIndex < gopsToAlignWith.length && gopIndex < gops.length) {
+          align = gopsToAlignWith[alignIndex];
+          gop = gops[gopIndex];
+          if (align.pts === gop.pts) {
+            break;
+          }
+          if (gop.pts > align.pts) {
+            alignIndex++;
+            continue;
+          }
+          gopIndex++;
+          byteLength -= gop.byteLength;
+          nalCount -= gop.nalCount;
+          duration3 -= gop.duration;
+        }
+        if (gopIndex === 0) {
+          return gops;
+        }
+        if (gopIndex === gops.length) {
+          return null;
+        }
+        alignedGops = gops.slice(gopIndex);
+        alignedGops.byteLength = byteLength;
+        alignedGops.duration = duration3;
+        alignedGops.nalCount = nalCount;
+        alignedGops.pts = alignedGops[0].pts;
+        alignedGops.dts = alignedGops[0].dts;
+        return alignedGops;
+      };
+      this.alignGopsAtEnd_ = function(gops) {
+        var alignIndex, gopIndex, align, gop, alignEndIndex, matchFound;
+        alignIndex = gopsToAlignWith.length - 1;
+        gopIndex = gops.length - 1;
+        alignEndIndex = null;
+        matchFound = false;
+        while (alignIndex >= 0 && gopIndex >= 0) {
+          align = gopsToAlignWith[alignIndex];
+          gop = gops[gopIndex];
+          if (align.pts === gop.pts) {
+            matchFound = true;
+            break;
+          }
+          if (align.pts > gop.pts) {
+            alignIndex--;
+            continue;
+          }
+          if (alignIndex === gopsToAlignWith.length - 1) {
+            alignEndIndex = gopIndex;
+          }
+          gopIndex--;
+        }
+        if (!matchFound && alignEndIndex === null) {
+          return null;
+        }
+        var trimIndex;
+        if (matchFound) {
+          trimIndex = gopIndex;
+        } else {
+          trimIndex = alignEndIndex;
+        }
+        if (trimIndex === 0) {
+          return gops;
+        }
+        var alignedGops = gops.slice(trimIndex);
+        var metadata = alignedGops.reduce(function(total, gop2) {
+          total.byteLength += gop2.byteLength;
+          total.duration += gop2.duration;
+          total.nalCount += gop2.nalCount;
+          return total;
+        }, {
+          byteLength: 0,
+          duration: 0,
+          nalCount: 0
+        });
+        alignedGops.byteLength = metadata.byteLength;
+        alignedGops.duration = metadata.duration;
+        alignedGops.nalCount = metadata.nalCount;
+        alignedGops.pts = alignedGops[0].pts;
+        alignedGops.dts = alignedGops[0].dts;
+        return alignedGops;
+      };
+      this.alignGopsWith = function(newGopsToAlignWith) {
+        gopsToAlignWith = newGopsToAlignWith;
+      };
+    };
+    VideoSegmentStream.prototype = new Stream2();
+    CoalesceStream = function(options, metadataStream2) {
+      this.numberOfTracks = 0;
+      this.metadataStream = metadataStream2;
+      options = options || {};
+      if (typeof options.remux !== "undefined") {
+        this.remuxTracks = !!options.remux;
+      } else {
+        this.remuxTracks = true;
+      }
+      if (typeof options.keepOriginalTimestamps === "boolean") {
+        this.keepOriginalTimestamps = options.keepOriginalTimestamps;
+      } else {
+        this.keepOriginalTimestamps = false;
+      }
+      this.pendingTracks = [];
+      this.videoTrack = null;
+      this.pendingBoxes = [];
+      this.pendingCaptions = [];
+      this.pendingMetadata = [];
+      this.pendingBytes = 0;
+      this.emittedTracks = 0;
+      CoalesceStream.prototype.init.call(this);
+      this.push = function(output) {
+        if (output.content || output.text) {
+          return this.pendingCaptions.push(output);
+        }
+        if (output.frames) {
+          return this.pendingMetadata.push(output);
+        }
+        this.pendingTracks.push(output.track);
+        this.pendingBytes += output.boxes.byteLength;
+        if (output.track.type === "video") {
+          this.videoTrack = output.track;
+          this.pendingBoxes.push(output.boxes);
+        }
+        if (output.track.type === "audio") {
+          this.audioTrack = output.track;
+          this.pendingBoxes.unshift(output.boxes);
+        }
+      };
+    };
+    CoalesceStream.prototype = new Stream2();
+    CoalesceStream.prototype.flush = function(flushSource) {
+      var offset = 0, event = {
+        captions: [],
+        captionStreams: {},
+        metadata: [],
+        info: {}
+      }, caption, id32, initSegment, timelineStartPts = 0, i2;
+      if (this.pendingTracks.length < this.numberOfTracks) {
+        if (flushSource !== "VideoSegmentStream" && flushSource !== "AudioSegmentStream") {
+          return;
+        } else if (this.remuxTracks) {
+          return;
+        } else if (this.pendingTracks.length === 0) {
+          this.emittedTracks++;
+          if (this.emittedTracks >= this.numberOfTracks) {
+            this.trigger("done");
+            this.emittedTracks = 0;
+          }
+          return;
+        }
+      }
+      if (this.videoTrack) {
+        timelineStartPts = this.videoTrack.timelineStartInfo.pts;
+        VIDEO_PROPERTIES.forEach(function(prop) {
+          event.info[prop] = this.videoTrack[prop];
+        }, this);
+      } else if (this.audioTrack) {
+        timelineStartPts = this.audioTrack.timelineStartInfo.pts;
+        AUDIO_PROPERTIES.forEach(function(prop) {
+          event.info[prop] = this.audioTrack[prop];
+        }, this);
+      }
+      if (this.videoTrack || this.audioTrack) {
+        if (this.pendingTracks.length === 1) {
+          event.type = this.pendingTracks[0].type;
+        } else {
+          event.type = "combined";
+        }
+        this.emittedTracks += this.pendingTracks.length;
+        initSegment = mp42.initSegment(this.pendingTracks);
+        event.initSegment = new Uint8Array(initSegment.byteLength);
+        event.initSegment.set(initSegment);
+        event.data = new Uint8Array(this.pendingBytes);
+        for (i2 = 0; i2 < this.pendingBoxes.length; i2++) {
+          event.data.set(this.pendingBoxes[i2], offset);
+          offset += this.pendingBoxes[i2].byteLength;
+        }
+        for (i2 = 0; i2 < this.pendingCaptions.length; i2++) {
+          caption = this.pendingCaptions[i2];
+          caption.startTime = clock.metadataTsToSeconds(caption.startPts, timelineStartPts, this.keepOriginalTimestamps);
+          caption.endTime = clock.metadataTsToSeconds(caption.endPts, timelineStartPts, this.keepOriginalTimestamps);
+          event.captionStreams[caption.stream] = true;
+          event.captions.push(caption);
+        }
+        for (i2 = 0; i2 < this.pendingMetadata.length; i2++) {
+          id32 = this.pendingMetadata[i2];
+          id32.cueTime = clock.metadataTsToSeconds(id32.pts, timelineStartPts, this.keepOriginalTimestamps);
+          event.metadata.push(id32);
+        }
+        event.metadata.dispatchType = this.metadataStream.dispatchType;
+        this.pendingTracks.length = 0;
+        this.videoTrack = null;
+        this.pendingBoxes.length = 0;
+        this.pendingCaptions.length = 0;
+        this.pendingBytes = 0;
+        this.pendingMetadata.length = 0;
+        this.trigger("data", event);
+        for (i2 = 0; i2 < event.captions.length; i2++) {
+          caption = event.captions[i2];
+          this.trigger("caption", caption);
+        }
+        for (i2 = 0; i2 < event.metadata.length; i2++) {
+          id32 = event.metadata[i2];
+          this.trigger("id3Frame", id32);
+        }
+      }
+      if (this.emittedTracks >= this.numberOfTracks) {
+        this.trigger("done");
+        this.emittedTracks = 0;
+      }
+    };
+    CoalesceStream.prototype.setRemux = function(val) {
+      this.remuxTracks = val;
+    };
+    Transmuxer = function(options) {
+      var self2 = this, hasFlushed = true, videoTrack, audioTrack;
+      Transmuxer.prototype.init.call(this);
+      options = options || {};
+      this.baseMediaDecodeTime = options.baseMediaDecodeTime || 0;
+      this.transmuxPipeline_ = {};
+      this.setupAacPipeline = function() {
+        var pipeline = {};
+        this.transmuxPipeline_ = pipeline;
+        pipeline.type = "aac";
+        pipeline.metadataStream = new m2ts.MetadataStream();
+        pipeline.aacStream = new AacStream();
+        pipeline.audioTimestampRolloverStream = new m2ts.TimestampRolloverStream("audio");
+        pipeline.timedMetadataTimestampRolloverStream = new m2ts.TimestampRolloverStream("timed-metadata");
+        pipeline.adtsStream = new AdtsStream();
+        pipeline.coalesceStream = new CoalesceStream(options, pipeline.metadataStream);
+        pipeline.headOfPipeline = pipeline.aacStream;
+        pipeline.aacStream.pipe(pipeline.audioTimestampRolloverStream).pipe(pipeline.adtsStream);
+        pipeline.aacStream.pipe(pipeline.timedMetadataTimestampRolloverStream).pipe(pipeline.metadataStream).pipe(pipeline.coalesceStream);
+        pipeline.metadataStream.on("timestamp", function(frame) {
+          pipeline.aacStream.setTimestamp(frame.timeStamp);
+        });
+        pipeline.aacStream.on("data", function(data) {
+          if (data.type !== "timed-metadata" && data.type !== "audio" || pipeline.audioSegmentStream) {
+            return;
+          }
+          audioTrack = audioTrack || {
+            timelineStartInfo: {
+              baseMediaDecodeTime: self2.baseMediaDecodeTime
+            },
+            codec: "adts",
+            type: "audio"
+          };
+          pipeline.coalesceStream.numberOfTracks++;
+          pipeline.audioSegmentStream = new AudioSegmentStream(audioTrack, options);
+          pipeline.audioSegmentStream.on("log", self2.getLogTrigger_("audioSegmentStream"));
+          pipeline.audioSegmentStream.on("timingInfo", self2.trigger.bind(self2, "audioTimingInfo"));
+          pipeline.adtsStream.pipe(pipeline.audioSegmentStream).pipe(pipeline.coalesceStream);
+          self2.trigger("trackinfo", {
+            hasAudio: !!audioTrack,
+            hasVideo: !!videoTrack
+          });
+        });
+        pipeline.coalesceStream.on("data", this.trigger.bind(this, "data"));
+        pipeline.coalesceStream.on("done", this.trigger.bind(this, "done"));
+        addPipelineLogRetriggers(this, pipeline);
+      };
+      this.setupTsPipeline = function() {
+        var pipeline = {};
+        this.transmuxPipeline_ = pipeline;
+        pipeline.type = "ts";
+        pipeline.metadataStream = new m2ts.MetadataStream();
+        pipeline.packetStream = new m2ts.TransportPacketStream();
+        pipeline.parseStream = new m2ts.TransportParseStream();
+        pipeline.elementaryStream = new m2ts.ElementaryStream();
+        pipeline.timestampRolloverStream = new m2ts.TimestampRolloverStream();
+        pipeline.adtsStream = new AdtsStream();
+        pipeline.h264Stream = new H264Stream();
+        pipeline.captionStream = new m2ts.CaptionStream(options);
+        pipeline.coalesceStream = new CoalesceStream(options, pipeline.metadataStream);
+        pipeline.headOfPipeline = pipeline.packetStream;
+        pipeline.packetStream.pipe(pipeline.parseStream).pipe(pipeline.elementaryStream).pipe(pipeline.timestampRolloverStream);
+        pipeline.timestampRolloverStream.pipe(pipeline.h264Stream);
+        pipeline.timestampRolloverStream.pipe(pipeline.adtsStream);
+        pipeline.timestampRolloverStream.pipe(pipeline.metadataStream).pipe(pipeline.coalesceStream);
+        pipeline.h264Stream.pipe(pipeline.captionStream).pipe(pipeline.coalesceStream);
+        pipeline.elementaryStream.on("data", function(data) {
+          var i2;
+          if (data.type === "metadata") {
+            i2 = data.tracks.length;
+            while (i2--) {
+              if (!videoTrack && data.tracks[i2].type === "video") {
+                videoTrack = data.tracks[i2];
+                videoTrack.timelineStartInfo.baseMediaDecodeTime = self2.baseMediaDecodeTime;
+              } else if (!audioTrack && data.tracks[i2].type === "audio") {
+                audioTrack = data.tracks[i2];
+                audioTrack.timelineStartInfo.baseMediaDecodeTime = self2.baseMediaDecodeTime;
+              }
+            }
+            if (videoTrack && !pipeline.videoSegmentStream) {
+              pipeline.coalesceStream.numberOfTracks++;
+              pipeline.videoSegmentStream = new VideoSegmentStream(videoTrack, options);
+              pipeline.videoSegmentStream.on("log", self2.getLogTrigger_("videoSegmentStream"));
+              pipeline.videoSegmentStream.on("timelineStartInfo", function(timelineStartInfo) {
+                if (audioTrack && !options.keepOriginalTimestamps) {
+                  audioTrack.timelineStartInfo = timelineStartInfo;
+                  pipeline.audioSegmentStream.setEarliestDts(timelineStartInfo.dts - self2.baseMediaDecodeTime);
+                }
+              });
+              pipeline.videoSegmentStream.on("processedGopsInfo", self2.trigger.bind(self2, "gopInfo"));
+              pipeline.videoSegmentStream.on("segmentTimingInfo", self2.trigger.bind(self2, "videoSegmentTimingInfo"));
+              pipeline.videoSegmentStream.on("baseMediaDecodeTime", function(baseMediaDecodeTime) {
+                if (audioTrack) {
+                  pipeline.audioSegmentStream.setVideoBaseMediaDecodeTime(baseMediaDecodeTime);
+                }
+              });
+              pipeline.videoSegmentStream.on("timingInfo", self2.trigger.bind(self2, "videoTimingInfo"));
+              pipeline.h264Stream.pipe(pipeline.videoSegmentStream).pipe(pipeline.coalesceStream);
+            }
+            if (audioTrack && !pipeline.audioSegmentStream) {
+              pipeline.coalesceStream.numberOfTracks++;
+              pipeline.audioSegmentStream = new AudioSegmentStream(audioTrack, options);
+              pipeline.audioSegmentStream.on("log", self2.getLogTrigger_("audioSegmentStream"));
+              pipeline.audioSegmentStream.on("timingInfo", self2.trigger.bind(self2, "audioTimingInfo"));
+              pipeline.audioSegmentStream.on("segmentTimingInfo", self2.trigger.bind(self2, "audioSegmentTimingInfo"));
+              pipeline.adtsStream.pipe(pipeline.audioSegmentStream).pipe(pipeline.coalesceStream);
+            }
+            self2.trigger("trackinfo", {
+              hasAudio: !!audioTrack,
+              hasVideo: !!videoTrack
+            });
+          }
+        });
+        pipeline.coalesceStream.on("data", this.trigger.bind(this, "data"));
+        pipeline.coalesceStream.on("id3Frame", function(id3Frame) {
+          id3Frame.dispatchType = pipeline.metadataStream.dispatchType;
+          self2.trigger("id3Frame", id3Frame);
+        });
+        pipeline.coalesceStream.on("caption", this.trigger.bind(this, "caption"));
+        pipeline.coalesceStream.on("done", this.trigger.bind(this, "done"));
+        addPipelineLogRetriggers(this, pipeline);
+      };
+      this.setBaseMediaDecodeTime = function(baseMediaDecodeTime) {
+        var pipeline = this.transmuxPipeline_;
+        if (!options.keepOriginalTimestamps) {
+          this.baseMediaDecodeTime = baseMediaDecodeTime;
+        }
+        if (audioTrack) {
+          audioTrack.timelineStartInfo.dts = void 0;
+          audioTrack.timelineStartInfo.pts = void 0;
+          trackDecodeInfo.clearDtsInfo(audioTrack);
+          if (pipeline.audioTimestampRolloverStream) {
+            pipeline.audioTimestampRolloverStream.discontinuity();
+          }
+        }
+        if (videoTrack) {
+          if (pipeline.videoSegmentStream) {
+            pipeline.videoSegmentStream.gopCache_ = [];
+          }
+          videoTrack.timelineStartInfo.dts = void 0;
+          videoTrack.timelineStartInfo.pts = void 0;
+          trackDecodeInfo.clearDtsInfo(videoTrack);
+          pipeline.captionStream.reset();
+        }
+        if (pipeline.timestampRolloverStream) {
+          pipeline.timestampRolloverStream.discontinuity();
+        }
+      };
+      this.setAudioAppendStart = function(timestamp) {
+        if (audioTrack) {
+          this.transmuxPipeline_.audioSegmentStream.setAudioAppendStart(timestamp);
+        }
+      };
+      this.setRemux = function(val) {
+        var pipeline = this.transmuxPipeline_;
+        options.remux = val;
+        if (pipeline && pipeline.coalesceStream) {
+          pipeline.coalesceStream.setRemux(val);
+        }
+      };
+      this.alignGopsWith = function(gopsToAlignWith) {
+        if (videoTrack && this.transmuxPipeline_.videoSegmentStream) {
+          this.transmuxPipeline_.videoSegmentStream.alignGopsWith(gopsToAlignWith);
+        }
+      };
+      this.getLogTrigger_ = function(key) {
+        var self3 = this;
+        return function(event) {
+          event.stream = key;
+          self3.trigger("log", event);
+        };
+      };
+      this.push = function(data) {
+        if (hasFlushed) {
+          var isAac = isLikelyAacData(data);
+          if (isAac && this.transmuxPipeline_.type !== "aac") {
+            this.setupAacPipeline();
+          } else if (!isAac && this.transmuxPipeline_.type !== "ts") {
+            this.setupTsPipeline();
+          }
+          hasFlushed = false;
+        }
+        this.transmuxPipeline_.headOfPipeline.push(data);
+      };
+      this.flush = function() {
+        hasFlushed = true;
+        this.transmuxPipeline_.headOfPipeline.flush();
+      };
+      this.endTimeline = function() {
+        this.transmuxPipeline_.headOfPipeline.endTimeline();
+      };
+      this.reset = function() {
+        if (this.transmuxPipeline_.headOfPipeline) {
+          this.transmuxPipeline_.headOfPipeline.reset();
+        }
+      };
+      this.resetCaptions = function() {
+        if (this.transmuxPipeline_.captionStream) {
+          this.transmuxPipeline_.captionStream.reset();
+        }
+      };
+    };
+    Transmuxer.prototype = new Stream2();
+    var transmuxer = {
+      Transmuxer,
+      VideoSegmentStream,
+      AudioSegmentStream,
+      AUDIO_PROPERTIES,
+      VIDEO_PROPERTIES,
+      // exported for testing
+      generateSegmentTimingInfo
+    };
+    var toUnsigned$3 = function(value) {
+      return value >>> 0;
+    };
+    var toHexString$1 = function(value) {
+      return ("00" + value.toString(16)).slice(-2);
+    };
+    var bin = {
+      toUnsigned: toUnsigned$3,
+      toHexString: toHexString$1
+    };
+    var parseType$3 = function(buffer) {
+      var result = "";
+      result += String.fromCharCode(buffer[0]);
+      result += String.fromCharCode(buffer[1]);
+      result += String.fromCharCode(buffer[2]);
+      result += String.fromCharCode(buffer[3]);
+      return result;
+    };
+    var parseType_1 = parseType$3;
+    var toUnsigned$2 = bin.toUnsigned;
+    var parseType$2 = parseType_1;
+    var findBox$2 = function(data, path) {
+      var results = [], i2, size, type2, end, subresults;
+      if (!path.length) {
+        return null;
+      }
+      for (i2 = 0; i2 < data.byteLength; ) {
+        size = toUnsigned$2(data[i2] << 24 | data[i2 + 1] << 16 | data[i2 + 2] << 8 | data[i2 + 3]);
+        type2 = parseType$2(data.subarray(i2 + 4, i2 + 8));
+        end = size > 1 ? i2 + size : data.byteLength;
+        if (type2 === path[0]) {
+          if (path.length === 1) {
+            results.push(data.subarray(i2 + 8, end));
+          } else {
+            subresults = findBox$2(data.subarray(i2 + 8, end), path.slice(1));
+            if (subresults.length) {
+              results = results.concat(subresults);
+            }
+          }
+        }
+        i2 = end;
+      }
+      return results;
+    };
+    var findBox_1 = findBox$2;
+    var toUnsigned$1 = bin.toUnsigned;
+    var getUint64$2 = numbers.getUint64;
+    var tfdt = function(data) {
+      var result = {
+        version: data[0],
+        flags: new Uint8Array(data.subarray(1, 4))
+      };
+      if (result.version === 1) {
+        result.baseMediaDecodeTime = getUint64$2(data.subarray(4));
+      } else {
+        result.baseMediaDecodeTime = toUnsigned$1(data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7]);
+      }
+      return result;
+    };
+    var parseTfdt$2 = tfdt;
+    var parseSampleFlags$1 = function(flags) {
+      return {
+        isLeading: (flags[0] & 12) >>> 2,
+        dependsOn: flags[0] & 3,
+        isDependedOn: (flags[1] & 192) >>> 6,
+        hasRedundancy: (flags[1] & 48) >>> 4,
+        paddingValue: (flags[1] & 14) >>> 1,
+        isNonSyncSample: flags[1] & 1,
+        degradationPriority: flags[2] << 8 | flags[3]
+      };
+    };
+    var parseSampleFlags_1 = parseSampleFlags$1;
+    var parseSampleFlags = parseSampleFlags_1;
+    var trun = function(data) {
+      var result = {
+        version: data[0],
+        flags: new Uint8Array(data.subarray(1, 4)),
+        samples: []
+      }, view = new DataView(data.buffer, data.byteOffset, data.byteLength), dataOffsetPresent = result.flags[2] & 1, firstSampleFlagsPresent = result.flags[2] & 4, sampleDurationPresent = result.flags[1] & 1, sampleSizePresent = result.flags[1] & 2, sampleFlagsPresent = result.flags[1] & 4, sampleCompositionTimeOffsetPresent = result.flags[1] & 8, sampleCount = view.getUint32(4), offset = 8, sample;
+      if (dataOffsetPresent) {
+        result.dataOffset = view.getInt32(offset);
+        offset += 4;
+      }
+      if (firstSampleFlagsPresent && sampleCount) {
+        sample = {
+          flags: parseSampleFlags(data.subarray(offset, offset + 4))
+        };
+        offset += 4;
+        if (sampleDurationPresent) {
+          sample.duration = view.getUint32(offset);
+          offset += 4;
+        }
+        if (sampleSizePresent) {
+          sample.size = view.getUint32(offset);
+          offset += 4;
+        }
+        if (sampleCompositionTimeOffsetPresent) {
+          if (result.version === 1) {
+            sample.compositionTimeOffset = view.getInt32(offset);
+          } else {
+            sample.compositionTimeOffset = view.getUint32(offset);
+          }
+          offset += 4;
+        }
+        result.samples.push(sample);
+        sampleCount--;
+      }
+      while (sampleCount--) {
+        sample = {};
+        if (sampleDurationPresent) {
+          sample.duration = view.getUint32(offset);
+          offset += 4;
+        }
+        if (sampleSizePresent) {
+          sample.size = view.getUint32(offset);
+          offset += 4;
+        }
+        if (sampleFlagsPresent) {
+          sample.flags = parseSampleFlags(data.subarray(offset, offset + 4));
+          offset += 4;
+        }
+        if (sampleCompositionTimeOffsetPresent) {
+          if (result.version === 1) {
+            sample.compositionTimeOffset = view.getInt32(offset);
+          } else {
+            sample.compositionTimeOffset = view.getUint32(offset);
+          }
+          offset += 4;
+        }
+        result.samples.push(sample);
+      }
+      return result;
+    };
+    var parseTrun$2 = trun;
+    var tfhd = function(data) {
+      var view = new DataView(data.buffer, data.byteOffset, data.byteLength), result = {
+        version: data[0],
+        flags: new Uint8Array(data.subarray(1, 4)),
+        trackId: view.getUint32(4)
+      }, baseDataOffsetPresent = result.flags[2] & 1, sampleDescriptionIndexPresent = result.flags[2] & 2, defaultSampleDurationPresent = result.flags[2] & 8, defaultSampleSizePresent = result.flags[2] & 16, defaultSampleFlagsPresent = result.flags[2] & 32, durationIsEmpty = result.flags[0] & 65536, defaultBaseIsMoof = result.flags[0] & 131072, i2;
+      i2 = 8;
+      if (baseDataOffsetPresent) {
+        i2 += 4;
+        result.baseDataOffset = view.getUint32(12);
+        i2 += 4;
+      }
+      if (sampleDescriptionIndexPresent) {
+        result.sampleDescriptionIndex = view.getUint32(i2);
+        i2 += 4;
+      }
+      if (defaultSampleDurationPresent) {
+        result.defaultSampleDuration = view.getUint32(i2);
+        i2 += 4;
+      }
+      if (defaultSampleSizePresent) {
+        result.defaultSampleSize = view.getUint32(i2);
+        i2 += 4;
+      }
+      if (defaultSampleFlagsPresent) {
+        result.defaultSampleFlags = view.getUint32(i2);
+      }
+      if (durationIsEmpty) {
+        result.durationIsEmpty = true;
+      }
+      if (!baseDataOffsetPresent && defaultBaseIsMoof) {
+        result.baseDataOffsetIsMoof = true;
+      }
+      return result;
+    };
+    var parseTfhd$2 = tfhd;
+    var win;
+    if (typeof window !== "undefined") {
+      win = window;
+    } else if (typeof commonjsGlobal !== "undefined") {
+      win = commonjsGlobal;
+    } else if (typeof self !== "undefined") {
+      win = self;
+    } else {
+      win = {};
+    }
+    var window_1 = win;
+    var discardEmulationPreventionBytes3 = captionPacketParser.discardEmulationPreventionBytes;
+    var CaptionStream = captionStream.CaptionStream;
+    var findBox$1 = findBox_1;
+    var parseTfdt$1 = parseTfdt$2;
+    var parseTrun$1 = parseTrun$2;
+    var parseTfhd$1 = parseTfhd$2;
+    var window$2 = window_1;
+    var mapToSample = function(offset, samples) {
+      var approximateOffset = offset;
+      for (var i2 = 0; i2 < samples.length; i2++) {
+        var sample = samples[i2];
+        if (approximateOffset < sample.size) {
+          return sample;
+        }
+        approximateOffset -= sample.size;
+      }
+      return null;
+    };
+    var findSeiNals = function(avcStream, samples, trackId) {
+      var avcView = new DataView(avcStream.buffer, avcStream.byteOffset, avcStream.byteLength), result = {
+        logs: [],
+        seiNals: []
+      }, seiNal, i2, length, lastMatchedSample;
+      for (i2 = 0; i2 + 4 < avcStream.length; i2 += length) {
+        length = avcView.getUint32(i2);
+        i2 += 4;
+        if (length <= 0) {
+          continue;
+        }
+        switch (avcStream[i2] & 31) {
+          case 6:
+            var data = avcStream.subarray(i2 + 1, i2 + 1 + length);
+            var matchingSample = mapToSample(i2, samples);
+            seiNal = {
+              nalUnitType: "sei_rbsp",
+              size: length,
+              data,
+              escapedRBSP: discardEmulationPreventionBytes3(data),
+              trackId
+            };
+            if (matchingSample) {
+              seiNal.pts = matchingSample.pts;
+              seiNal.dts = matchingSample.dts;
+              lastMatchedSample = matchingSample;
+            } else if (lastMatchedSample) {
+              seiNal.pts = lastMatchedSample.pts;
+              seiNal.dts = lastMatchedSample.dts;
+            } else {
+              result.logs.push({
+                level: "warn",
+                message: "We've encountered a nal unit without data at " + i2 + " for trackId " + trackId + ". See mux.js#223."
+              });
+              break;
+            }
+            result.seiNals.push(seiNal);
+            break;
+        }
+      }
+      return result;
+    };
+    var parseSamples = function(truns, baseMediaDecodeTime, tfhd2) {
+      var currentDts = baseMediaDecodeTime;
+      var defaultSampleDuration = tfhd2.defaultSampleDuration || 0;
+      var defaultSampleSize = tfhd2.defaultSampleSize || 0;
+      var trackId = tfhd2.trackId;
+      var allSamples = [];
+      truns.forEach(function(trun2) {
+        var trackRun = parseTrun$1(trun2);
+        var samples = trackRun.samples;
+        samples.forEach(function(sample) {
+          if (sample.duration === void 0) {
+            sample.duration = defaultSampleDuration;
+          }
+          if (sample.size === void 0) {
+            sample.size = defaultSampleSize;
+          }
+          sample.trackId = trackId;
+          sample.dts = currentDts;
+          if (sample.compositionTimeOffset === void 0) {
+            sample.compositionTimeOffset = 0;
+          }
+          if (typeof currentDts === "bigint") {
+            sample.pts = currentDts + window$2.BigInt(sample.compositionTimeOffset);
+            currentDts += window$2.BigInt(sample.duration);
+          } else {
+            sample.pts = currentDts + sample.compositionTimeOffset;
+            currentDts += sample.duration;
+          }
+        });
+        allSamples = allSamples.concat(samples);
+      });
+      return allSamples;
+    };
+    var parseCaptionNals = function(segment, videoTrackId) {
+      var trafs = findBox$1(segment, ["moof", "traf"]);
+      var mdats = findBox$1(segment, ["mdat"]);
+      var captionNals = {};
+      var mdatTrafPairs = [];
+      mdats.forEach(function(mdat2, index) {
+        var matchingTraf = trafs[index];
+        mdatTrafPairs.push({
+          mdat: mdat2,
+          traf: matchingTraf
+        });
+      });
+      mdatTrafPairs.forEach(function(pair) {
+        var mdat2 = pair.mdat;
+        var traf2 = pair.traf;
+        var tfhd2 = findBox$1(traf2, ["tfhd"]);
+        var headerInfo = parseTfhd$1(tfhd2[0]);
+        var trackId = headerInfo.trackId;
+        var tfdt2 = findBox$1(traf2, ["tfdt"]);
+        var baseMediaDecodeTime = tfdt2.length > 0 ? parseTfdt$1(tfdt2[0]).baseMediaDecodeTime : 0;
+        var truns = findBox$1(traf2, ["trun"]);
+        var samples;
+        var result;
+        if (videoTrackId === trackId && truns.length > 0) {
+          samples = parseSamples(truns, baseMediaDecodeTime, headerInfo);
+          result = findSeiNals(mdat2, samples, trackId);
+          if (!captionNals[trackId]) {
+            captionNals[trackId] = {
+              seiNals: [],
+              logs: []
+            };
+          }
+          captionNals[trackId].seiNals = captionNals[trackId].seiNals.concat(result.seiNals);
+          captionNals[trackId].logs = captionNals[trackId].logs.concat(result.logs);
+        }
+      });
+      return captionNals;
+    };
+    var parseEmbeddedCaptions = function(segment, trackId, timescale2) {
+      var captionNals;
+      if (trackId === null) {
+        return null;
+      }
+      captionNals = parseCaptionNals(segment, trackId);
+      var trackNals = captionNals[trackId] || {};
+      return {
+        seiNals: trackNals.seiNals,
+        logs: trackNals.logs,
+        timescale: timescale2
+      };
+    };
+    var CaptionParser = function() {
+      var isInitialized = false;
+      var captionStream2;
+      var segmentCache;
+      var trackId;
+      var timescale2;
+      var parsedCaptions;
+      var parsingPartial;
+      this.isInitialized = function() {
+        return isInitialized;
+      };
+      this.init = function(options) {
+        captionStream2 = new CaptionStream();
+        isInitialized = true;
+        parsingPartial = options ? options.isPartial : false;
+        captionStream2.on("data", function(event) {
+          event.startTime = event.startPts / timescale2;
+          event.endTime = event.endPts / timescale2;
+          parsedCaptions.captions.push(event);
+          parsedCaptions.captionStreams[event.stream] = true;
+        });
+        captionStream2.on("log", function(log3) {
+          parsedCaptions.logs.push(log3);
+        });
+      };
+      this.isNewInit = function(videoTrackIds, timescales) {
+        if (videoTrackIds && videoTrackIds.length === 0 || timescales && typeof timescales === "object" && Object.keys(timescales).length === 0) {
+          return false;
+        }
+        return trackId !== videoTrackIds[0] || timescale2 !== timescales[trackId];
+      };
+      this.parse = function(segment, videoTrackIds, timescales) {
+        var parsedData;
+        if (!this.isInitialized()) {
+          return null;
+        } else if (!videoTrackIds || !timescales) {
+          return null;
+        } else if (this.isNewInit(videoTrackIds, timescales)) {
+          trackId = videoTrackIds[0];
+          timescale2 = timescales[trackId];
+        } else if (trackId === null || !timescale2) {
+          segmentCache.push(segment);
+          return null;
+        }
+        while (segmentCache.length > 0) {
+          var cachedSegment = segmentCache.shift();
+          this.parse(cachedSegment, videoTrackIds, timescales);
+        }
+        parsedData = parseEmbeddedCaptions(segment, trackId, timescale2);
+        if (parsedData && parsedData.logs) {
+          parsedCaptions.logs = parsedCaptions.logs.concat(parsedData.logs);
+        }
+        if (parsedData === null || !parsedData.seiNals) {
+          if (parsedCaptions.logs.length) {
+            return {
+              logs: parsedCaptions.logs,
+              captions: [],
+              captionStreams: []
+            };
+          }
+          return null;
+        }
+        this.pushNals(parsedData.seiNals);
+        this.flushStream();
+        return parsedCaptions;
+      };
+      this.pushNals = function(nals) {
+        if (!this.isInitialized() || !nals || nals.length === 0) {
+          return null;
+        }
+        nals.forEach(function(nal) {
+          captionStream2.push(nal);
+        });
+      };
+      this.flushStream = function() {
+        if (!this.isInitialized()) {
+          return null;
+        }
+        if (!parsingPartial) {
+          captionStream2.flush();
+        } else {
+          captionStream2.partialFlush();
+        }
+      };
+      this.clearParsedCaptions = function() {
+        parsedCaptions.captions = [];
+        parsedCaptions.captionStreams = {};
+        parsedCaptions.logs = [];
+      };
+      this.resetCaptionStream = function() {
+        if (!this.isInitialized()) {
+          return null;
+        }
+        captionStream2.reset();
+      };
+      this.clearAllCaptions = function() {
+        this.clearParsedCaptions();
+        this.resetCaptionStream();
+      };
+      this.reset = function() {
+        segmentCache = [];
+        trackId = null;
+        timescale2 = null;
+        if (!parsedCaptions) {
+          parsedCaptions = {
+            captions: [],
+            // CC1, CC2, CC3, CC4
+            captionStreams: {},
+            logs: []
+          };
+        } else {
+          this.clearParsedCaptions();
+        }
+        this.resetCaptionStream();
+      };
+      this.reset();
+    };
+    var captionParser = CaptionParser;
+    var uint8ToCString$1 = function(data) {
+      var index = 0;
+      var curChar = String.fromCharCode(data[index]);
+      var retString = "";
+      while (curChar !== "\0") {
+        retString += curChar;
+        index++;
+        curChar = String.fromCharCode(data[index]);
+      }
+      retString += curChar;
+      return retString;
+    };
+    var string = {
+      uint8ToCString: uint8ToCString$1
+    };
+    var uint8ToCString = string.uint8ToCString;
+    var getUint64$1 = numbers.getUint64;
+    var parseEmsgBox = function(boxData) {
+      var offset = 4;
+      var version3 = boxData[0];
+      var scheme_id_uri, value, timescale2, presentation_time, presentation_time_delta, event_duration, id, message_data;
+      if (version3 === 0) {
+        scheme_id_uri = uint8ToCString(boxData.subarray(offset));
+        offset += scheme_id_uri.length;
+        value = uint8ToCString(boxData.subarray(offset));
+        offset += value.length;
+        var dv = new DataView(boxData.buffer);
+        timescale2 = dv.getUint32(offset);
+        offset += 4;
+        presentation_time_delta = dv.getUint32(offset);
+        offset += 4;
+        event_duration = dv.getUint32(offset);
+        offset += 4;
+        id = dv.getUint32(offset);
+        offset += 4;
+      } else if (version3 === 1) {
+        var dv = new DataView(boxData.buffer);
+        timescale2 = dv.getUint32(offset);
+        offset += 4;
+        presentation_time = getUint64$1(boxData.subarray(offset));
+        offset += 8;
+        event_duration = dv.getUint32(offset);
+        offset += 4;
+        id = dv.getUint32(offset);
+        offset += 4;
+        scheme_id_uri = uint8ToCString(boxData.subarray(offset));
+        offset += scheme_id_uri.length;
+        value = uint8ToCString(boxData.subarray(offset));
+        offset += value.length;
+      }
+      message_data = new Uint8Array(boxData.subarray(offset, boxData.byteLength));
+      var emsgBox = {
+        scheme_id_uri,
+        value,
+        // if timescale is undefined or 0 set to 1 
+        timescale: timescale2 ? timescale2 : 1,
+        presentation_time,
+        presentation_time_delta,
+        event_duration,
+        id,
+        message_data
+      };
+      return isValidEmsgBox(version3, emsgBox) ? emsgBox : void 0;
+    };
+    var scaleTime = function(presentationTime, timescale2, timeDelta, offset) {
+      return presentationTime || presentationTime === 0 ? presentationTime / timescale2 : offset + timeDelta / timescale2;
+    };
+    var isValidEmsgBox = function(version3, emsg2) {
+      var hasScheme = emsg2.scheme_id_uri !== "\0";
+      var isValidV0Box = version3 === 0 && isDefined(emsg2.presentation_time_delta) && hasScheme;
+      var isValidV1Box = version3 === 1 && isDefined(emsg2.presentation_time) && hasScheme;
+      return !(version3 > 1) && isValidV0Box || isValidV1Box;
+    };
+    var isDefined = function(data) {
+      return data !== void 0 || data !== null;
+    };
+    var emsg$1 = {
+      parseEmsgBox,
+      scaleTime
+    };
+    var toUnsigned = bin.toUnsigned;
+    var toHexString2 = bin.toHexString;
+    var findBox3 = findBox_1;
+    var parseType$1 = parseType_1;
+    var emsg = emsg$1;
+    var parseTfhd = parseTfhd$2;
+    var parseTrun = parseTrun$2;
+    var parseTfdt = parseTfdt$2;
+    var getUint64 = numbers.getUint64;
+    var timescale, startTime, compositionStartTime, getVideoTrackIds, getTracks, getTimescaleFromMediaHeader, getEmsgID3;
+    var window$13 = window_1;
+    var parseId3Frames = parseId3.parseId3Frames;
+    timescale = function(init) {
+      var result = {}, traks = findBox3(init, ["moov", "trak"]);
+      return traks.reduce(function(result2, trak2) {
+        var tkhd2, version3, index, id, mdhd2;
+        tkhd2 = findBox3(trak2, ["tkhd"])[0];
+        if (!tkhd2) {
+          return null;
+        }
+        version3 = tkhd2[0];
+        index = version3 === 0 ? 12 : 20;
+        id = toUnsigned(tkhd2[index] << 24 | tkhd2[index + 1] << 16 | tkhd2[index + 2] << 8 | tkhd2[index + 3]);
+        mdhd2 = findBox3(trak2, ["mdia", "mdhd"])[0];
+        if (!mdhd2) {
+          return null;
+        }
+        version3 = mdhd2[0];
+        index = version3 === 0 ? 12 : 20;
+        result2[id] = toUnsigned(mdhd2[index] << 24 | mdhd2[index + 1] << 16 | mdhd2[index + 2] << 8 | mdhd2[index + 3]);
+        return result2;
+      }, result);
+    };
+    startTime = function(timescale2, fragment) {
+      var trafs;
+      trafs = findBox3(fragment, ["moof", "traf"]);
+      var lowestTime = trafs.reduce(function(acc, traf2) {
+        var tfhd2 = findBox3(traf2, ["tfhd"])[0];
+        var id = toUnsigned(tfhd2[4] << 24 | tfhd2[5] << 16 | tfhd2[6] << 8 | tfhd2[7]);
+        var scale = timescale2[id] || 9e4;
+        var tfdt2 = findBox3(traf2, ["tfdt"])[0];
+        var dv = new DataView(tfdt2.buffer, tfdt2.byteOffset, tfdt2.byteLength);
+        var baseTime;
+        if (tfdt2[0] === 1) {
+          baseTime = getUint64(tfdt2.subarray(4, 12));
+        } else {
+          baseTime = dv.getUint32(4);
+        }
+        let seconds;
+        if (typeof baseTime === "bigint") {
+          seconds = baseTime / window$13.BigInt(scale);
+        } else if (typeof baseTime === "number" && !isNaN(baseTime)) {
+          seconds = baseTime / scale;
+        }
+        if (seconds < Number.MAX_SAFE_INTEGER) {
+          seconds = Number(seconds);
+        }
+        if (seconds < acc) {
+          acc = seconds;
+        }
+        return acc;
+      }, Infinity);
+      return typeof lowestTime === "bigint" || isFinite(lowestTime) ? lowestTime : 0;
+    };
+    compositionStartTime = function(timescales, fragment) {
+      var trafBoxes = findBox3(fragment, ["moof", "traf"]);
+      var baseMediaDecodeTime = 0;
+      var compositionTimeOffset = 0;
+      var trackId;
+      if (trafBoxes && trafBoxes.length) {
+        var tfhd2 = findBox3(trafBoxes[0], ["tfhd"])[0];
+        var trun2 = findBox3(trafBoxes[0], ["trun"])[0];
+        var tfdt2 = findBox3(trafBoxes[0], ["tfdt"])[0];
+        if (tfhd2) {
+          var parsedTfhd = parseTfhd(tfhd2);
+          trackId = parsedTfhd.trackId;
+        }
+        if (tfdt2) {
+          var parsedTfdt = parseTfdt(tfdt2);
+          baseMediaDecodeTime = parsedTfdt.baseMediaDecodeTime;
+        }
+        if (trun2) {
+          var parsedTrun = parseTrun(trun2);
+          if (parsedTrun.samples && parsedTrun.samples.length) {
+            compositionTimeOffset = parsedTrun.samples[0].compositionTimeOffset || 0;
+          }
+        }
+      }
+      var timescale2 = timescales[trackId] || 9e4;
+      if (typeof baseMediaDecodeTime === "bigint") {
+        compositionTimeOffset = window$13.BigInt(compositionTimeOffset);
+        timescale2 = window$13.BigInt(timescale2);
+      }
+      var result = (baseMediaDecodeTime + compositionTimeOffset) / timescale2;
+      if (typeof result === "bigint" && result < Number.MAX_SAFE_INTEGER) {
+        result = Number(result);
+      }
+      return result;
+    };
+    getVideoTrackIds = function(init) {
+      var traks = findBox3(init, ["moov", "trak"]);
+      var videoTrackIds = [];
+      traks.forEach(function(trak2) {
+        var hdlrs = findBox3(trak2, ["mdia", "hdlr"]);
+        var tkhds = findBox3(trak2, ["tkhd"]);
+        hdlrs.forEach(function(hdlr2, index) {
+          var handlerType = parseType$1(hdlr2.subarray(8, 12));
+          var tkhd2 = tkhds[index];
+          var view;
+          var version3;
+          var trackId;
+          if (handlerType === "vide") {
+            view = new DataView(tkhd2.buffer, tkhd2.byteOffset, tkhd2.byteLength);
+            version3 = view.getUint8(0);
+            trackId = version3 === 0 ? view.getUint32(12) : view.getUint32(20);
+            videoTrackIds.push(trackId);
+          }
+        });
+      });
+      return videoTrackIds;
+    };
+    getTimescaleFromMediaHeader = function(mdhd2) {
+      var version3 = mdhd2[0];
+      var index = version3 === 0 ? 12 : 20;
+      return toUnsigned(mdhd2[index] << 24 | mdhd2[index + 1] << 16 | mdhd2[index + 2] << 8 | mdhd2[index + 3]);
+    };
+    getTracks = function(init) {
+      var traks = findBox3(init, ["moov", "trak"]);
+      var tracks = [];
+      traks.forEach(function(trak2) {
+        var track = {};
+        var tkhd2 = findBox3(trak2, ["tkhd"])[0];
+        var view, tkhdVersion;
+        if (tkhd2) {
+          view = new DataView(tkhd2.buffer, tkhd2.byteOffset, tkhd2.byteLength);
+          tkhdVersion = view.getUint8(0);
+          track.id = tkhdVersion === 0 ? view.getUint32(12) : view.getUint32(20);
+        }
+        var hdlr2 = findBox3(trak2, ["mdia", "hdlr"])[0];
+        if (hdlr2) {
+          var type2 = parseType$1(hdlr2.subarray(8, 12));
+          if (type2 === "vide") {
+            track.type = "video";
+          } else if (type2 === "soun") {
+            track.type = "audio";
+          } else {
+            track.type = type2;
+          }
+        }
+        var stsd2 = findBox3(trak2, ["mdia", "minf", "stbl", "stsd"])[0];
+        if (stsd2) {
+          var sampleDescriptions = stsd2.subarray(8);
+          track.codec = parseType$1(sampleDescriptions.subarray(4, 8));
+          var codecBox = findBox3(sampleDescriptions, [track.codec])[0];
+          var codecConfig, codecConfigType;
+          if (codecBox) {
+            if (/^[asm]vc[1-9]$/i.test(track.codec)) {
+              codecConfig = codecBox.subarray(78);
+              codecConfigType = parseType$1(codecConfig.subarray(4, 8));
+              if (codecConfigType === "avcC" && codecConfig.length > 11) {
+                track.codec += ".";
+                track.codec += toHexString2(codecConfig[9]);
+                track.codec += toHexString2(codecConfig[10]);
+                track.codec += toHexString2(codecConfig[11]);
+              } else {
+                track.codec = "avc1.4d400d";
+              }
+            } else if (/^mp4[a,v]$/i.test(track.codec)) {
+              codecConfig = codecBox.subarray(28);
+              codecConfigType = parseType$1(codecConfig.subarray(4, 8));
+              if (codecConfigType === "esds" && codecConfig.length > 20 && codecConfig[19] !== 0) {
+                track.codec += "." + toHexString2(codecConfig[19]);
+                track.codec += "." + toHexString2(codecConfig[20] >>> 2 & 63).replace(/^0/, "");
+              } else {
+                track.codec = "mp4a.40.2";
+              }
+            } else {
+              track.codec = track.codec.toLowerCase();
+            }
+          }
+        }
+        var mdhd2 = findBox3(trak2, ["mdia", "mdhd"])[0];
+        if (mdhd2) {
+          track.timescale = getTimescaleFromMediaHeader(mdhd2);
+        }
+        tracks.push(track);
+      });
+      return tracks;
+    };
+    getEmsgID3 = function(segmentData, offset = 0) {
+      var emsgBoxes = findBox3(segmentData, ["emsg"]);
+      return emsgBoxes.map((data) => {
+        var parsedBox = emsg.parseEmsgBox(new Uint8Array(data));
+        var parsedId3Frames = parseId3Frames(parsedBox.message_data);
+        return {
+          cueTime: emsg.scaleTime(parsedBox.presentation_time, parsedBox.timescale, parsedBox.presentation_time_delta, offset),
+          duration: emsg.scaleTime(parsedBox.event_duration, parsedBox.timescale),
+          frames: parsedId3Frames
+        };
+      });
+    };
+    var probe$2 = {
+      // export mp4 inspector's findBox and parseType for backwards compatibility
+      findBox: findBox3,
+      parseType: parseType$1,
+      timescale,
+      startTime,
+      compositionStartTime,
+      videoTrackIds: getVideoTrackIds,
+      tracks: getTracks,
+      getTimescaleFromMediaHeader,
+      getEmsgID3
+    };
+    var StreamTypes$1 = streamTypes;
+    var parsePid = function(packet) {
+      var pid = packet[1] & 31;
+      pid <<= 8;
+      pid |= packet[2];
+      return pid;
+    };
+    var parsePayloadUnitStartIndicator = function(packet) {
+      return !!(packet[1] & 64);
+    };
+    var parseAdaptionField = function(packet) {
+      var offset = 0;
+      if ((packet[3] & 48) >>> 4 > 1) {
+        offset += packet[4] + 1;
+      }
+      return offset;
+    };
+    var parseType = function(packet, pmtPid) {
+      var pid = parsePid(packet);
+      if (pid === 0) {
+        return "pat";
+      } else if (pid === pmtPid) {
+        return "pmt";
+      } else if (pmtPid) {
+        return "pes";
+      }
+      return null;
+    };
+    var parsePat = function(packet) {
+      var pusi = parsePayloadUnitStartIndicator(packet);
+      var offset = 4 + parseAdaptionField(packet);
+      if (pusi) {
+        offset += packet[offset] + 1;
+      }
+      return (packet[offset + 10] & 31) << 8 | packet[offset + 11];
+    };
+    var parsePmt = function(packet) {
+      var programMapTable = {};
+      var pusi = parsePayloadUnitStartIndicator(packet);
+      var payloadOffset = 4 + parseAdaptionField(packet);
+      if (pusi) {
+        payloadOffset += packet[payloadOffset] + 1;
+      }
+      if (!(packet[payloadOffset + 5] & 1)) {
+        return;
+      }
+      var sectionLength, tableEnd, programInfoLength;
+      sectionLength = (packet[payloadOffset + 1] & 15) << 8 | packet[payloadOffset + 2];
+      tableEnd = 3 + sectionLength - 4;
+      programInfoLength = (packet[payloadOffset + 10] & 15) << 8 | packet[payloadOffset + 11];
+      var offset = 12 + programInfoLength;
+      while (offset < tableEnd) {
+        var i2 = payloadOffset + offset;
+        programMapTable[(packet[i2 + 1] & 31) << 8 | packet[i2 + 2]] = packet[i2];
+        offset += ((packet[i2 + 3] & 15) << 8 | packet[i2 + 4]) + 5;
+      }
+      return programMapTable;
+    };
+    var parsePesType = function(packet, programMapTable) {
+      var pid = parsePid(packet);
+      var type2 = programMapTable[pid];
+      switch (type2) {
+        case StreamTypes$1.H264_STREAM_TYPE:
+          return "video";
+        case StreamTypes$1.ADTS_STREAM_TYPE:
+          return "audio";
+        case StreamTypes$1.METADATA_STREAM_TYPE:
+          return "timed-metadata";
+        default:
+          return null;
+      }
+    };
+    var parsePesTime = function(packet) {
+      var pusi = parsePayloadUnitStartIndicator(packet);
+      if (!pusi) {
+        return null;
+      }
+      var offset = 4 + parseAdaptionField(packet);
+      if (offset >= packet.byteLength) {
+        return null;
+      }
+      var pes = null;
+      var ptsDtsFlags;
+      ptsDtsFlags = packet[offset + 7];
+      if (ptsDtsFlags & 192) {
+        pes = {};
+        pes.pts = (packet[offset + 9] & 14) << 27 | (packet[offset + 10] & 255) << 20 | (packet[offset + 11] & 254) << 12 | (packet[offset + 12] & 255) << 5 | (packet[offset + 13] & 254) >>> 3;
+        pes.pts *= 4;
+        pes.pts += (packet[offset + 13] & 6) >>> 1;
+        pes.dts = pes.pts;
+        if (ptsDtsFlags & 64) {
+          pes.dts = (packet[offset + 14] & 14) << 27 | (packet[offset + 15] & 255) << 20 | (packet[offset + 16] & 254) << 12 | (packet[offset + 17] & 255) << 5 | (packet[offset + 18] & 254) >>> 3;
+          pes.dts *= 4;
+          pes.dts += (packet[offset + 18] & 6) >>> 1;
+        }
+      }
+      return pes;
+    };
+    var parseNalUnitType = function(type2) {
+      switch (type2) {
+        case 5:
+          return "slice_layer_without_partitioning_rbsp_idr";
+        case 6:
+          return "sei_rbsp";
+        case 7:
+          return "seq_parameter_set_rbsp";
+        case 8:
+          return "pic_parameter_set_rbsp";
+        case 9:
+          return "access_unit_delimiter_rbsp";
+        default:
+          return null;
+      }
+    };
+    var videoPacketContainsKeyFrame = function(packet) {
+      var offset = 4 + parseAdaptionField(packet);
+      var frameBuffer = packet.subarray(offset);
+      var frameI = 0;
+      var frameSyncPoint = 0;
+      var foundKeyFrame = false;
+      var nalType;
+      for (; frameSyncPoint < frameBuffer.byteLength - 3; frameSyncPoint++) {
+        if (frameBuffer[frameSyncPoint + 2] === 1) {
+          frameI = frameSyncPoint + 5;
+          break;
+        }
+      }
+      while (frameI < frameBuffer.byteLength) {
+        switch (frameBuffer[frameI]) {
+          case 0:
+            if (frameBuffer[frameI - 1] !== 0) {
+              frameI += 2;
+              break;
+            } else if (frameBuffer[frameI - 2] !== 0) {
+              frameI++;
+              break;
+            }
+            if (frameSyncPoint + 3 !== frameI - 2) {
+              nalType = parseNalUnitType(frameBuffer[frameSyncPoint + 3] & 31);
+              if (nalType === "slice_layer_without_partitioning_rbsp_idr") {
+                foundKeyFrame = true;
+              }
+            }
+            do {
+              frameI++;
+            } while (frameBuffer[frameI] !== 1 && frameI < frameBuffer.length);
+            frameSyncPoint = frameI - 2;
+            frameI += 3;
+            break;
+          case 1:
+            if (frameBuffer[frameI - 1] !== 0 || frameBuffer[frameI - 2] !== 0) {
+              frameI += 3;
+              break;
+            }
+            nalType = parseNalUnitType(frameBuffer[frameSyncPoint + 3] & 31);
+            if (nalType === "slice_layer_without_partitioning_rbsp_idr") {
+              foundKeyFrame = true;
+            }
+            frameSyncPoint = frameI - 2;
+            frameI += 3;
+            break;
+          default:
+            frameI += 3;
+            break;
+        }
+      }
+      frameBuffer = frameBuffer.subarray(frameSyncPoint);
+      frameI -= frameSyncPoint;
+      frameSyncPoint = 0;
+      if (frameBuffer && frameBuffer.byteLength > 3) {
+        nalType = parseNalUnitType(frameBuffer[frameSyncPoint + 3] & 31);
+        if (nalType === "slice_layer_without_partitioning_rbsp_idr") {
+          foundKeyFrame = true;
+        }
+      }
+      return foundKeyFrame;
+    };
+    var probe$1 = {
+      parseType,
+      parsePat,
+      parsePmt,
+      parsePayloadUnitStartIndicator,
+      parsePesType,
+      parsePesTime,
+      videoPacketContainsKeyFrame
+    };
+    var StreamTypes = streamTypes;
+    var handleRollover = timestampRolloverStream.handleRollover;
+    var probe = {};
+    probe.ts = probe$1;
+    probe.aac = utils3;
+    var ONE_SECOND_IN_TS3 = clock$2.ONE_SECOND_IN_TS;
+    var MP2T_PACKET_LENGTH = 188, SYNC_BYTE = 71;
+    var parsePsi_ = function(bytes, pmt) {
+      var startIndex = 0, endIndex = MP2T_PACKET_LENGTH, packet, type2;
+      while (endIndex < bytes.byteLength) {
+        if (bytes[startIndex] === SYNC_BYTE && bytes[endIndex] === SYNC_BYTE) {
+          packet = bytes.subarray(startIndex, endIndex);
+          type2 = probe.ts.parseType(packet, pmt.pid);
+          switch (type2) {
+            case "pat":
+              pmt.pid = probe.ts.parsePat(packet);
+              break;
+            case "pmt":
+              var table = probe.ts.parsePmt(packet);
+              pmt.table = pmt.table || {};
+              Object.keys(table).forEach(function(key) {
+                pmt.table[key] = table[key];
+              });
+              break;
+          }
+          startIndex += MP2T_PACKET_LENGTH;
+          endIndex += MP2T_PACKET_LENGTH;
+          continue;
+        }
+        startIndex++;
+        endIndex++;
+      }
+    };
+    var parseAudioPes_ = function(bytes, pmt, result) {
+      var startIndex = 0, endIndex = MP2T_PACKET_LENGTH, packet, type2, pesType, pusi, parsed;
+      var endLoop = false;
+      while (endIndex <= bytes.byteLength) {
+        if (bytes[startIndex] === SYNC_BYTE && (bytes[endIndex] === SYNC_BYTE || endIndex === bytes.byteLength)) {
+          packet = bytes.subarray(startIndex, endIndex);
+          type2 = probe.ts.parseType(packet, pmt.pid);
+          switch (type2) {
+            case "pes":
+              pesType = probe.ts.parsePesType(packet, pmt.table);
+              pusi = probe.ts.parsePayloadUnitStartIndicator(packet);
+              if (pesType === "audio" && pusi) {
+                parsed = probe.ts.parsePesTime(packet);
+                if (parsed) {
+                  parsed.type = "audio";
+                  result.audio.push(parsed);
+                  endLoop = true;
+                }
+              }
+              break;
+          }
+          if (endLoop) {
+            break;
+          }
+          startIndex += MP2T_PACKET_LENGTH;
+          endIndex += MP2T_PACKET_LENGTH;
+          continue;
+        }
+        startIndex++;
+        endIndex++;
+      }
+      endIndex = bytes.byteLength;
+      startIndex = endIndex - MP2T_PACKET_LENGTH;
+      endLoop = false;
+      while (startIndex >= 0) {
+        if (bytes[startIndex] === SYNC_BYTE && (bytes[endIndex] === SYNC_BYTE || endIndex === bytes.byteLength)) {
+          packet = bytes.subarray(startIndex, endIndex);
+          type2 = probe.ts.parseType(packet, pmt.pid);
+          switch (type2) {
+            case "pes":
+              pesType = probe.ts.parsePesType(packet, pmt.table);
+              pusi = probe.ts.parsePayloadUnitStartIndicator(packet);
+              if (pesType === "audio" && pusi) {
+                parsed = probe.ts.parsePesTime(packet);
+                if (parsed) {
+                  parsed.type = "audio";
+                  result.audio.push(parsed);
+                  endLoop = true;
+                }
+              }
+              break;
+          }
+          if (endLoop) {
+            break;
+          }
+          startIndex -= MP2T_PACKET_LENGTH;
+          endIndex -= MP2T_PACKET_LENGTH;
+          continue;
+        }
+        startIndex--;
+        endIndex--;
+      }
+    };
+    var parseVideoPes_ = function(bytes, pmt, result) {
+      var startIndex = 0, endIndex = MP2T_PACKET_LENGTH, packet, type2, pesType, pusi, parsed, frame, i2, pes;
+      var endLoop = false;
+      var currentFrame = {
+        data: [],
+        size: 0
+      };
+      while (endIndex < bytes.byteLength) {
+        if (bytes[startIndex] === SYNC_BYTE && bytes[endIndex] === SYNC_BYTE) {
+          packet = bytes.subarray(startIndex, endIndex);
+          type2 = probe.ts.parseType(packet, pmt.pid);
+          switch (type2) {
+            case "pes":
+              pesType = probe.ts.parsePesType(packet, pmt.table);
+              pusi = probe.ts.parsePayloadUnitStartIndicator(packet);
+              if (pesType === "video") {
+                if (pusi && !endLoop) {
+                  parsed = probe.ts.parsePesTime(packet);
+                  if (parsed) {
+                    parsed.type = "video";
+                    result.video.push(parsed);
+                    endLoop = true;
+                  }
+                }
+                if (!result.firstKeyFrame) {
+                  if (pusi) {
+                    if (currentFrame.size !== 0) {
+                      frame = new Uint8Array(currentFrame.size);
+                      i2 = 0;
+                      while (currentFrame.data.length) {
+                        pes = currentFrame.data.shift();
+                        frame.set(pes, i2);
+                        i2 += pes.byteLength;
+                      }
+                      if (probe.ts.videoPacketContainsKeyFrame(frame)) {
+                        var firstKeyFrame = probe.ts.parsePesTime(frame);
+                        if (firstKeyFrame) {
+                          result.firstKeyFrame = firstKeyFrame;
+                          result.firstKeyFrame.type = "video";
+                        } else {
+                          console.warn("Failed to extract PTS/DTS from PES at first keyframe. This could be an unusual TS segment, or else mux.js did not parse your TS segment correctly. If you know your TS segments do contain PTS/DTS on keyframes please file a bug report! You can try ffprobe to double check for yourself.");
+                        }
+                      }
+                      currentFrame.size = 0;
+                    }
+                  }
+                  currentFrame.data.push(packet);
+                  currentFrame.size += packet.byteLength;
+                }
+              }
+              break;
+          }
+          if (endLoop && result.firstKeyFrame) {
+            break;
+          }
+          startIndex += MP2T_PACKET_LENGTH;
+          endIndex += MP2T_PACKET_LENGTH;
+          continue;
+        }
+        startIndex++;
+        endIndex++;
+      }
+      endIndex = bytes.byteLength;
+      startIndex = endIndex - MP2T_PACKET_LENGTH;
+      endLoop = false;
+      while (startIndex >= 0) {
+        if (bytes[startIndex] === SYNC_BYTE && bytes[endIndex] === SYNC_BYTE) {
+          packet = bytes.subarray(startIndex, endIndex);
+          type2 = probe.ts.parseType(packet, pmt.pid);
+          switch (type2) {
+            case "pes":
+              pesType = probe.ts.parsePesType(packet, pmt.table);
+              pusi = probe.ts.parsePayloadUnitStartIndicator(packet);
+              if (pesType === "video" && pusi) {
+                parsed = probe.ts.parsePesTime(packet);
+                if (parsed) {
+                  parsed.type = "video";
+                  result.video.push(parsed);
+                  endLoop = true;
+                }
+              }
+              break;
+          }
+          if (endLoop) {
+            break;
+          }
+          startIndex -= MP2T_PACKET_LENGTH;
+          endIndex -= MP2T_PACKET_LENGTH;
+          continue;
+        }
+        startIndex--;
+        endIndex--;
+      }
+    };
+    var adjustTimestamp_ = function(segmentInfo, baseTimestamp) {
+      if (segmentInfo.audio && segmentInfo.audio.length) {
+        var audioBaseTimestamp = baseTimestamp;
+        if (typeof audioBaseTimestamp === "undefined" || isNaN(audioBaseTimestamp)) {
+          audioBaseTimestamp = segmentInfo.audio[0].dts;
+        }
+        segmentInfo.audio.forEach(function(info) {
+          info.dts = handleRollover(info.dts, audioBaseTimestamp);
+          info.pts = handleRollover(info.pts, audioBaseTimestamp);
+          info.dtsTime = info.dts / ONE_SECOND_IN_TS3;
+          info.ptsTime = info.pts / ONE_SECOND_IN_TS3;
+        });
+      }
+      if (segmentInfo.video && segmentInfo.video.length) {
+        var videoBaseTimestamp = baseTimestamp;
+        if (typeof videoBaseTimestamp === "undefined" || isNaN(videoBaseTimestamp)) {
+          videoBaseTimestamp = segmentInfo.video[0].dts;
+        }
+        segmentInfo.video.forEach(function(info) {
+          info.dts = handleRollover(info.dts, videoBaseTimestamp);
+          info.pts = handleRollover(info.pts, videoBaseTimestamp);
+          info.dtsTime = info.dts / ONE_SECOND_IN_TS3;
+          info.ptsTime = info.pts / ONE_SECOND_IN_TS3;
+        });
+        if (segmentInfo.firstKeyFrame) {
+          var frame = segmentInfo.firstKeyFrame;
+          frame.dts = handleRollover(frame.dts, videoBaseTimestamp);
+          frame.pts = handleRollover(frame.pts, videoBaseTimestamp);
+          frame.dtsTime = frame.dts / ONE_SECOND_IN_TS3;
+          frame.ptsTime = frame.pts / ONE_SECOND_IN_TS3;
+        }
+      }
+    };
+    var inspectAac_ = function(bytes) {
+      var endLoop = false, audioCount = 0, sampleRate = null, timestamp = null, frameSize = 0, byteIndex = 0, packet;
+      while (bytes.length - byteIndex >= 3) {
+        var type2 = probe.aac.parseType(bytes, byteIndex);
+        switch (type2) {
+          case "timed-metadata":
+            if (bytes.length - byteIndex < 10) {
+              endLoop = true;
+              break;
+            }
+            frameSize = probe.aac.parseId3TagSize(bytes, byteIndex);
+            if (frameSize > bytes.length) {
+              endLoop = true;
+              break;
+            }
+            if (timestamp === null) {
+              packet = bytes.subarray(byteIndex, byteIndex + frameSize);
+              timestamp = probe.aac.parseAacTimestamp(packet);
+            }
+            byteIndex += frameSize;
+            break;
+          case "audio":
+            if (bytes.length - byteIndex < 7) {
+              endLoop = true;
+              break;
+            }
+            frameSize = probe.aac.parseAdtsSize(bytes, byteIndex);
+            if (frameSize > bytes.length) {
+              endLoop = true;
+              break;
+            }
+            if (sampleRate === null) {
+              packet = bytes.subarray(byteIndex, byteIndex + frameSize);
+              sampleRate = probe.aac.parseSampleRate(packet);
+            }
+            audioCount++;
+            byteIndex += frameSize;
+            break;
+          default:
+            byteIndex++;
+            break;
+        }
+        if (endLoop) {
+          return null;
+        }
+      }
+      if (sampleRate === null || timestamp === null) {
+        return null;
+      }
+      var audioTimescale = ONE_SECOND_IN_TS3 / sampleRate;
+      var result = {
+        audio: [{
+          type: "audio",
+          dts: timestamp,
+          pts: timestamp
+        }, {
+          type: "audio",
+          dts: timestamp + audioCount * 1024 * audioTimescale,
+          pts: timestamp + audioCount * 1024 * audioTimescale
+        }]
+      };
+      return result;
+    };
+    var inspectTs_ = function(bytes) {
+      var pmt = {
+        pid: null,
+        table: null
+      };
+      var result = {};
+      parsePsi_(bytes, pmt);
+      for (var pid in pmt.table) {
+        if (pmt.table.hasOwnProperty(pid)) {
+          var type2 = pmt.table[pid];
+          switch (type2) {
+            case StreamTypes.H264_STREAM_TYPE:
+              result.video = [];
+              parseVideoPes_(bytes, pmt, result);
+              if (result.video.length === 0) {
+                delete result.video;
+              }
+              break;
+            case StreamTypes.ADTS_STREAM_TYPE:
+              result.audio = [];
+              parseAudioPes_(bytes, pmt, result);
+              if (result.audio.length === 0) {
+                delete result.audio;
+              }
+              break;
+          }
+        }
+      }
+      return result;
+    };
+    var inspect = function(bytes, baseTimestamp) {
+      var isAacData = probe.aac.isLikelyAacData(bytes);
+      var result;
+      if (isAacData) {
+        result = inspectAac_(bytes);
+      } else {
+        result = inspectTs_(bytes);
+      }
+      if (!result || !result.audio && !result.video) {
+        return null;
+      }
+      adjustTimestamp_(result, baseTimestamp);
+      return result;
+    };
+    var tsInspector = {
+      inspect,
+      parseAudioPes_
+    };
+    const wireTransmuxerEvents = function(self2, transmuxer2) {
+      transmuxer2.on("data", function(segment) {
+        const initArray = segment.initSegment;
+        segment.initSegment = {
+          data: initArray.buffer,
+          byteOffset: initArray.byteOffset,
+          byteLength: initArray.byteLength
+        };
+        const typedArray2 = segment.data;
+        segment.data = typedArray2.buffer;
+        self2.postMessage({
+          action: "data",
+          segment,
+          byteOffset: typedArray2.byteOffset,
+          byteLength: typedArray2.byteLength
+        }, [segment.data]);
+      });
+      transmuxer2.on("done", function(data) {
+        self2.postMessage({
+          action: "done"
+        });
+      });
+      transmuxer2.on("gopInfo", function(gopInfo) {
+        self2.postMessage({
+          action: "gopInfo",
+          gopInfo
+        });
+      });
+      transmuxer2.on("videoSegmentTimingInfo", function(timingInfo) {
+        const videoSegmentTimingInfo = {
+          start: {
+            decode: clock$2.videoTsToSeconds(timingInfo.start.dts),
+            presentation: clock$2.videoTsToSeconds(timingInfo.start.pts)
+          },
+          end: {
+            decode: clock$2.videoTsToSeconds(timingInfo.end.dts),
+            presentation: clock$2.videoTsToSeconds(timingInfo.end.pts)
+          },
+          baseMediaDecodeTime: clock$2.videoTsToSeconds(timingInfo.baseMediaDecodeTime)
+        };
+        if (timingInfo.prependedContentDuration) {
+          videoSegmentTimingInfo.prependedContentDuration = clock$2.videoTsToSeconds(timingInfo.prependedContentDuration);
+        }
+        self2.postMessage({
+          action: "videoSegmentTimingInfo",
+          videoSegmentTimingInfo
+        });
+      });
+      transmuxer2.on("audioSegmentTimingInfo", function(timingInfo) {
+        const audioSegmentTimingInfo = {
+          start: {
+            decode: clock$2.videoTsToSeconds(timingInfo.start.dts),
+            presentation: clock$2.videoTsToSeconds(timingInfo.start.pts)
+          },
+          end: {
+            decode: clock$2.videoTsToSeconds(timingInfo.end.dts),
+            presentation: clock$2.videoTsToSeconds(timingInfo.end.pts)
+          },
+          baseMediaDecodeTime: clock$2.videoTsToSeconds(timingInfo.baseMediaDecodeTime)
+        };
+        if (timingInfo.prependedContentDuration) {
+          audioSegmentTimingInfo.prependedContentDuration = clock$2.videoTsToSeconds(timingInfo.prependedContentDuration);
+        }
+        self2.postMessage({
+          action: "audioSegmentTimingInfo",
+          audioSegmentTimingInfo
+        });
+      });
+      transmuxer2.on("id3Frame", function(id3Frame) {
+        self2.postMessage({
+          action: "id3Frame",
+          id3Frame
+        });
+      });
+      transmuxer2.on("caption", function(caption) {
+        self2.postMessage({
+          action: "caption",
+          caption
+        });
+      });
+      transmuxer2.on("trackinfo", function(trackInfo) {
+        self2.postMessage({
+          action: "trackinfo",
+          trackInfo
+        });
+      });
+      transmuxer2.on("audioTimingInfo", function(audioTimingInfo) {
+        self2.postMessage({
+          action: "audioTimingInfo",
+          audioTimingInfo: {
+            start: clock$2.videoTsToSeconds(audioTimingInfo.start),
+            end: clock$2.videoTsToSeconds(audioTimingInfo.end)
+          }
+        });
+      });
+      transmuxer2.on("videoTimingInfo", function(videoTimingInfo) {
+        self2.postMessage({
+          action: "videoTimingInfo",
+          videoTimingInfo: {
+            start: clock$2.videoTsToSeconds(videoTimingInfo.start),
+            end: clock$2.videoTsToSeconds(videoTimingInfo.end)
+          }
+        });
+      });
+      transmuxer2.on("log", function(log3) {
+        self2.postMessage({
+          action: "log",
+          log: log3
+        });
+      });
+    };
+    class MessageHandlers {
+      constructor(self2, options) {
+        this.options = options || {};
+        this.self = self2;
+        this.init();
+      }
+      /**
+       * initialize our web worker and wire all the events.
+       */
+      init() {
+        if (this.transmuxer) {
+          this.transmuxer.dispose();
+        }
+        this.transmuxer = new transmuxer.Transmuxer(this.options);
+        wireTransmuxerEvents(this.self, this.transmuxer);
+      }
+      pushMp4Captions(data) {
+        if (!this.captionParser) {
+          this.captionParser = new captionParser();
+          this.captionParser.init();
+        }
+        const segment = new Uint8Array(data.data, data.byteOffset, data.byteLength);
+        const parsed = this.captionParser.parse(segment, data.trackIds, data.timescales);
+        this.self.postMessage({
+          action: "mp4Captions",
+          captions: parsed && parsed.captions || [],
+          logs: parsed && parsed.logs || [],
+          data: segment.buffer
+        }, [segment.buffer]);
+      }
+      probeMp4StartTime({
+        timescales,
+        data
+      }) {
+        const startTime2 = probe$2.startTime(timescales, data);
+        this.self.postMessage({
+          action: "probeMp4StartTime",
+          startTime: startTime2,
+          data
+        }, [data.buffer]);
+      }
+      probeMp4Tracks({
+        data
+      }) {
+        const tracks = probe$2.tracks(data);
+        this.self.postMessage({
+          action: "probeMp4Tracks",
+          tracks,
+          data
+        }, [data.buffer]);
+      }
+      /**
+       * Probes an mp4 segment for EMSG boxes containing ID3 data.
+       * https://aomediacodec.github.io/id3-emsg/
+       *
+       * @param {Uint8Array} data segment data
+       * @param {number} offset segment start time
+       * @return {Object[]} an array of ID3 frames
+       */
+      probeEmsgID3({
+        data,
+        offset
+      }) {
+        const id3Frames = probe$2.getEmsgID3(data, offset);
+        this.self.postMessage({
+          action: "probeEmsgID3",
+          id3Frames,
+          emsgData: data
+        }, [data.buffer]);
+      }
+      /**
+       * Probe an mpeg2-ts segment to determine the start time of the segment in it's
+       * internal "media time," as well as whether it contains video and/or audio.
+       *
+       * @private
+       * @param {Uint8Array} bytes - segment bytes
+       * @param {number} baseStartTime
+       *        Relative reference timestamp used when adjusting frame timestamps for rollover.
+       *        This value should be in seconds, as it's converted to a 90khz clock within the
+       *        function body.
+       * @return {Object} The start time of the current segment in "media time" as well as
+       *                  whether it contains video and/or audio
+       */
+      probeTs({
+        data,
+        baseStartTime
+      }) {
+        const tsStartTime = typeof baseStartTime === "number" && !isNaN(baseStartTime) ? baseStartTime * clock$2.ONE_SECOND_IN_TS : void 0;
+        const timeInfo = tsInspector.inspect(data, tsStartTime);
+        let result = null;
+        if (timeInfo) {
+          result = {
+            // each type's time info comes back as an array of 2 times, start and end
+            hasVideo: timeInfo.video && timeInfo.video.length === 2 || false,
+            hasAudio: timeInfo.audio && timeInfo.audio.length === 2 || false
+          };
+          if (result.hasVideo) {
+            result.videoStart = timeInfo.video[0].ptsTime;
+          }
+          if (result.hasAudio) {
+            result.audioStart = timeInfo.audio[0].ptsTime;
+          }
+        }
+        this.self.postMessage({
+          action: "probeTs",
+          result,
+          data
+        }, [data.buffer]);
+      }
+      clearAllMp4Captions() {
+        if (this.captionParser) {
+          this.captionParser.clearAllCaptions();
+        }
+      }
+      clearParsedMp4Captions() {
+        if (this.captionParser) {
+          this.captionParser.clearParsedCaptions();
+        }
+      }
+      /**
+       * Adds data (a ts segment) to the start of the transmuxer pipeline for
+       * processing.
+       *
+       * @param {ArrayBuffer} data data to push into the muxer
+       */
+      push(data) {
+        const segment = new Uint8Array(data.data, data.byteOffset, data.byteLength);
+        this.transmuxer.push(segment);
+      }
+      /**
+       * Recreate the transmuxer so that the next segment added via `push`
+       * start with a fresh transmuxer.
+       */
+      reset() {
+        this.transmuxer.reset();
+      }
+      /**
+       * Set the value that will be used as the `baseMediaDecodeTime` time for the
+       * next segment pushed in. Subsequent segments will have their `baseMediaDecodeTime`
+       * set relative to the first based on the PTS values.
+       *
+       * @param {Object} data used to set the timestamp offset in the muxer
+       */
+      setTimestampOffset(data) {
+        const timestampOffset = data.timestampOffset || 0;
+        this.transmuxer.setBaseMediaDecodeTime(Math.round(clock$2.secondsToVideoTs(timestampOffset)));
+      }
+      setAudioAppendStart(data) {
+        this.transmuxer.setAudioAppendStart(Math.ceil(clock$2.secondsToVideoTs(data.appendStart)));
+      }
+      setRemux(data) {
+        this.transmuxer.setRemux(data.remux);
+      }
+      /**
+       * Forces the pipeline to finish processing the last segment and emit it's
+       * results.
+       *
+       * @param {Object} data event data, not really used
+       */
+      flush(data) {
+        this.transmuxer.flush();
+        self.postMessage({
+          action: "done",
+          type: "transmuxed"
+        });
+      }
+      endTimeline() {
+        this.transmuxer.endTimeline();
+        self.postMessage({
+          action: "endedtimeline",
+          type: "transmuxed"
+        });
+      }
+      alignGopsWith(data) {
+        this.transmuxer.alignGopsWith(data.gopsToAlignWith.slice());
+      }
+    }
+    self.onmessage = function(event) {
+      if (event.data.action === "init" && event.data.options) {
+        this.messageHandlers = new MessageHandlers(self, event.data.options);
+        return;
+      }
+      if (!this.messageHandlers) {
+        this.messageHandlers = new MessageHandlers(self);
+      }
+      if (event.data && event.data.action && event.data.action !== "init") {
+        if (this.messageHandlers[event.data.action]) {
+          this.messageHandlers[event.data.action](event.data);
+        }
+      }
+    };
+  }));
+  var TransmuxWorker2 = factory2(workerCode$12);
+  var handleData_2 = (event, transmuxedData, callback) => {
+    const {
+      type,
+      initSegment,
+      captions,
+      captionStreams,
+      metadata,
+      videoFrameDtsTime,
+      videoFramePtsTime
+    } = event.data.segment;
+    transmuxedData.buffer.push({
+      captions,
+      captionStreams,
+      metadata
+    });
+    const boxes = event.data.segment.boxes || {
+      data: event.data.segment.data
+    };
+    const result = {
+      type,
+      // cast ArrayBuffer to TypedArray
+      data: new Uint8Array(boxes.data, boxes.data.byteOffset, boxes.data.byteLength),
+      initSegment: new Uint8Array(initSegment.data, initSegment.byteOffset, initSegment.byteLength)
+    };
+    if (typeof videoFrameDtsTime !== "undefined") {
+      result.videoFrameDtsTime = videoFrameDtsTime;
+    }
+    if (typeof videoFramePtsTime !== "undefined") {
+      result.videoFramePtsTime = videoFramePtsTime;
+    }
+    callback(result);
+  };
+  var handleDone_2 = ({
+    transmuxedData,
+    callback
+  }) => {
+    transmuxedData.buffer = [];
+    callback(transmuxedData);
+  };
+  var handleGopInfo_2 = (event, transmuxedData) => {
+    transmuxedData.gopInfo = event.data.gopInfo;
+  };
+  var processTransmux2 = (options) => {
+    const {
+      transmuxer,
+      bytes,
+      audioAppendStart,
+      gopsToAlignWith,
+      remux,
+      onData,
+      onTrackInfo,
+      onAudioTimingInfo,
+      onVideoTimingInfo,
+      onVideoSegmentTimingInfo,
+      onAudioSegmentTimingInfo,
+      onId3,
+      onCaptions,
+      onDone,
+      onEndedTimeline,
+      onTransmuxerLog,
+      isEndOfTimeline
+    } = options;
+    const transmuxedData = {
+      buffer: []
+    };
+    let waitForEndedTimelineEvent = isEndOfTimeline;
+    const handleMessage = (event) => {
+      if (transmuxer.currentTransmux !== options) {
+        return;
+      }
+      if (event.data.action === "data") {
+        handleData_2(event, transmuxedData, onData);
+      }
+      if (event.data.action === "trackinfo") {
+        onTrackInfo(event.data.trackInfo);
+      }
+      if (event.data.action === "gopInfo") {
+        handleGopInfo_2(event, transmuxedData);
+      }
+      if (event.data.action === "audioTimingInfo") {
+        onAudioTimingInfo(event.data.audioTimingInfo);
+      }
+      if (event.data.action === "videoTimingInfo") {
+        onVideoTimingInfo(event.data.videoTimingInfo);
+      }
+      if (event.data.action === "videoSegmentTimingInfo") {
+        onVideoSegmentTimingInfo(event.data.videoSegmentTimingInfo);
+      }
+      if (event.data.action === "audioSegmentTimingInfo") {
+        onAudioSegmentTimingInfo(event.data.audioSegmentTimingInfo);
+      }
+      if (event.data.action === "id3Frame") {
+        onId3([event.data.id3Frame], event.data.id3Frame.dispatchType);
+      }
+      if (event.data.action === "caption") {
+        onCaptions(event.data.caption);
+      }
+      if (event.data.action === "endedtimeline") {
+        waitForEndedTimelineEvent = false;
+        onEndedTimeline();
+      }
+      if (event.data.action === "log") {
+        onTransmuxerLog(event.data.log);
+      }
+      if (event.data.type !== "transmuxed") {
+        return;
+      }
+      if (waitForEndedTimelineEvent) {
+        return;
+      }
+      transmuxer.onmessage = null;
+      handleDone_2({
+        transmuxedData,
+        callback: onDone
+      });
+      dequeue2(transmuxer);
+    };
+    transmuxer.onmessage = handleMessage;
+    if (audioAppendStart) {
+      transmuxer.postMessage({
+        action: "setAudioAppendStart",
+        appendStart: audioAppendStart
+      });
+    }
+    if (Array.isArray(gopsToAlignWith)) {
+      transmuxer.postMessage({
+        action: "alignGopsWith",
+        gopsToAlignWith
+      });
+    }
+    if (typeof remux !== "undefined") {
+      transmuxer.postMessage({
+        action: "setRemux",
+        remux
+      });
+    }
+    if (bytes.byteLength) {
+      const buffer = bytes instanceof ArrayBuffer ? bytes : bytes.buffer;
+      const byteOffset = bytes instanceof ArrayBuffer ? 0 : bytes.byteOffset;
+      transmuxer.postMessage({
+        action: "push",
+        // Send the typed-array of data as an ArrayBuffer so that
+        // it can be sent as a "Transferable" and avoid the costly
+        // memory copy
+        data: buffer,
+        // To recreate the original typed-array, we need information
+        // about what portion of the ArrayBuffer it was a view into
+        byteOffset,
+        byteLength: bytes.byteLength
+      }, [buffer]);
+    }
+    if (isEndOfTimeline) {
+      transmuxer.postMessage({
+        action: "endTimeline"
+      });
+    }
+    transmuxer.postMessage({
+      action: "flush"
+    });
+  };
+  var dequeue2 = (transmuxer) => {
+    transmuxer.currentTransmux = null;
+    if (transmuxer.transmuxQueue.length) {
+      transmuxer.currentTransmux = transmuxer.transmuxQueue.shift();
+      if (typeof transmuxer.currentTransmux === "function") {
+        transmuxer.currentTransmux();
+      } else {
+        processTransmux2(transmuxer.currentTransmux);
+      }
+    }
+  };
+  var processAction2 = (transmuxer, action) => {
+    transmuxer.postMessage({
+      action
+    });
+    dequeue2(transmuxer);
+  };
+  var enqueueAction2 = (action, transmuxer) => {
+    if (!transmuxer.currentTransmux) {
+      transmuxer.currentTransmux = action;
+      processAction2(transmuxer, action);
+      return;
+    }
+    transmuxer.transmuxQueue.push(processAction2.bind(null, transmuxer, action));
+  };
+  var reset2 = (transmuxer) => {
+    enqueueAction2("reset", transmuxer);
+  };
+  var endTimeline2 = (transmuxer) => {
+    enqueueAction2("endTimeline", transmuxer);
+  };
+  var transmux2 = (options) => {
+    if (!options.transmuxer.currentTransmux) {
+      options.transmuxer.currentTransmux = options;
+      processTransmux2(options);
+      return;
+    }
+    options.transmuxer.transmuxQueue.push(options);
+  };
+  var createTransmuxer2 = (options) => {
+    const transmuxer = new TransmuxWorker2();
+    transmuxer.currentTransmux = null;
+    transmuxer.transmuxQueue = [];
+    const term = transmuxer.terminate;
+    transmuxer.terminate = () => {
+      transmuxer.currentTransmux = null;
+      transmuxer.transmuxQueue.length = 0;
+      return term.call(transmuxer);
+    };
+    transmuxer.postMessage({
+      action: "init",
+      options
+    });
+    return transmuxer;
+  };
+  var segmentTransmuxer2 = {
+    reset: reset2,
+    endTimeline: endTimeline2,
+    transmux: transmux2,
+    createTransmuxer: createTransmuxer2
+  };
+  var workerCallback2 = function(options) {
+    const transmuxer = options.transmuxer;
+    const endAction = options.endAction || options.action;
+    const callback = options.callback;
+    const message = _extends({}, options, {
+      endAction: null,
+      transmuxer: null,
+      callback: null
+    });
+    const listenForEndEvent = (event) => {
+      if (event.data.action !== endAction) {
+        return;
+      }
+      transmuxer.removeEventListener("message", listenForEndEvent);
+      if (event.data.data) {
+        event.data.data = new Uint8Array(event.data.data, options.byteOffset || 0, options.byteLength || event.data.data.byteLength);
+        if (options.data) {
+          options.data = event.data.data;
+        }
+      }
+      callback(event.data);
+    };
+    transmuxer.addEventListener("message", listenForEndEvent);
+    if (options.data) {
+      const isArrayBuffer = options.data instanceof ArrayBuffer;
+      message.byteOffset = isArrayBuffer ? 0 : options.data.byteOffset;
+      message.byteLength = options.data.byteLength;
+      const transfers = [isArrayBuffer ? options.data : options.data.buffer];
+      transmuxer.postMessage(message, transfers);
+    } else {
+      transmuxer.postMessage(message);
+    }
+  };
+  var REQUEST_ERRORS2 = {
+    FAILURE: 2,
+    TIMEOUT: -101,
+    ABORTED: -102
+  };
+  var abortAll2 = (activeXhrs) => {
+    activeXhrs.forEach((xhr) => {
+      xhr.abort();
+    });
+  };
+  var getRequestStats2 = (request) => {
+    return {
+      bandwidth: request.bandwidth,
+      bytesReceived: request.bytesReceived || 0,
+      roundTripTime: request.roundTripTime || 0
+    };
+  };
+  var getProgressStats2 = (progressEvent) => {
+    const request = progressEvent.target;
+    const roundTripTime = Date.now() - request.requestTime;
+    const stats = {
+      bandwidth: Infinity,
+      bytesReceived: 0,
+      roundTripTime: roundTripTime || 0
+    };
+    stats.bytesReceived = progressEvent.loaded;
+    stats.bandwidth = Math.floor(stats.bytesReceived / stats.roundTripTime * 8 * 1e3);
+    return stats;
+  };
+  var handleErrors2 = (error, request) => {
+    if (request.timedout) {
+      return {
+        status: request.status,
+        message: "HLS request timed-out at URL: " + request.uri,
+        code: REQUEST_ERRORS2.TIMEOUT,
+        xhr: request
+      };
+    }
+    if (request.aborted) {
+      return {
+        status: request.status,
+        message: "HLS request aborted at URL: " + request.uri,
+        code: REQUEST_ERRORS2.ABORTED,
+        xhr: request
+      };
+    }
+    if (error) {
+      return {
+        status: request.status,
+        message: "HLS request errored at URL: " + request.uri,
+        code: REQUEST_ERRORS2.FAILURE,
+        xhr: request
+      };
+    }
+    if (request.responseType === "arraybuffer" && request.response.byteLength === 0) {
+      return {
+        status: request.status,
+        message: "Empty HLS response at URL: " + request.uri,
+        code: REQUEST_ERRORS2.FAILURE,
+        xhr: request
+      };
+    }
+    return null;
+  };
+  var handleKeyResponse2 = (segment, objects, finishProcessingFn) => (error, request) => {
+    const response = request.response;
+    const errorObj = handleErrors2(error, request);
+    if (errorObj) {
+      return finishProcessingFn(errorObj, segment);
+    }
+    if (response.byteLength !== 16) {
+      return finishProcessingFn({
+        status: request.status,
+        message: "Invalid HLS key at URL: " + request.uri,
+        code: REQUEST_ERRORS2.FAILURE,
+        xhr: request
+      }, segment);
+    }
+    const view = new DataView(response);
+    const bytes = new Uint32Array([view.getUint32(0), view.getUint32(4), view.getUint32(8), view.getUint32(12)]);
+    for (let i2 = 0; i2 < objects.length; i2++) {
+      objects[i2].bytes = bytes;
+    }
+    return finishProcessingFn(null, segment);
+  };
+  var parseInitSegment2 = (segment, callback) => {
+    const type = detectContainerForBytes(segment.map.bytes);
+    if (type !== "mp4") {
+      const uri = segment.map.resolvedUri || segment.map.uri;
+      return callback({
+        internal: true,
+        message: `Found unsupported ${type || "unknown"} container for initialization segment at URL: ${uri}`,
+        code: REQUEST_ERRORS2.FAILURE
+      });
+    }
+    workerCallback2({
+      action: "probeMp4Tracks",
+      data: segment.map.bytes,
+      transmuxer: segment.transmuxer,
+      callback: ({
+        tracks,
+        data
+      }) => {
+        segment.map.bytes = data;
+        tracks.forEach(function(track) {
+          segment.map.tracks = segment.map.tracks || {};
+          if (segment.map.tracks[track.type]) {
+            return;
+          }
+          segment.map.tracks[track.type] = track;
+          if (typeof track.id === "number" && track.timescale) {
+            segment.map.timescales = segment.map.timescales || {};
+            segment.map.timescales[track.id] = track.timescale;
+          }
+        });
+        return callback(null);
+      }
+    });
+  };
+  var handleInitSegmentResponse2 = ({
+    segment,
+    finishProcessingFn
+  }) => (error, request) => {
+    const errorObj = handleErrors2(error, request);
+    if (errorObj) {
+      return finishProcessingFn(errorObj, segment);
+    }
+    const bytes = new Uint8Array(request.response);
+    if (segment.map.key) {
+      segment.map.encryptedBytes = bytes;
+      return finishProcessingFn(null, segment);
+    }
+    segment.map.bytes = bytes;
+    parseInitSegment2(segment, function(parseError) {
+      if (parseError) {
+        parseError.xhr = request;
+        parseError.status = request.status;
+        return finishProcessingFn(parseError, segment);
+      }
+      finishProcessingFn(null, segment);
+    });
+  };
+  var handleSegmentResponse2 = ({
+    segment,
+    finishProcessingFn,
+    responseType
+  }) => (error, request) => {
+    const errorObj = handleErrors2(error, request);
+    if (errorObj) {
+      return finishProcessingFn(errorObj, segment);
+    }
+    const newBytes = (
+      // although responseText "should" exist, this guard serves to prevent an error being
+      // thrown for two primary cases:
+      // 1. the mime type override stops working, or is not implemented for a specific
+      //    browser
+      // 2. when using mock XHR libraries like sinon that do not allow the override behavior
+      responseType === "arraybuffer" || !request.responseText ? request.response : stringToArrayBuffer2(request.responseText.substring(segment.lastReachedChar || 0))
+    );
+    segment.stats = getRequestStats2(request);
+    if (segment.key) {
+      segment.encryptedBytes = new Uint8Array(newBytes);
+    } else {
+      segment.bytes = new Uint8Array(newBytes);
+    }
+    return finishProcessingFn(null, segment);
+  };
+  var transmuxAndNotify2 = ({
+    segment,
+    bytes,
+    trackInfoFn,
+    timingInfoFn,
+    videoSegmentTimingInfoFn,
+    audioSegmentTimingInfoFn,
+    id3Fn,
+    captionsFn,
+    isEndOfTimeline,
+    endedTimelineFn,
+    dataFn,
+    doneFn,
+    onTransmuxerLog
+  }) => {
+    const fmp4Tracks = segment.map && segment.map.tracks || {};
+    const isMuxed3 = Boolean(fmp4Tracks.audio && fmp4Tracks.video);
+    let audioStartFn = timingInfoFn.bind(null, segment, "audio", "start");
+    const audioEndFn = timingInfoFn.bind(null, segment, "audio", "end");
+    let videoStartFn = timingInfoFn.bind(null, segment, "video", "start");
+    const videoEndFn = timingInfoFn.bind(null, segment, "video", "end");
+    const finish = () => transmux2({
+      bytes,
+      transmuxer: segment.transmuxer,
+      audioAppendStart: segment.audioAppendStart,
+      gopsToAlignWith: segment.gopsToAlignWith,
+      remux: isMuxed3,
+      onData: (result) => {
+        result.type = result.type === "combined" ? "video" : result.type;
+        dataFn(segment, result);
+      },
+      onTrackInfo: (trackInfo) => {
+        if (trackInfoFn) {
+          if (isMuxed3) {
+            trackInfo.isMuxed = true;
+          }
+          trackInfoFn(segment, trackInfo);
+        }
+      },
+      onAudioTimingInfo: (audioTimingInfo) => {
+        if (audioStartFn && typeof audioTimingInfo.start !== "undefined") {
+          audioStartFn(audioTimingInfo.start);
+          audioStartFn = null;
+        }
+        if (audioEndFn && typeof audioTimingInfo.end !== "undefined") {
+          audioEndFn(audioTimingInfo.end);
+        }
+      },
+      onVideoTimingInfo: (videoTimingInfo) => {
+        if (videoStartFn && typeof videoTimingInfo.start !== "undefined") {
+          videoStartFn(videoTimingInfo.start);
+          videoStartFn = null;
+        }
+        if (videoEndFn && typeof videoTimingInfo.end !== "undefined") {
+          videoEndFn(videoTimingInfo.end);
+        }
+      },
+      onVideoSegmentTimingInfo: (videoSegmentTimingInfo) => {
+        videoSegmentTimingInfoFn(videoSegmentTimingInfo);
+      },
+      onAudioSegmentTimingInfo: (audioSegmentTimingInfo) => {
+        audioSegmentTimingInfoFn(audioSegmentTimingInfo);
+      },
+      onId3: (id3Frames, dispatchType) => {
+        id3Fn(segment, id3Frames, dispatchType);
+      },
+      onCaptions: (captions) => {
+        captionsFn(segment, [captions]);
+      },
+      isEndOfTimeline,
+      onEndedTimeline: () => {
+        endedTimelineFn();
+      },
+      onTransmuxerLog,
+      onDone: (result) => {
+        if (!doneFn) {
+          return;
+        }
+        result.type = result.type === "combined" ? "video" : result.type;
+        doneFn(null, segment, result);
+      }
+    });
+    workerCallback2({
+      action: "probeTs",
+      transmuxer: segment.transmuxer,
+      data: bytes,
+      baseStartTime: segment.baseStartTime,
+      callback: (data) => {
+        segment.bytes = bytes = data.data;
+        const probeResult = data.result;
+        if (probeResult) {
+          trackInfoFn(segment, {
+            hasAudio: probeResult.hasAudio,
+            hasVideo: probeResult.hasVideo,
+            isMuxed: isMuxed3
+          });
+          trackInfoFn = null;
+        }
+        finish();
+      }
+    });
+  };
+  var handleSegmentBytes2 = ({
+    segment,
+    bytes,
+    trackInfoFn,
+    timingInfoFn,
+    videoSegmentTimingInfoFn,
+    audioSegmentTimingInfoFn,
+    id3Fn,
+    captionsFn,
+    isEndOfTimeline,
+    endedTimelineFn,
+    dataFn,
+    doneFn,
+    onTransmuxerLog
+  }) => {
+    let bytesAsUint8Array = new Uint8Array(bytes);
+    if (isLikelyFmp4MediaSegment(bytesAsUint8Array)) {
+      segment.isFmp4 = true;
+      const {
+        tracks
+      } = segment.map;
+      const trackInfo = {
+        isFmp4: true,
+        hasVideo: !!tracks.video,
+        hasAudio: !!tracks.audio
+      };
+      if (tracks.audio && tracks.audio.codec && tracks.audio.codec !== "enca") {
+        trackInfo.audioCodec = tracks.audio.codec;
+      }
+      if (tracks.video && tracks.video.codec && tracks.video.codec !== "encv") {
+        trackInfo.videoCodec = tracks.video.codec;
+      }
+      if (tracks.video && tracks.audio) {
+        trackInfo.isMuxed = true;
+      }
+      trackInfoFn(segment, trackInfo);
+      const finishLoading = (captions, id3Frames) => {
+        dataFn(segment, {
+          data: bytesAsUint8Array,
+          type: trackInfo.hasAudio && !trackInfo.isMuxed ? "audio" : "video"
+        });
+        if (id3Frames && id3Frames.length) {
+          id3Fn(segment, id3Frames);
+        }
+        if (captions && captions.length) {
+          captionsFn(segment, captions);
+        }
+        doneFn(null, segment, {});
+      };
+      workerCallback2({
+        action: "probeMp4StartTime",
+        timescales: segment.map.timescales,
+        data: bytesAsUint8Array,
+        transmuxer: segment.transmuxer,
+        callback: ({
+          data,
+          startTime
+        }) => {
+          bytes = data.buffer;
+          segment.bytes = bytesAsUint8Array = data;
+          if (trackInfo.hasAudio && !trackInfo.isMuxed) {
+            timingInfoFn(segment, "audio", "start", startTime);
+          }
+          if (trackInfo.hasVideo) {
+            timingInfoFn(segment, "video", "start", startTime);
+          }
+          workerCallback2({
+            action: "probeEmsgID3",
+            data: bytesAsUint8Array,
+            transmuxer: segment.transmuxer,
+            offset: startTime,
+            callback: ({
+              emsgData,
+              id3Frames
+            }) => {
+              bytes = emsgData.buffer;
+              segment.bytes = bytesAsUint8Array = emsgData;
+              if (!tracks.video || !emsgData.byteLength || !segment.transmuxer) {
+                finishLoading(void 0, id3Frames);
+                return;
+              }
+              workerCallback2({
+                action: "pushMp4Captions",
+                endAction: "mp4Captions",
+                transmuxer: segment.transmuxer,
+                data: bytesAsUint8Array,
+                timescales: segment.map.timescales,
+                trackIds: [tracks.video.id],
+                callback: (message) => {
+                  bytes = message.data.buffer;
+                  segment.bytes = bytesAsUint8Array = message.data;
+                  message.logs.forEach(function(log3) {
+                    onTransmuxerLog(merge3(log3, {
+                      stream: "mp4CaptionParser"
+                    }));
+                  });
+                  finishLoading(message.captions, id3Frames);
+                }
+              });
+            }
+          });
+        }
+      });
+      return;
+    }
+    if (!segment.transmuxer) {
+      doneFn(null, segment, {});
+      return;
+    }
+    if (typeof segment.container === "undefined") {
+      segment.container = detectContainerForBytes(bytesAsUint8Array);
+    }
+    if (segment.container !== "ts" && segment.container !== "aac") {
+      trackInfoFn(segment, {
+        hasAudio: false,
+        hasVideo: false
+      });
+      doneFn(null, segment, {});
+      return;
+    }
+    transmuxAndNotify2({
+      segment,
+      bytes,
+      trackInfoFn,
+      timingInfoFn,
+      videoSegmentTimingInfoFn,
+      audioSegmentTimingInfoFn,
+      id3Fn,
+      captionsFn,
+      isEndOfTimeline,
+      endedTimelineFn,
+      dataFn,
+      doneFn,
+      onTransmuxerLog
+    });
+  };
+  var decrypt2 = function({
+    id,
+    key,
+    encryptedBytes,
+    decryptionWorker
+  }, callback) {
+    const decryptionHandler = (event) => {
+      if (event.data.source === id) {
+        decryptionWorker.removeEventListener("message", decryptionHandler);
+        const decrypted = event.data.decrypted;
+        callback(new Uint8Array(decrypted.bytes, decrypted.byteOffset, decrypted.byteLength));
+      }
+    };
+    decryptionWorker.addEventListener("message", decryptionHandler);
+    let keyBytes;
+    if (key.bytes.slice) {
+      keyBytes = key.bytes.slice();
+    } else {
+      keyBytes = new Uint32Array(Array.prototype.slice.call(key.bytes));
+    }
+    decryptionWorker.postMessage(createTransferableMessage2({
+      source: id,
+      encrypted: encryptedBytes,
+      key: keyBytes,
+      iv: key.iv
+    }), [encryptedBytes.buffer, keyBytes.buffer]);
+  };
+  var decryptSegment2 = ({
+    decryptionWorker,
+    segment,
+    trackInfoFn,
+    timingInfoFn,
+    videoSegmentTimingInfoFn,
+    audioSegmentTimingInfoFn,
+    id3Fn,
+    captionsFn,
+    isEndOfTimeline,
+    endedTimelineFn,
+    dataFn,
+    doneFn,
+    onTransmuxerLog
+  }) => {
+    decrypt2({
+      id: segment.requestId,
+      key: segment.key,
+      encryptedBytes: segment.encryptedBytes,
+      decryptionWorker
+    }, (decryptedBytes) => {
+      segment.bytes = decryptedBytes;
+      handleSegmentBytes2({
+        segment,
+        bytes: segment.bytes,
+        trackInfoFn,
+        timingInfoFn,
+        videoSegmentTimingInfoFn,
+        audioSegmentTimingInfoFn,
+        id3Fn,
+        captionsFn,
+        isEndOfTimeline,
+        endedTimelineFn,
+        dataFn,
+        doneFn,
+        onTransmuxerLog
+      });
+    });
+  };
+  var waitForCompletion2 = ({
+    activeXhrs,
+    decryptionWorker,
+    trackInfoFn,
+    timingInfoFn,
+    videoSegmentTimingInfoFn,
+    audioSegmentTimingInfoFn,
+    id3Fn,
+    captionsFn,
+    isEndOfTimeline,
+    endedTimelineFn,
+    dataFn,
+    doneFn,
+    onTransmuxerLog
+  }) => {
+    let count = 0;
+    let didError = false;
+    return (error, segment) => {
+      if (didError) {
+        return;
+      }
+      if (error) {
+        didError = true;
+        abortAll2(activeXhrs);
+        return doneFn(error, segment);
+      }
+      count += 1;
+      if (count === activeXhrs.length) {
+        const segmentFinish = function() {
+          if (segment.encryptedBytes) {
+            return decryptSegment2({
+              decryptionWorker,
+              segment,
+              trackInfoFn,
+              timingInfoFn,
+              videoSegmentTimingInfoFn,
+              audioSegmentTimingInfoFn,
+              id3Fn,
+              captionsFn,
+              isEndOfTimeline,
+              endedTimelineFn,
+              dataFn,
+              doneFn,
+              onTransmuxerLog
+            });
+          }
+          handleSegmentBytes2({
+            segment,
+            bytes: segment.bytes,
+            trackInfoFn,
+            timingInfoFn,
+            videoSegmentTimingInfoFn,
+            audioSegmentTimingInfoFn,
+            id3Fn,
+            captionsFn,
+            isEndOfTimeline,
+            endedTimelineFn,
+            dataFn,
+            doneFn,
+            onTransmuxerLog
+          });
+        };
+        segment.endOfAllRequests = Date.now();
+        if (segment.map && segment.map.encryptedBytes && !segment.map.bytes) {
+          return decrypt2({
+            decryptionWorker,
+            // add -init to the "id" to differentiate between segment
+            // and init segment decryption, just in case they happen
+            // at the same time at some point in the future.
+            id: segment.requestId + "-init",
+            encryptedBytes: segment.map.encryptedBytes,
+            key: segment.map.key
+          }, (decryptedBytes) => {
+            segment.map.bytes = decryptedBytes;
+            parseInitSegment2(segment, (parseError) => {
+              if (parseError) {
+                abortAll2(activeXhrs);
+                return doneFn(parseError, segment);
+              }
+              segmentFinish();
+            });
+          });
+        }
+        segmentFinish();
+      }
+    };
+  };
+  var handleLoadEnd2 = ({
+    loadendState,
+    abortFn
+  }) => (event) => {
+    const request = event.target;
+    if (request.aborted && abortFn && !loadendState.calledAbortFn) {
+      abortFn();
+      loadendState.calledAbortFn = true;
+    }
+  };
+  var handleProgress2 = ({
+    segment,
+    progressFn,
+    trackInfoFn,
+    timingInfoFn,
+    videoSegmentTimingInfoFn,
+    audioSegmentTimingInfoFn,
+    id3Fn,
+    captionsFn,
+    isEndOfTimeline,
+    endedTimelineFn,
+    dataFn
+  }) => (event) => {
+    const request = event.target;
+    if (request.aborted) {
+      return;
+    }
+    segment.stats = merge3(segment.stats, getProgressStats2(event));
+    if (!segment.stats.firstBytesReceivedAt && segment.stats.bytesReceived) {
+      segment.stats.firstBytesReceivedAt = Date.now();
+    }
+    return progressFn(event, segment);
+  };
+  var mediaSegmentRequest2 = ({
+    xhr,
+    xhrOptions,
+    decryptionWorker,
+    segment,
+    abortFn,
+    progressFn,
+    trackInfoFn,
+    timingInfoFn,
+    videoSegmentTimingInfoFn,
+    audioSegmentTimingInfoFn,
+    id3Fn,
+    captionsFn,
+    isEndOfTimeline,
+    endedTimelineFn,
+    dataFn,
+    doneFn,
+    onTransmuxerLog
+  }) => {
+    const activeXhrs = [];
+    const finishProcessingFn = waitForCompletion2({
+      activeXhrs,
+      decryptionWorker,
+      trackInfoFn,
+      timingInfoFn,
+      videoSegmentTimingInfoFn,
+      audioSegmentTimingInfoFn,
+      id3Fn,
+      captionsFn,
+      isEndOfTimeline,
+      endedTimelineFn,
+      dataFn,
+      doneFn,
+      onTransmuxerLog
+    });
+    if (segment.key && !segment.key.bytes) {
+      const objects = [segment.key];
+      if (segment.map && !segment.map.bytes && segment.map.key && segment.map.key.resolvedUri === segment.key.resolvedUri) {
+        objects.push(segment.map.key);
+      }
+      const keyRequestOptions = merge3(xhrOptions, {
+        uri: segment.key.resolvedUri,
+        responseType: "arraybuffer"
+      });
+      const keyRequestCallback = handleKeyResponse2(segment, objects, finishProcessingFn);
+      const keyXhr = xhr(keyRequestOptions, keyRequestCallback);
+      activeXhrs.push(keyXhr);
+    }
+    if (segment.map && !segment.map.bytes) {
+      const differentMapKey = segment.map.key && (!segment.key || segment.key.resolvedUri !== segment.map.key.resolvedUri);
+      if (differentMapKey) {
+        const mapKeyRequestOptions = merge3(xhrOptions, {
+          uri: segment.map.key.resolvedUri,
+          responseType: "arraybuffer"
+        });
+        const mapKeyRequestCallback = handleKeyResponse2(segment, [segment.map.key], finishProcessingFn);
+        const mapKeyXhr = xhr(mapKeyRequestOptions, mapKeyRequestCallback);
+        activeXhrs.push(mapKeyXhr);
+      }
+      const initSegmentOptions = merge3(xhrOptions, {
+        uri: segment.map.resolvedUri,
+        responseType: "arraybuffer",
+        headers: segmentXhrHeaders2(segment.map)
+      });
+      const initSegmentRequestCallback = handleInitSegmentResponse2({
+        segment,
+        finishProcessingFn
+      });
+      const initSegmentXhr = xhr(initSegmentOptions, initSegmentRequestCallback);
+      activeXhrs.push(initSegmentXhr);
+    }
+    const segmentRequestOptions = merge3(xhrOptions, {
+      uri: segment.part && segment.part.resolvedUri || segment.resolvedUri,
+      responseType: "arraybuffer",
+      headers: segmentXhrHeaders2(segment)
+    });
+    const segmentRequestCallback = handleSegmentResponse2({
+      segment,
+      finishProcessingFn,
+      responseType: segmentRequestOptions.responseType
+    });
+    const segmentXhr = xhr(segmentRequestOptions, segmentRequestCallback);
+    segmentXhr.addEventListener("progress", handleProgress2({
+      segment,
+      progressFn,
+      trackInfoFn,
+      timingInfoFn,
+      videoSegmentTimingInfoFn,
+      audioSegmentTimingInfoFn,
+      id3Fn,
+      captionsFn,
+      isEndOfTimeline,
+      endedTimelineFn,
+      dataFn
+    }));
+    activeXhrs.push(segmentXhr);
+    const loadendState = {};
+    activeXhrs.forEach((activeXhr) => {
+      activeXhr.addEventListener("loadend", handleLoadEnd2({
+        loadendState,
+        abortFn
+      }));
+    });
+    return () => abortAll2(activeXhrs);
+  };
+  var logFn$12 = logger2("CodecUtils");
+  var getCodecs2 = function(media) {
+    const mediaAttributes = media.attributes || {};
+    if (mediaAttributes.CODECS) {
+      return parseCodecs(mediaAttributes.CODECS);
+    }
+  };
+  var isMaat2 = (main, media) => {
+    const mediaAttributes = media.attributes || {};
+    return main && main.mediaGroups && main.mediaGroups.AUDIO && mediaAttributes.AUDIO && main.mediaGroups.AUDIO[mediaAttributes.AUDIO];
+  };
+  var isMuxed2 = (main, media) => {
+    if (!isMaat2(main, media)) {
+      return true;
+    }
+    const mediaAttributes = media.attributes || {};
+    const audioGroup = main.mediaGroups.AUDIO[mediaAttributes.AUDIO];
+    for (const groupId in audioGroup) {
+      if (!audioGroup[groupId].uri && !audioGroup[groupId].playlists) {
+        return true;
+      }
+    }
+    return false;
+  };
+  var unwrapCodecList2 = function(codecList) {
+    const codecs = {};
+    codecList.forEach(({
+      mediaType,
+      type,
+      details
+    }) => {
+      codecs[mediaType] = codecs[mediaType] || [];
+      codecs[mediaType].push(translateLegacyCodec(`${type}${details}`));
+    });
+    Object.keys(codecs).forEach(function(mediaType) {
+      if (codecs[mediaType].length > 1) {
+        logFn$12(`multiple ${mediaType} codecs found as attributes: ${codecs[mediaType].join(", ")}. Setting playlist codecs to null so that we wait for mux.js to probe segments for real codecs.`);
+        codecs[mediaType] = null;
+        return;
+      }
+      codecs[mediaType] = codecs[mediaType][0];
+    });
+    return codecs;
+  };
+  var codecCount2 = function(codecObj) {
+    let count = 0;
+    if (codecObj.audio) {
+      count++;
+    }
+    if (codecObj.video) {
+      count++;
+    }
+    return count;
+  };
+  var codecsForPlaylist2 = function(main, media) {
+    const mediaAttributes = media.attributes || {};
+    const codecInfo = unwrapCodecList2(getCodecs2(media) || []);
+    if (isMaat2(main, media) && !codecInfo.audio) {
+      if (!isMuxed2(main, media)) {
+        const defaultCodecs = unwrapCodecList2(codecsFromDefault(main, mediaAttributes.AUDIO) || []);
+        if (defaultCodecs.audio) {
+          codecInfo.audio = defaultCodecs.audio;
+        }
+      }
+    }
+    return codecInfo;
+  };
+  var logFn2 = logger2("PlaylistSelector");
+  var representationToString2 = function(representation) {
+    if (!representation || !representation.playlist) {
+      return;
+    }
+    const playlist = representation.playlist;
+    return JSON.stringify({
+      id: playlist.id,
+      bandwidth: representation.bandwidth,
+      width: representation.width,
+      height: representation.height,
+      codecs: playlist.attributes && playlist.attributes.CODECS || ""
+    });
+  };
+  var safeGetComputedStyle2 = function(el, property) {
+    if (!el) {
+      return "";
+    }
+    const result = import_window8.default.getComputedStyle(el);
+    if (!result) {
+      return "";
+    }
+    return result[property];
+  };
+  var stableSort2 = function(array, sortFn) {
+    const newArray = array.slice();
+    array.sort(function(left, right) {
+      const cmp = sortFn(left, right);
+      if (cmp === 0) {
+        return newArray.indexOf(left) - newArray.indexOf(right);
+      }
+      return cmp;
+    });
+  };
+  var comparePlaylistBandwidth2 = function(left, right) {
+    let leftBandwidth;
+    let rightBandwidth;
+    if (left.attributes.BANDWIDTH) {
+      leftBandwidth = left.attributes.BANDWIDTH;
+    }
+    leftBandwidth = leftBandwidth || import_window8.default.Number.MAX_VALUE;
+    if (right.attributes.BANDWIDTH) {
+      rightBandwidth = right.attributes.BANDWIDTH;
+    }
+    rightBandwidth = rightBandwidth || import_window8.default.Number.MAX_VALUE;
+    return leftBandwidth - rightBandwidth;
+  };
+  var comparePlaylistResolution2 = function(left, right) {
+    let leftWidth;
+    let rightWidth;
+    if (left.attributes.RESOLUTION && left.attributes.RESOLUTION.width) {
+      leftWidth = left.attributes.RESOLUTION.width;
+    }
+    leftWidth = leftWidth || import_window8.default.Number.MAX_VALUE;
+    if (right.attributes.RESOLUTION && right.attributes.RESOLUTION.width) {
+      rightWidth = right.attributes.RESOLUTION.width;
+    }
+    rightWidth = rightWidth || import_window8.default.Number.MAX_VALUE;
+    if (leftWidth === rightWidth && left.attributes.BANDWIDTH && right.attributes.BANDWIDTH) {
+      return left.attributes.BANDWIDTH - right.attributes.BANDWIDTH;
+    }
+    return leftWidth - rightWidth;
+  };
+  var simpleSelector2 = function(main, playerBandwidth, playerWidth, playerHeight, limitRenditionByPlayerDimensions, playlistController) {
+    if (!main) {
+      return;
+    }
+    const options = {
+      bandwidth: playerBandwidth,
+      width: playerWidth,
+      height: playerHeight,
+      limitRenditionByPlayerDimensions
+    };
+    let playlists = main.playlists;
+    if (Playlist2.isAudioOnly(main)) {
+      playlists = playlistController.getAudioTrackPlaylists_();
+      options.audioOnly = true;
+    }
+    let sortedPlaylistReps = playlists.map((playlist) => {
+      let bandwidth;
+      const width = playlist.attributes && playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.width;
+      const height = playlist.attributes && playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.height;
+      bandwidth = playlist.attributes && playlist.attributes.BANDWIDTH;
+      bandwidth = bandwidth || import_window8.default.Number.MAX_VALUE;
+      return {
+        bandwidth,
+        width,
+        height,
+        playlist
+      };
+    });
+    stableSort2(sortedPlaylistReps, (left, right) => left.bandwidth - right.bandwidth);
+    sortedPlaylistReps = sortedPlaylistReps.filter((rep) => !Playlist2.isIncompatible(rep.playlist));
+    let enabledPlaylistReps = sortedPlaylistReps.filter((rep) => Playlist2.isEnabled(rep.playlist));
+    if (!enabledPlaylistReps.length) {
+      enabledPlaylistReps = sortedPlaylistReps.filter((rep) => !Playlist2.isDisabled(rep.playlist));
+    }
+    const bandwidthPlaylistReps = enabledPlaylistReps.filter((rep) => rep.bandwidth * Config2.BANDWIDTH_VARIANCE < playerBandwidth);
+    let highestRemainingBandwidthRep = bandwidthPlaylistReps[bandwidthPlaylistReps.length - 1];
+    const bandwidthBestRep = bandwidthPlaylistReps.filter((rep) => rep.bandwidth === highestRemainingBandwidthRep.bandwidth)[0];
+    if (limitRenditionByPlayerDimensions === false) {
+      const chosenRep2 = bandwidthBestRep || enabledPlaylistReps[0] || sortedPlaylistReps[0];
+      if (chosenRep2 && chosenRep2.playlist) {
+        let type = "sortedPlaylistReps";
+        if (bandwidthBestRep) {
+          type = "bandwidthBestRep";
+        }
+        if (enabledPlaylistReps[0]) {
+          type = "enabledPlaylistReps";
+        }
+        logFn2(`choosing ${representationToString2(chosenRep2)} using ${type} with options`, options);
+        return chosenRep2.playlist;
+      }
+      logFn2("could not choose a playlist with options", options);
+      return null;
+    }
+    const haveResolution = bandwidthPlaylistReps.filter((rep) => rep.width && rep.height);
+    stableSort2(haveResolution, (left, right) => left.width - right.width);
+    const resolutionBestRepList = haveResolution.filter((rep) => rep.width === playerWidth && rep.height === playerHeight);
+    highestRemainingBandwidthRep = resolutionBestRepList[resolutionBestRepList.length - 1];
+    const resolutionBestRep = resolutionBestRepList.filter((rep) => rep.bandwidth === highestRemainingBandwidthRep.bandwidth)[0];
+    let resolutionPlusOneList;
+    let resolutionPlusOneSmallest;
+    let resolutionPlusOneRep;
+    if (!resolutionBestRep) {
+      resolutionPlusOneList = haveResolution.filter((rep) => rep.width > playerWidth || rep.height > playerHeight);
+      resolutionPlusOneSmallest = resolutionPlusOneList.filter((rep) => rep.width === resolutionPlusOneList[0].width && rep.height === resolutionPlusOneList[0].height);
+      highestRemainingBandwidthRep = resolutionPlusOneSmallest[resolutionPlusOneSmallest.length - 1];
+      resolutionPlusOneRep = resolutionPlusOneSmallest.filter((rep) => rep.bandwidth === highestRemainingBandwidthRep.bandwidth)[0];
+    }
+    let leastPixelDiffRep;
+    if (playlistController.leastPixelDiffSelector) {
+      const leastPixelDiffList = haveResolution.map((rep) => {
+        rep.pixelDiff = Math.abs(rep.width - playerWidth) + Math.abs(rep.height - playerHeight);
+        return rep;
+      });
+      stableSort2(leastPixelDiffList, (left, right) => {
+        if (left.pixelDiff === right.pixelDiff) {
+          return right.bandwidth - left.bandwidth;
+        }
+        return left.pixelDiff - right.pixelDiff;
+      });
+      leastPixelDiffRep = leastPixelDiffList[0];
+    }
+    const chosenRep = leastPixelDiffRep || resolutionPlusOneRep || resolutionBestRep || bandwidthBestRep || enabledPlaylistReps[0] || sortedPlaylistReps[0];
+    if (chosenRep && chosenRep.playlist) {
+      let type = "sortedPlaylistReps";
+      if (leastPixelDiffRep) {
+        type = "leastPixelDiffRep";
+      } else if (resolutionPlusOneRep) {
+        type = "resolutionPlusOneRep";
+      } else if (resolutionBestRep) {
+        type = "resolutionBestRep";
+      } else if (bandwidthBestRep) {
+        type = "bandwidthBestRep";
+      } else if (enabledPlaylistReps[0]) {
+        type = "enabledPlaylistReps";
+      }
+      logFn2(`choosing ${representationToString2(chosenRep)} using ${type} with options`, options);
+      return chosenRep.playlist;
+    }
+    logFn2("could not choose a playlist with options", options);
+    return null;
+  };
+  var lastBandwidthSelector2 = function() {
+    const pixelRatio = this.useDevicePixelRatio ? import_window8.default.devicePixelRatio || 1 : 1;
+    return simpleSelector2(this.playlists.main, this.systemBandwidth, parseInt(safeGetComputedStyle2(this.tech_.el(), "width"), 10) * pixelRatio, parseInt(safeGetComputedStyle2(this.tech_.el(), "height"), 10) * pixelRatio, this.limitRenditionByPlayerDimensions, this.playlistController_);
+  };
+  var movingAverageBandwidthSelector2 = function(decay) {
+    let average = -1;
+    let lastSystemBandwidth = -1;
+    if (decay < 0 || decay > 1) {
+      throw new Error("Moving average bandwidth decay must be between 0 and 1.");
+    }
+    return function() {
+      const pixelRatio = this.useDevicePixelRatio ? import_window8.default.devicePixelRatio || 1 : 1;
+      if (average < 0) {
+        average = this.systemBandwidth;
+        lastSystemBandwidth = this.systemBandwidth;
+      }
+      if (this.systemBandwidth > 0 && this.systemBandwidth !== lastSystemBandwidth) {
+        average = decay * this.systemBandwidth + (1 - decay) * average;
+        lastSystemBandwidth = this.systemBandwidth;
+      }
+      return simpleSelector2(this.playlists.main, average, parseInt(safeGetComputedStyle2(this.tech_.el(), "width"), 10) * pixelRatio, parseInt(safeGetComputedStyle2(this.tech_.el(), "height"), 10) * pixelRatio, this.limitRenditionByPlayerDimensions, this.playlistController_);
+    };
+  };
+  var minRebufferMaxBandwidthSelector2 = function(settings) {
+    const {
+      main,
+      currentTime,
+      bandwidth,
+      duration: duration3,
+      segmentDuration,
+      timeUntilRebuffer: timeUntilRebuffer3,
+      currentTimeline,
+      syncController
+    } = settings;
+    const compatiblePlaylists = main.playlists.filter((playlist) => !Playlist2.isIncompatible(playlist));
+    let enabledPlaylists = compatiblePlaylists.filter(Playlist2.isEnabled);
+    if (!enabledPlaylists.length) {
+      enabledPlaylists = compatiblePlaylists.filter((playlist) => !Playlist2.isDisabled(playlist));
+    }
+    const bandwidthPlaylists = enabledPlaylists.filter(Playlist2.hasAttribute.bind(null, "BANDWIDTH"));
+    const rebufferingEstimates = bandwidthPlaylists.map((playlist) => {
+      const syncPoint = syncController.getSyncPoint(playlist, duration3, currentTimeline, currentTime);
+      const numRequests = syncPoint ? 1 : 2;
+      const requestTimeEstimate = Playlist2.estimateSegmentRequestTime(segmentDuration, bandwidth, playlist);
+      const rebufferingImpact = requestTimeEstimate * numRequests - timeUntilRebuffer3;
+      return {
+        playlist,
+        rebufferingImpact
+      };
+    });
+    const noRebufferingPlaylists = rebufferingEstimates.filter((estimate) => estimate.rebufferingImpact <= 0);
+    stableSort2(noRebufferingPlaylists, (a2, b2) => comparePlaylistBandwidth2(b2.playlist, a2.playlist));
+    if (noRebufferingPlaylists.length) {
+      return noRebufferingPlaylists[0];
+    }
+    stableSort2(rebufferingEstimates, (a2, b2) => a2.rebufferingImpact - b2.rebufferingImpact);
+    return rebufferingEstimates[0] || null;
+  };
+  var lowestBitrateCompatibleVariantSelector2 = function() {
+    const playlists = this.playlists.main.playlists.filter(Playlist2.isEnabled);
+    stableSort2(playlists, (a2, b2) => comparePlaylistBandwidth2(a2, b2));
+    const playlistsWithVideo = playlists.filter((playlist) => !!codecsForPlaylist2(this.playlists.main, playlist).video);
+    return playlistsWithVideo[0] || null;
+  };
+  var concatSegments2 = (segmentObj) => {
+    let offset = 0;
+    let tempBuffer;
+    if (segmentObj.bytes) {
+      tempBuffer = new Uint8Array(segmentObj.bytes);
+      segmentObj.segments.forEach((segment) => {
+        tempBuffer.set(segment, offset);
+        offset += segment.byteLength;
+      });
+    }
+    return tempBuffer;
+  };
+  var createCaptionsTrackIfNotExists2 = function(inbandTextTracks, tech, captionStream) {
+    if (!inbandTextTracks[captionStream]) {
+      tech.trigger({
+        type: "usage",
+        name: "vhs-608"
+      });
+      let instreamId = captionStream;
+      if (/^cc708_/.test(captionStream)) {
+        instreamId = "SERVICE" + captionStream.split("_")[1];
+      }
+      const track = tech.textTracks().getTrackById(instreamId);
+      if (track) {
+        inbandTextTracks[captionStream] = track;
+      } else {
+        const captionServices = tech.options_.vhs && tech.options_.vhs.captionServices || {};
+        let label = captionStream;
+        let language = captionStream;
+        let def = false;
+        const captionService = captionServices[instreamId];
+        if (captionService) {
+          label = captionService.label;
+          language = captionService.language;
+          def = captionService.default;
+        }
+        inbandTextTracks[captionStream] = tech.addRemoteTextTrack({
+          kind: "captions",
+          id: instreamId,
+          // TODO: investigate why this doesn't seem to turn the caption on by default
+          default: def,
+          label,
+          language
+        }, false).track;
+      }
+    }
+  };
+  var addCaptionData2 = function({
+    inbandTextTracks,
+    captionArray,
+    timestampOffset
+  }) {
+    if (!captionArray) {
+      return;
+    }
+    const Cue = import_window8.default.WebKitDataCue || import_window8.default.VTTCue;
+    captionArray.forEach((caption) => {
+      const track = caption.stream;
+      if (caption.content) {
+        caption.content.forEach((value) => {
+          const cue = new Cue(caption.startTime + timestampOffset, caption.endTime + timestampOffset, value.text);
+          cue.line = value.line;
+          cue.align = "left";
+          cue.position = value.position;
+          cue.positionAlign = "line-left";
+          inbandTextTracks[track].addCue(cue);
+        });
+      } else {
+        inbandTextTracks[track].addCue(new Cue(caption.startTime + timestampOffset, caption.endTime + timestampOffset, caption.text));
+      }
+    });
+  };
+  var deprecateOldCue2 = function(cue) {
+    Object.defineProperties(cue.frame, {
+      id: {
+        get() {
+          videojs.log.warn("cue.frame.id is deprecated. Use cue.value.key instead.");
+          return cue.value.key;
+        }
+      },
+      value: {
+        get() {
+          videojs.log.warn("cue.frame.value is deprecated. Use cue.value.data instead.");
+          return cue.value.data;
+        }
+      },
+      privateData: {
+        get() {
+          videojs.log.warn("cue.frame.privateData is deprecated. Use cue.value.data instead.");
+          return cue.value.data;
+        }
+      }
+    });
+  };
+  var addMetadata2 = ({
+    inbandTextTracks,
+    metadataArray,
+    timestampOffset,
+    videoDuration
+  }) => {
+    if (!metadataArray) {
+      return;
+    }
+    const Cue = import_window8.default.WebKitDataCue || import_window8.default.VTTCue;
+    const metadataTrack = inbandTextTracks.metadataTrack_;
+    if (!metadataTrack) {
+      return;
+    }
+    metadataArray.forEach((metadata) => {
+      const time = metadata.cueTime + timestampOffset;
+      if (typeof time !== "number" || import_window8.default.isNaN(time) || time < 0 || !(time < Infinity)) {
+        return;
+      }
+      if (!metadata.frames || !metadata.frames.length) {
+        return;
+      }
+      metadata.frames.forEach((frame) => {
+        const cue = new Cue(time, time, frame.value || frame.url || frame.data || "");
+        cue.frame = frame;
+        cue.value = frame;
+        deprecateOldCue2(cue);
+        metadataTrack.addCue(cue);
+      });
+    });
+    if (!metadataTrack.cues || !metadataTrack.cues.length) {
+      return;
+    }
+    const cues = metadataTrack.cues;
+    const cuesArray = [];
+    for (let i2 = 0; i2 < cues.length; i2++) {
+      if (cues[i2]) {
+        cuesArray.push(cues[i2]);
+      }
+    }
+    const cuesGroupedByStartTime = cuesArray.reduce((obj, cue) => {
+      const timeSlot = obj[cue.startTime] || [];
+      timeSlot.push(cue);
+      obj[cue.startTime] = timeSlot;
+      return obj;
+    }, {});
+    const sortedStartTimes = Object.keys(cuesGroupedByStartTime).sort((a2, b2) => Number(a2) - Number(b2));
+    sortedStartTimes.forEach((startTime, idx) => {
+      const cueGroup = cuesGroupedByStartTime[startTime];
+      const finiteDuration = isFinite(videoDuration) ? videoDuration : startTime;
+      const nextTime = Number(sortedStartTimes[idx + 1]) || finiteDuration;
+      cueGroup.forEach((cue) => {
+        cue.endTime = nextTime;
+      });
+    });
+  };
+  var dateRangeAttr2 = {
+    id: "ID",
+    class: "CLASS",
+    startDate: "START-DATE",
+    duration: "DURATION",
+    endDate: "END-DATE",
+    endOnNext: "END-ON-NEXT",
+    plannedDuration: "PLANNED-DURATION",
+    scte35Out: "SCTE35-OUT",
+    scte35In: "SCTE35-IN"
+  };
+  var dateRangeKeysToOmit2 = /* @__PURE__ */ new Set(["id", "class", "startDate", "duration", "endDate", "endOnNext", "startTime", "endTime", "processDateRange"]);
+  var addDateRangeMetadata2 = ({
+    inbandTextTracks,
+    dateRanges
+  }) => {
+    const metadataTrack = inbandTextTracks.metadataTrack_;
+    if (!metadataTrack) {
+      return;
+    }
+    const Cue = import_window8.default.WebKitDataCue || import_window8.default.VTTCue;
+    dateRanges.forEach((dateRange) => {
+      for (const key of Object.keys(dateRange)) {
+        if (dateRangeKeysToOmit2.has(key)) {
+          continue;
+        }
+        const cue = new Cue(dateRange.startTime, dateRange.endTime, "");
+        cue.id = dateRange.id;
+        cue.type = "com.apple.quicktime.HLS";
+        cue.value = {
+          key: dateRangeAttr2[key],
+          data: dateRange[key]
+        };
+        if (key === "scte35Out" || key === "scte35In") {
+          cue.value.data = new Uint8Array(cue.value.data.match(/[\da-f]{2}/gi)).buffer;
+        }
+        metadataTrack.addCue(cue);
+      }
+      dateRange.processDateRange();
+    });
+  };
+  var createMetadataTrackIfNotExists2 = (inbandTextTracks, dispatchType, tech) => {
+    if (inbandTextTracks.metadataTrack_) {
+      return;
+    }
+    inbandTextTracks.metadataTrack_ = tech.addRemoteTextTrack({
+      kind: "metadata",
+      label: "Timed Metadata"
+    }, false).track;
+    if (!videojs.browser.IS_ANY_SAFARI) {
+      inbandTextTracks.metadataTrack_.inBandMetadataTrackDispatchType = dispatchType;
+    }
+  };
+  var removeCuesFromTrack2 = function(start, end, track) {
+    let i2;
+    let cue;
+    if (!track) {
+      return;
+    }
+    if (!track.cues) {
+      return;
+    }
+    i2 = track.cues.length;
+    while (i2--) {
+      cue = track.cues[i2];
+      if (cue.startTime >= start && cue.endTime <= end) {
+        track.removeCue(cue);
+      }
+    }
+  };
+  var removeDuplicateCuesFromTrack2 = function(track) {
+    const cues = track.cues;
+    if (!cues) {
+      return;
+    }
+    const uniqueCues = {};
+    for (let i2 = cues.length - 1; i2 >= 0; i2--) {
+      const cue = cues[i2];
+      const cueKey = `${cue.startTime}-${cue.endTime}-${cue.text}`;
+      if (uniqueCues[cueKey]) {
+        track.removeCue(cue);
+      } else {
+        uniqueCues[cueKey] = cue;
+      }
+    }
+  };
+  var gopsSafeToAlignWith2 = (buffer, currentTime, mapping) => {
+    if (typeof currentTime === "undefined" || currentTime === null || !buffer.length) {
+      return [];
+    }
+    const currentTimePts = Math.ceil((currentTime - mapping + 3) * import_clock2.ONE_SECOND_IN_TS);
+    let i2;
+    for (i2 = 0; i2 < buffer.length; i2++) {
+      if (buffer[i2].pts > currentTimePts) {
+        break;
+      }
+    }
+    return buffer.slice(i2);
+  };
+  var updateGopBuffer2 = (buffer, gops, replace) => {
+    if (!gops.length) {
+      return buffer;
+    }
+    if (replace) {
+      return gops.slice();
+    }
+    const start = gops[0].pts;
+    let i2 = 0;
+    for (i2; i2 < buffer.length; i2++) {
+      if (buffer[i2].pts >= start) {
+        break;
+      }
+    }
+    return buffer.slice(0, i2).concat(gops);
+  };
+  var removeGopBuffer2 = (buffer, start, end, mapping) => {
+    const startPts = Math.ceil((start - mapping) * import_clock2.ONE_SECOND_IN_TS);
+    const endPts = Math.ceil((end - mapping) * import_clock2.ONE_SECOND_IN_TS);
+    const updatedBuffer = buffer.slice();
+    let i2 = buffer.length;
+    while (i2--) {
+      if (buffer[i2].pts <= endPts) {
+        break;
+      }
+    }
+    if (i2 === -1) {
+      return updatedBuffer;
+    }
+    let j2 = i2 + 1;
+    while (j2--) {
+      if (buffer[j2].pts <= startPts) {
+        break;
+      }
+    }
+    j2 = Math.max(j2, 0);
+    updatedBuffer.splice(j2, i2 - j2 + 1);
+    return updatedBuffer;
+  };
+  var shallowEqual2 = function(a2, b2) {
+    if (!a2 && !b2 || !a2 && b2 || a2 && !b2) {
+      return false;
+    }
+    if (a2 === b2) {
+      return true;
+    }
+    const akeys = Object.keys(a2).sort();
+    const bkeys = Object.keys(b2).sort();
+    if (akeys.length !== bkeys.length) {
+      return false;
+    }
+    for (let i2 = 0; i2 < akeys.length; i2++) {
+      const key = akeys[i2];
+      if (key !== bkeys[i2]) {
+        return false;
+      }
+      if (a2[key] !== b2[key]) {
+        return false;
+      }
+    }
+    return true;
+  };
+  var QUOTA_EXCEEDED_ERR2 = 22;
+  var getSyncSegmentCandidate2 = function(currentTimeline, segments, targetTime) {
+    segments = segments || [];
+    const timelineSegments = [];
+    let time = 0;
+    for (let i2 = 0; i2 < segments.length; i2++) {
+      const segment = segments[i2];
+      if (currentTimeline === segment.timeline) {
+        timelineSegments.push(i2);
+        time += segment.duration;
+        if (time > targetTime) {
+          return i2;
+        }
+      }
+    }
+    if (timelineSegments.length === 0) {
+      return 0;
+    }
+    return timelineSegments[timelineSegments.length - 1];
+  };
+  var MIN_BACK_BUFFER2 = 1;
+  var CHECK_BUFFER_DELAY2 = 500;
+  var finite2 = (num) => typeof num === "number" && isFinite(num);
+  var MIN_SEGMENT_DURATION_TO_SAVE_STATS2 = 1 / 60;
+  var illegalMediaSwitch2 = (loaderType, startingMedia, trackInfo) => {
+    if (loaderType !== "main" || !startingMedia || !trackInfo) {
+      return null;
+    }
+    if (!trackInfo.hasAudio && !trackInfo.hasVideo) {
+      return "Neither audio nor video found in segment.";
+    }
+    if (startingMedia.hasVideo && !trackInfo.hasVideo) {
+      return "Only audio found in segment when we expected video. We can't switch to audio only from a stream that had video. To get rid of this message, please add codec information to the manifest.";
+    }
+    if (!startingMedia.hasVideo && trackInfo.hasVideo) {
+      return "Video found in segment when we expected only audio. We can't switch to a stream with video from an audio only stream. To get rid of this message, please add codec information to the manifest.";
+    }
+    return null;
+  };
+  var safeBackBufferTrimTime2 = (seekable3, currentTime, targetDuration) => {
+    let trimTime = currentTime - Config2.BACK_BUFFER_LENGTH;
+    if (seekable3.length) {
+      trimTime = Math.max(trimTime, seekable3.start(0));
+    }
+    const maxTrimTime = currentTime - targetDuration;
+    return Math.min(maxTrimTime, trimTime);
+  };
+  var segmentInfoString2 = (segmentInfo) => {
+    const {
+      startOfSegment,
+      duration: duration3,
+      segment,
+      part,
+      playlist: {
+        mediaSequence: seq,
+        id,
+        segments = []
+      },
+      mediaIndex: index,
+      partIndex,
+      timeline
+    } = segmentInfo;
+    const segmentLen = segments.length - 1;
+    let selection = "mediaIndex/partIndex increment";
+    if (segmentInfo.getMediaInfoForTime) {
+      selection = `getMediaInfoForTime (${segmentInfo.getMediaInfoForTime})`;
+    } else if (segmentInfo.isSyncRequest) {
+      selection = "getSyncSegmentCandidate (isSyncRequest)";
+    }
+    if (segmentInfo.independent) {
+      selection += ` with independent ${segmentInfo.independent}`;
+    }
+    const hasPartIndex = typeof partIndex === "number";
+    const name = segmentInfo.segment.uri ? "segment" : "pre-segment";
+    const zeroBasedPartCount = hasPartIndex ? getKnownPartCount2({
+      preloadSegment: segment
+    }) - 1 : 0;
+    return `${name} [${seq + index}/${seq + segmentLen}]` + (hasPartIndex ? ` part [${partIndex}/${zeroBasedPartCount}]` : "") + ` segment start/end [${segment.start} => ${segment.end}]` + (hasPartIndex ? ` part start/end [${part.start} => ${part.end}]` : "") + ` startOfSegment [${startOfSegment}] duration [${duration3}] timeline [${timeline}] selected by [${selection}] playlist [${id}]`;
+  };
+  var timingInfoPropertyForMedia2 = (mediaType) => `${mediaType}TimingInfo`;
+  var timestampOffsetForSegment2 = ({
+    segmentTimeline,
+    currentTimeline,
+    startOfSegment,
+    buffered,
+    overrideCheck
+  }) => {
+    if (!overrideCheck && segmentTimeline === currentTimeline) {
+      return null;
+    }
+    if (segmentTimeline < currentTimeline) {
+      return startOfSegment;
+    }
+    return buffered.length ? buffered.end(buffered.length - 1) : startOfSegment;
+  };
+  var shouldWaitForTimelineChange2 = ({
+    timelineChangeController,
+    currentTimeline,
+    segmentTimeline,
+    loaderType,
+    audioDisabled
+  }) => {
+    if (currentTimeline === segmentTimeline) {
+      return false;
+    }
+    if (loaderType === "audio") {
+      const lastMainTimelineChange = timelineChangeController.lastTimelineChange({
+        type: "main"
+      });
+      return !lastMainTimelineChange || lastMainTimelineChange.to !== segmentTimeline;
+    }
+    if (loaderType === "main" && audioDisabled) {
+      const pendingAudioTimelineChange = timelineChangeController.pendingTimelineChange({
+        type: "audio"
+      });
+      if (pendingAudioTimelineChange && pendingAudioTimelineChange.to === segmentTimeline) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  };
+  var mediaDuration2 = (timingInfos) => {
+    let maxDuration = 0;
+    ["video", "audio"].forEach(function(type) {
+      const typeTimingInfo = timingInfos[`${type}TimingInfo`];
+      if (!typeTimingInfo) {
+        return;
+      }
+      const {
+        start,
+        end
+      } = typeTimingInfo;
+      let duration3;
+      if (typeof start === "bigint" || typeof end === "bigint") {
+        duration3 = import_window8.default.BigInt(end) - import_window8.default.BigInt(start);
+      } else if (typeof start === "number" && typeof end === "number") {
+        duration3 = end - start;
+      }
+      if (typeof duration3 !== "undefined" && duration3 > maxDuration) {
+        maxDuration = duration3;
+      }
+    });
+    if (typeof maxDuration === "bigint" && maxDuration < Number.MAX_SAFE_INTEGER) {
+      maxDuration = Number(maxDuration);
+    }
+    return maxDuration;
+  };
+  var segmentTooLong2 = ({
+    segmentDuration,
+    maxDuration
+  }) => {
+    if (!segmentDuration) {
+      return false;
+    }
+    return Math.round(segmentDuration) > maxDuration + TIME_FUDGE_FACTOR2;
+  };
+  var getTroublesomeSegmentDurationMessage2 = (segmentInfo, sourceType) => {
+    if (sourceType !== "hls") {
+      return null;
+    }
+    const segmentDuration = mediaDuration2({
+      audioTimingInfo: segmentInfo.audioTimingInfo,
+      videoTimingInfo: segmentInfo.videoTimingInfo
+    });
+    if (!segmentDuration) {
+      return null;
+    }
+    const targetDuration = segmentInfo.playlist.targetDuration;
+    const isSegmentWayTooLong = segmentTooLong2({
+      segmentDuration,
+      maxDuration: targetDuration * 2
+    });
+    const isSegmentSlightlyTooLong = segmentTooLong2({
+      segmentDuration,
+      maxDuration: targetDuration
+    });
+    const segmentTooLongMessage = `Segment with index ${segmentInfo.mediaIndex} from playlist ${segmentInfo.playlist.id} has a duration of ${segmentDuration} when the reported duration is ${segmentInfo.duration} and the target duration is ${targetDuration}. For HLS content, a duration in excess of the target duration may result in playback issues. See the HLS specification section on EXT-X-TARGETDURATION for more details: https://tools.ietf.org/html/draft-pantos-http-live-streaming-23#section-4.3.3.1`;
+    if (isSegmentWayTooLong || isSegmentSlightlyTooLong) {
+      return {
+        severity: isSegmentWayTooLong ? "warn" : "info",
+        message: segmentTooLongMessage
+      };
+    }
+    return null;
+  };
+  var SegmentLoader2 = class extends videojs.EventTarget {
+    constructor(settings, options = {}) {
+      super();
+      if (!settings) {
+        throw new TypeError("Initialization settings are required");
+      }
+      if (typeof settings.currentTime !== "function") {
+        throw new TypeError("No currentTime getter specified");
+      }
+      if (!settings.mediaSource) {
+        throw new TypeError("No MediaSource specified");
+      }
+      this.bandwidth = settings.bandwidth;
+      this.throughput = {
+        rate: 0,
+        count: 0
+      };
+      this.roundTrip = NaN;
+      this.resetStats_();
+      this.mediaIndex = null;
+      this.partIndex = null;
+      this.hasPlayed_ = settings.hasPlayed;
+      this.currentTime_ = settings.currentTime;
+      this.seekable_ = settings.seekable;
+      this.seeking_ = settings.seeking;
+      this.duration_ = settings.duration;
+      this.mediaSource_ = settings.mediaSource;
+      this.vhs_ = settings.vhs;
+      this.loaderType_ = settings.loaderType;
+      this.currentMediaInfo_ = void 0;
+      this.startingMediaInfo_ = void 0;
+      this.segmentMetadataTrack_ = settings.segmentMetadataTrack;
+      this.goalBufferLength_ = settings.goalBufferLength;
+      this.sourceType_ = settings.sourceType;
+      this.sourceUpdater_ = settings.sourceUpdater;
+      this.inbandTextTracks_ = settings.inbandTextTracks;
+      this.state_ = "INIT";
+      this.timelineChangeController_ = settings.timelineChangeController;
+      this.shouldSaveSegmentTimingInfo_ = true;
+      this.parse708captions_ = settings.parse708captions;
+      this.useDtsForTimestampOffset_ = settings.useDtsForTimestampOffset;
+      this.captionServices_ = settings.captionServices;
+      this.exactManifestTimings = settings.exactManifestTimings;
+      this.addMetadataToTextTrack = settings.addMetadataToTextTrack;
+      this.checkBufferTimeout_ = null;
+      this.error_ = void 0;
+      this.currentTimeline_ = -1;
+      this.shouldForceTimestampOffsetAfterResync_ = false;
+      this.pendingSegment_ = null;
+      this.xhrOptions_ = null;
+      this.pendingSegments_ = [];
+      this.audioDisabled_ = false;
+      this.isPendingTimestampOffset_ = false;
+      this.gopBuffer_ = [];
+      this.timeMapping_ = 0;
+      this.safeAppend_ = false;
+      this.appendInitSegment_ = {
+        audio: true,
+        video: true
+      };
+      this.playlistOfLastInitSegment_ = {
+        audio: null,
+        video: null
+      };
+      this.callQueue_ = [];
+      this.loadQueue_ = [];
+      this.metadataQueue_ = {
+        id3: [],
+        caption: []
+      };
+      this.waitingOnRemove_ = false;
+      this.quotaExceededErrorRetryTimeout_ = null;
+      this.activeInitSegmentId_ = null;
+      this.initSegments_ = {};
+      this.cacheEncryptionKeys_ = settings.cacheEncryptionKeys;
+      this.keyCache_ = {};
+      this.decrypter_ = settings.decrypter;
+      this.syncController_ = settings.syncController;
+      this.syncPoint_ = {
+        segmentIndex: 0,
+        time: 0
+      };
+      this.transmuxer_ = this.createTransmuxer_();
+      this.triggerSyncInfoUpdate_ = () => this.trigger("syncinfoupdate");
+      this.syncController_.on("syncinfoupdate", this.triggerSyncInfoUpdate_);
+      this.mediaSource_.addEventListener("sourceopen", () => {
+        if (!this.isEndOfStream_()) {
+          this.ended_ = false;
+        }
+      });
+      this.fetchAtBuffer_ = false;
+      this.logger_ = logger2(`SegmentLoader[${this.loaderType_}]`);
+      Object.defineProperty(this, "state", {
+        get() {
+          return this.state_;
+        },
+        set(newState) {
+          if (newState !== this.state_) {
+            this.logger_(`${this.state_} -> ${newState}`);
+            this.state_ = newState;
+            this.trigger("statechange");
+          }
+        }
+      });
+      this.sourceUpdater_.on("ready", () => {
+        if (this.hasEnoughInfoToAppend_()) {
+          this.processCallQueue_();
+        }
+      });
+      if (this.loaderType_ === "main") {
+        this.timelineChangeController_.on("pendingtimelinechange", () => {
+          if (this.hasEnoughInfoToAppend_()) {
+            this.processCallQueue_();
+          }
+        });
+      }
+      if (this.loaderType_ === "audio") {
+        this.timelineChangeController_.on("timelinechange", () => {
+          if (this.hasEnoughInfoToLoad_()) {
+            this.processLoadQueue_();
+          }
+          if (this.hasEnoughInfoToAppend_()) {
+            this.processCallQueue_();
+          }
+        });
+      }
+    }
+    createTransmuxer_() {
+      return segmentTransmuxer2.createTransmuxer({
+        remux: false,
+        alignGopsAtEnd: this.safeAppend_,
+        keepOriginalTimestamps: true,
+        parse708captions: this.parse708captions_,
+        captionServices: this.captionServices_
+      });
+    }
+    /**
+     * reset all of our media stats
+     *
+     * @private
+     */
+    resetStats_() {
+      this.mediaBytesTransferred = 0;
+      this.mediaRequests = 0;
+      this.mediaRequestsAborted = 0;
+      this.mediaRequestsTimedout = 0;
+      this.mediaRequestsErrored = 0;
+      this.mediaTransferDuration = 0;
+      this.mediaSecondsLoaded = 0;
+      this.mediaAppends = 0;
+    }
+    /**
+     * dispose of the SegmentLoader and reset to the default state
+     */
+    dispose() {
+      this.trigger("dispose");
+      this.state = "DISPOSED";
+      this.pause();
+      this.abort_();
+      if (this.transmuxer_) {
+        this.transmuxer_.terminate();
+      }
+      this.resetStats_();
+      if (this.checkBufferTimeout_) {
+        import_window8.default.clearTimeout(this.checkBufferTimeout_);
+      }
+      if (this.syncController_ && this.triggerSyncInfoUpdate_) {
+        this.syncController_.off("syncinfoupdate", this.triggerSyncInfoUpdate_);
+      }
+      this.off();
+    }
+    setAudio(enable) {
+      this.audioDisabled_ = !enable;
+      if (enable) {
+        this.appendInitSegment_.audio = true;
+      } else {
+        this.sourceUpdater_.removeAudio(0, this.duration_());
+      }
+    }
+    /**
+     * abort anything that is currently doing on with the SegmentLoader
+     * and reset to a default state
+     */
+    abort() {
+      if (this.state !== "WAITING") {
+        if (this.pendingSegment_) {
+          this.pendingSegment_ = null;
+        }
+        return;
+      }
+      this.abort_();
+      this.state = "READY";
+      if (!this.paused()) {
+        this.monitorBuffer_();
+      }
+    }
+    /**
+     * abort all pending xhr requests and null any pending segements
+     *
+     * @private
+     */
+    abort_() {
+      if (this.pendingSegment_ && this.pendingSegment_.abortRequests) {
+        this.pendingSegment_.abortRequests();
+      }
+      this.pendingSegment_ = null;
+      this.callQueue_ = [];
+      this.loadQueue_ = [];
+      this.metadataQueue_.id3 = [];
+      this.metadataQueue_.caption = [];
+      this.timelineChangeController_.clearPendingTimelineChange(this.loaderType_);
+      this.waitingOnRemove_ = false;
+      import_window8.default.clearTimeout(this.quotaExceededErrorRetryTimeout_);
+      this.quotaExceededErrorRetryTimeout_ = null;
+    }
+    checkForAbort_(requestId) {
+      if (this.state === "APPENDING" && !this.pendingSegment_) {
+        this.state = "READY";
+        return true;
+      }
+      if (!this.pendingSegment_ || this.pendingSegment_.requestId !== requestId) {
+        return true;
+      }
+      return false;
+    }
+    /**
+     * set an error on the segment loader and null out any pending segements
+     *
+     * @param {Error} error the error to set on the SegmentLoader
+     * @return {Error} the error that was set or that is currently set
+     */
+    error(error) {
+      if (typeof error !== "undefined") {
+        this.logger_("error occurred:", error);
+        this.error_ = error;
+      }
+      this.pendingSegment_ = null;
+      return this.error_;
+    }
+    endOfStream() {
+      this.ended_ = true;
+      if (this.transmuxer_) {
+        segmentTransmuxer2.reset(this.transmuxer_);
+      }
+      this.gopBuffer_.length = 0;
+      this.pause();
+      this.trigger("ended");
+    }
+    /**
+     * Indicates which time ranges are buffered
+     *
+     * @return {TimeRange}
+     *         TimeRange object representing the current buffered ranges
+     */
+    buffered_() {
+      const trackInfo = this.getMediaInfo_();
+      if (!this.sourceUpdater_ || !trackInfo) {
+        return createTimeRanges2();
+      }
+      if (this.loaderType_ === "main") {
+        const {
+          hasAudio,
+          hasVideo,
+          isMuxed: isMuxed3
+        } = trackInfo;
+        if (hasVideo && hasAudio && !this.audioDisabled_ && !isMuxed3) {
+          return this.sourceUpdater_.buffered();
+        }
+        if (hasVideo) {
+          return this.sourceUpdater_.videoBuffered();
+        }
+      }
+      return this.sourceUpdater_.audioBuffered();
+    }
+    /**
+     * Gets and sets init segment for the provided map
+     *
+     * @param {Object} map
+     *        The map object representing the init segment to get or set
+     * @param {boolean=} set
+     *        If true, the init segment for the provided map should be saved
+     * @return {Object}
+     *         map object for desired init segment
+     */
+    initSegmentForMap(map, set2 = false) {
+      if (!map) {
+        return null;
+      }
+      const id = initSegmentId2(map);
+      let storedMap = this.initSegments_[id];
+      if (set2 && !storedMap && map.bytes) {
+        this.initSegments_[id] = storedMap = {
+          resolvedUri: map.resolvedUri,
+          byterange: map.byterange,
+          bytes: map.bytes,
+          tracks: map.tracks,
+          timescales: map.timescales
+        };
+      }
+      return storedMap || map;
+    }
+    /**
+     * Gets and sets key for the provided key
+     *
+     * @param {Object} key
+     *        The key object representing the key to get or set
+     * @param {boolean=} set
+     *        If true, the key for the provided key should be saved
+     * @return {Object}
+     *         Key object for desired key
+     */
+    segmentKey(key, set2 = false) {
+      if (!key) {
+        return null;
+      }
+      const id = segmentKeyId2(key);
+      let storedKey = this.keyCache_[id];
+      if (this.cacheEncryptionKeys_ && set2 && !storedKey && key.bytes) {
+        this.keyCache_[id] = storedKey = {
+          resolvedUri: key.resolvedUri,
+          bytes: key.bytes
+        };
+      }
+      const result = {
+        resolvedUri: (storedKey || key).resolvedUri
+      };
+      if (storedKey) {
+        result.bytes = storedKey.bytes;
+      }
+      return result;
+    }
+    /**
+     * Returns true if all configuration required for loading is present, otherwise false.
+     *
+     * @return {boolean} True if the all configuration is ready for loading
+     * @private
+     */
+    couldBeginLoading_() {
+      return this.playlist_ && !this.paused();
+    }
+    /**
+     * load a playlist and start to fill the buffer
+     */
+    load() {
+      this.monitorBuffer_();
+      if (!this.playlist_) {
+        return;
+      }
+      if (this.state === "INIT" && this.couldBeginLoading_()) {
+        return this.init_();
+      }
+      if (!this.couldBeginLoading_() || this.state !== "READY" && this.state !== "INIT") {
+        return;
+      }
+      this.state = "READY";
+    }
+    /**
+     * Once all the starting parameters have been specified, begin
+     * operation. This method should only be invoked from the INIT
+     * state.
+     *
+     * @private
+     */
+    init_() {
+      this.state = "READY";
+      this.resetEverything();
+      return this.monitorBuffer_();
+    }
+    /**
+     * set a playlist on the segment loader
+     *
+     * @param {PlaylistLoader} media the playlist to set on the segment loader
+     */
+    playlist(newPlaylist, options = {}) {
+      if (!newPlaylist) {
+        return;
+      }
+      const oldPlaylist = this.playlist_;
+      const segmentInfo = this.pendingSegment_;
+      this.playlist_ = newPlaylist;
+      this.xhrOptions_ = options;
+      if (this.state === "INIT") {
+        newPlaylist.syncInfo = {
+          mediaSequence: newPlaylist.mediaSequence,
+          time: 0
+        };
+        if (this.loaderType_ === "main") {
+          this.syncController_.setDateTimeMappingForStart(newPlaylist);
+        }
+      }
+      let oldId = null;
+      if (oldPlaylist) {
+        if (oldPlaylist.id) {
+          oldId = oldPlaylist.id;
+        } else if (oldPlaylist.uri) {
+          oldId = oldPlaylist.uri;
+        }
+      }
+      this.logger_(`playlist update [${oldId} => ${newPlaylist.id || newPlaylist.uri}]`);
+      this.syncController_.updateMediaSequenceMap(newPlaylist, this.currentTime_(), this.loaderType_);
+      this.trigger("syncinfoupdate");
+      if (this.state === "INIT" && this.couldBeginLoading_()) {
+        return this.init_();
+      }
+      if (!oldPlaylist || oldPlaylist.uri !== newPlaylist.uri) {
+        if (this.mediaIndex !== null) {
+          const isLLHLS = !newPlaylist.endList && typeof newPlaylist.partTargetDuration === "number";
+          if (isLLHLS) {
+            this.resetLoader();
+          } else {
+            this.resyncLoader();
+          }
+        }
+        this.currentMediaInfo_ = void 0;
+        this.trigger("playlistupdate");
+        return;
+      }
+      const mediaSequenceDiff = newPlaylist.mediaSequence - oldPlaylist.mediaSequence;
+      this.logger_(`live window shift [${mediaSequenceDiff}]`);
+      if (this.mediaIndex !== null) {
+        this.mediaIndex -= mediaSequenceDiff;
+        if (this.mediaIndex < 0) {
+          this.mediaIndex = null;
+          this.partIndex = null;
+        } else {
+          const segment = this.playlist_.segments[this.mediaIndex];
+          if (this.partIndex && (!segment.parts || !segment.parts.length || !segment.parts[this.partIndex])) {
+            const mediaIndex = this.mediaIndex;
+            this.logger_(`currently processing part (index ${this.partIndex}) no longer exists.`);
+            this.resetLoader();
+            this.mediaIndex = mediaIndex;
+          }
+        }
+      }
+      if (segmentInfo) {
+        segmentInfo.mediaIndex -= mediaSequenceDiff;
+        if (segmentInfo.mediaIndex < 0) {
+          segmentInfo.mediaIndex = null;
+          segmentInfo.partIndex = null;
+        } else {
+          if (segmentInfo.mediaIndex >= 0) {
+            segmentInfo.segment = newPlaylist.segments[segmentInfo.mediaIndex];
+          }
+          if (segmentInfo.partIndex >= 0 && segmentInfo.segment.parts) {
+            segmentInfo.part = segmentInfo.segment.parts[segmentInfo.partIndex];
+          }
+        }
+      }
+      this.syncController_.saveExpiredSegmentInfo(oldPlaylist, newPlaylist);
+    }
+    /**
+     * Prevent the loader from fetching additional segments. If there
+     * is a segment request outstanding, it will finish processing
+     * before the loader halts. A segment loader can be unpaused by
+     * calling load().
+     */
+    pause() {
+      if (this.checkBufferTimeout_) {
+        import_window8.default.clearTimeout(this.checkBufferTimeout_);
+        this.checkBufferTimeout_ = null;
+      }
+    }
+    /**
+     * Returns whether the segment loader is fetching additional
+     * segments when given the opportunity. This property can be
+     * modified through calls to pause() and load().
+     */
+    paused() {
+      return this.checkBufferTimeout_ === null;
+    }
+    /**
+     * Delete all the buffered data and reset the SegmentLoader
+     *
+     * @param {Function} [done] an optional callback to be executed when the remove
+     * operation is complete
+     */
+    resetEverything(done) {
+      this.ended_ = false;
+      this.activeInitSegmentId_ = null;
+      this.appendInitSegment_ = {
+        audio: true,
+        video: true
+      };
+      this.resetLoader();
+      this.remove(0, Infinity, done);
+      if (this.transmuxer_) {
+        this.transmuxer_.postMessage({
+          action: "clearAllMp4Captions"
+        });
+        this.transmuxer_.postMessage({
+          action: "reset"
+        });
+      }
+    }
+    /**
+     * Force the SegmentLoader to resync and start loading around the currentTime instead
+     * of starting at the end of the buffer
+     *
+     * Useful for fast quality changes
+     */
+    resetLoader() {
+      this.fetchAtBuffer_ = false;
+      this.resyncLoader();
+    }
+    /**
+     * Force the SegmentLoader to restart synchronization and make a conservative guess
+     * before returning to the simple walk-forward method
+     */
+    resyncLoader() {
+      if (this.transmuxer_) {
+        segmentTransmuxer2.reset(this.transmuxer_);
+      }
+      this.mediaIndex = null;
+      this.partIndex = null;
+      this.syncPoint_ = null;
+      this.isPendingTimestampOffset_ = false;
+      this.shouldForceTimestampOffsetAfterResync_ = true;
+      this.callQueue_ = [];
+      this.loadQueue_ = [];
+      this.metadataQueue_.id3 = [];
+      this.metadataQueue_.caption = [];
+      this.abort();
+      if (this.transmuxer_) {
+        this.transmuxer_.postMessage({
+          action: "clearParsedMp4Captions"
+        });
+      }
+    }
+    /**
+     * Remove any data in the source buffer between start and end times
+     *
+     * @param {number} start - the start time of the region to remove from the buffer
+     * @param {number} end - the end time of the region to remove from the buffer
+     * @param {Function} [done] - an optional callback to be executed when the remove
+     * @param {boolean} force - force all remove operations to happen
+     * operation is complete
+     */
+    remove(start, end, done = () => {
+    }, force = false) {
+      if (end === Infinity) {
+        end = this.duration_();
+      }
+      if (end <= start) {
+        this.logger_("skipping remove because end ${end} is <= start ${start}");
+        return;
+      }
+      if (!this.sourceUpdater_ || !this.getMediaInfo_()) {
+        this.logger_("skipping remove because no source updater or starting media info");
+        return;
+      }
+      let removesRemaining = 1;
+      const removeFinished = () => {
+        removesRemaining--;
+        if (removesRemaining === 0) {
+          done();
+        }
+      };
+      if (force || !this.audioDisabled_) {
+        removesRemaining++;
+        this.sourceUpdater_.removeAudio(start, end, removeFinished);
+      }
+      if (force || this.loaderType_ === "main") {
+        this.gopBuffer_ = removeGopBuffer2(this.gopBuffer_, start, end, this.timeMapping_);
+        removesRemaining++;
+        this.sourceUpdater_.removeVideo(start, end, removeFinished);
+      }
+      for (const track in this.inbandTextTracks_) {
+        removeCuesFromTrack2(start, end, this.inbandTextTracks_[track]);
+      }
+      removeCuesFromTrack2(start, end, this.segmentMetadataTrack_);
+      removeFinished();
+    }
+    /**
+     * (re-)schedule monitorBufferTick_ to run as soon as possible
+     *
+     * @private
+     */
+    monitorBuffer_() {
+      if (this.checkBufferTimeout_) {
+        import_window8.default.clearTimeout(this.checkBufferTimeout_);
+      }
+      this.checkBufferTimeout_ = import_window8.default.setTimeout(this.monitorBufferTick_.bind(this), 1);
+    }
+    /**
+     * As long as the SegmentLoader is in the READY state, periodically
+     * invoke fillBuffer_().
+     *
+     * @private
+     */
+    monitorBufferTick_() {
+      if (this.state === "READY") {
+        this.fillBuffer_();
+      }
+      if (this.checkBufferTimeout_) {
+        import_window8.default.clearTimeout(this.checkBufferTimeout_);
+      }
+      this.checkBufferTimeout_ = import_window8.default.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY2);
+    }
+    /**
+     * fill the buffer with segements unless the sourceBuffers are
+     * currently updating
+     *
+     * Note: this function should only ever be called by monitorBuffer_
+     * and never directly
+     *
+     * @private
+     */
+    fillBuffer_() {
+      if (this.sourceUpdater_.updating()) {
+        return;
+      }
+      const segmentInfo = this.chooseNextRequest_();
+      if (!segmentInfo) {
+        return;
+      }
+      if (typeof segmentInfo.timestampOffset === "number") {
+        this.isPendingTimestampOffset_ = false;
+        this.timelineChangeController_.pendingTimelineChange({
+          type: this.loaderType_,
+          from: this.currentTimeline_,
+          to: segmentInfo.timeline
+        });
+      }
+      this.loadSegment_(segmentInfo);
+    }
+    /**
+     * Determines if we should call endOfStream on the media source based
+     * on the state of the buffer or if appened segment was the final
+     * segment in the playlist.
+     *
+     * @param {number} [mediaIndex] the media index of segment we last appended
+     * @param {Object} [playlist] a media playlist object
+     * @return {boolean} do we need to call endOfStream on the MediaSource
+     */
+    isEndOfStream_(mediaIndex = this.mediaIndex, playlist = this.playlist_, partIndex = this.partIndex) {
+      if (!playlist || !this.mediaSource_) {
+        return false;
+      }
+      const segment = typeof mediaIndex === "number" && playlist.segments[mediaIndex];
+      const appendedLastSegment = mediaIndex + 1 === playlist.segments.length;
+      const appendedLastPart = !segment || !segment.parts || partIndex + 1 === segment.parts.length;
+      return playlist.endList && this.mediaSource_.readyState === "open" && appendedLastSegment && appendedLastPart;
+    }
+    /**
+     * Determines what request should be made given current segment loader state.
+     *
+     * @return {Object} a request object that describes the segment/part to load
+     */
+    chooseNextRequest_() {
+      const buffered = this.buffered_();
+      const bufferedEnd = lastBufferedEnd2(buffered) || 0;
+      const bufferedTime = timeAheadOf2(buffered, this.currentTime_());
+      const preloaded = !this.hasPlayed_() && bufferedTime >= 1;
+      const haveEnoughBuffer = bufferedTime >= this.goalBufferLength_();
+      const segments = this.playlist_.segments;
+      if (!segments.length || preloaded || haveEnoughBuffer) {
+        return null;
+      }
+      this.syncPoint_ = this.syncPoint_ || this.syncController_.getSyncPoint(this.playlist_, this.duration_(), this.currentTimeline_, this.currentTime_(), this.loaderType_);
+      const next = {
+        partIndex: null,
+        mediaIndex: null,
+        startOfSegment: null,
+        playlist: this.playlist_,
+        isSyncRequest: Boolean(!this.syncPoint_)
+      };
+      if (next.isSyncRequest) {
+        next.mediaIndex = getSyncSegmentCandidate2(this.currentTimeline_, segments, bufferedEnd);
+        this.logger_(`choose next request. Can not find sync point. Fallback to media Index: ${next.mediaIndex}`);
+      } else if (this.mediaIndex !== null) {
+        const segment = segments[this.mediaIndex];
+        const partIndex = typeof this.partIndex === "number" ? this.partIndex : -1;
+        next.startOfSegment = segment.end ? segment.end : bufferedEnd;
+        if (segment.parts && segment.parts[partIndex + 1]) {
+          next.mediaIndex = this.mediaIndex;
+          next.partIndex = partIndex + 1;
+        } else {
+          next.mediaIndex = this.mediaIndex + 1;
+        }
+      } else {
+        const {
+          segmentIndex,
+          startTime,
+          partIndex
+        } = Playlist2.getMediaInfoForTime({
+          exactManifestTimings: this.exactManifestTimings,
+          playlist: this.playlist_,
+          currentTime: this.fetchAtBuffer_ ? bufferedEnd : this.currentTime_(),
+          startingPartIndex: this.syncPoint_.partIndex,
+          startingSegmentIndex: this.syncPoint_.segmentIndex,
+          startTime: this.syncPoint_.time
+        });
+        next.getMediaInfoForTime = this.fetchAtBuffer_ ? `bufferedEnd ${bufferedEnd}` : `currentTime ${this.currentTime_()}`;
+        next.mediaIndex = segmentIndex;
+        next.startOfSegment = startTime;
+        next.partIndex = partIndex;
+        this.logger_(`choose next request. Playlist switched and we have a sync point. Media Index: ${next.mediaIndex} `);
+      }
+      const nextSegment = segments[next.mediaIndex];
+      let nextPart = nextSegment && typeof next.partIndex === "number" && nextSegment.parts && nextSegment.parts[next.partIndex];
+      if (!nextSegment || typeof next.partIndex === "number" && !nextPart) {
+        return null;
+      }
+      if (typeof next.partIndex !== "number" && nextSegment.parts) {
+        next.partIndex = 0;
+        nextPart = nextSegment.parts[0];
+      }
+      const hasIndependentSegments = this.vhs_.playlists && this.vhs_.playlists.main && this.vhs_.playlists.main.independentSegments || this.playlist_.independentSegments;
+      if (!bufferedTime && nextPart && !hasIndependentSegments && !nextPart.independent) {
+        if (next.partIndex === 0) {
+          const lastSegment = segments[next.mediaIndex - 1];
+          const lastSegmentLastPart = lastSegment.parts && lastSegment.parts.length && lastSegment.parts[lastSegment.parts.length - 1];
+          if (lastSegmentLastPart && lastSegmentLastPart.independent) {
+            next.mediaIndex -= 1;
+            next.partIndex = lastSegment.parts.length - 1;
+            next.independent = "previous segment";
+          }
+        } else if (nextSegment.parts[next.partIndex - 1].independent) {
+          next.partIndex -= 1;
+          next.independent = "previous part";
+        }
+      }
+      const ended = this.mediaSource_ && this.mediaSource_.readyState === "ended";
+      if (next.mediaIndex >= segments.length - 1 && ended && !this.seeking_()) {
+        return null;
+      }
+      if (this.shouldForceTimestampOffsetAfterResync_) {
+        this.shouldForceTimestampOffsetAfterResync_ = false;
+        next.forceTimestampOffset = true;
+        this.logger_("choose next request. Force timestamp offset after loader resync");
+      }
+      return this.generateSegmentInfo_(next);
+    }
+    generateSegmentInfo_(options) {
+      const {
+        independent,
+        playlist,
+        mediaIndex,
+        startOfSegment,
+        isSyncRequest,
+        partIndex,
+        forceTimestampOffset,
+        getMediaInfoForTime: getMediaInfoForTime3
+      } = options;
+      const segment = playlist.segments[mediaIndex];
+      const part = typeof partIndex === "number" && segment.parts[partIndex];
+      const segmentInfo = {
+        requestId: "segment-loader-" + Math.random(),
+        // resolve the segment URL relative to the playlist
+        uri: part && part.resolvedUri || segment.resolvedUri,
+        // the segment's mediaIndex at the time it was requested
+        mediaIndex,
+        partIndex: part ? partIndex : null,
+        // whether or not to update the SegmentLoader's state with this
+        // segment's mediaIndex
+        isSyncRequest,
+        startOfSegment,
+        // the segment's playlist
+        playlist,
+        // unencrypted bytes of the segment
+        bytes: null,
+        // when a key is defined for this segment, the encrypted bytes
+        encryptedBytes: null,
+        // The target timestampOffset for this segment when we append it
+        // to the source buffer
+        timestampOffset: null,
+        // The timeline that the segment is in
+        timeline: segment.timeline,
+        // The expected duration of the segment in seconds
+        duration: part && part.duration || segment.duration,
+        // retain the segment in case the playlist updates while doing an async process
+        segment,
+        part,
+        byteLength: 0,
+        transmuxer: this.transmuxer_,
+        // type of getMediaInfoForTime that was used to get this segment
+        getMediaInfoForTime: getMediaInfoForTime3,
+        independent
+      };
+      const overrideCheck = typeof forceTimestampOffset !== "undefined" ? forceTimestampOffset : this.isPendingTimestampOffset_;
+      segmentInfo.timestampOffset = this.timestampOffsetForSegment_({
+        segmentTimeline: segment.timeline,
+        currentTimeline: this.currentTimeline_,
+        startOfSegment,
+        buffered: this.buffered_(),
+        overrideCheck
+      });
+      const audioBufferedEnd = lastBufferedEnd2(this.sourceUpdater_.audioBuffered());
+      if (typeof audioBufferedEnd === "number") {
+        segmentInfo.audioAppendStart = audioBufferedEnd - this.sourceUpdater_.audioTimestampOffset();
+      }
+      if (this.sourceUpdater_.videoBuffered().length) {
+        segmentInfo.gopsToAlignWith = gopsSafeToAlignWith2(
+          this.gopBuffer_,
+          // since the transmuxer is using the actual timing values, but the time is
+          // adjusted by the timestmap offset, we must adjust the value here
+          this.currentTime_() - this.sourceUpdater_.videoTimestampOffset(),
+          this.timeMapping_
+        );
+      }
+      return segmentInfo;
+    }
+    // get the timestampoffset for a segment,
+    // added so that vtt segment loader can override and prevent
+    // adding timestamp offsets.
+    timestampOffsetForSegment_(options) {
+      return timestampOffsetForSegment2(options);
+    }
+    /**
+     * Determines if the network has enough bandwidth to complete the current segment
+     * request in a timely manner. If not, the request will be aborted early and bandwidth
+     * updated to trigger a playlist switch.
+     *
+     * @param {Object} stats
+     *        Object containing stats about the request timing and size
+     * @private
+     */
+    earlyAbortWhenNeeded_(stats) {
+      if (this.vhs_.tech_.paused() || // Don't abort if the current playlist is on the lowestEnabledRendition
+      // TODO: Replace using timeout with a boolean indicating whether this playlist is
+      //       the lowestEnabledRendition.
+      !this.xhrOptions_.timeout || // Don't abort if we have no bandwidth information to estimate segment sizes
+      !this.playlist_.attributes.BANDWIDTH) {
+        return;
+      }
+      if (Date.now() - (stats.firstBytesReceivedAt || Date.now()) < 1e3) {
+        return;
+      }
+      const currentTime = this.currentTime_();
+      const measuredBandwidth = stats.bandwidth;
+      const segmentDuration = this.pendingSegment_.duration;
+      const requestTimeRemaining = Playlist2.estimateSegmentRequestTime(segmentDuration, measuredBandwidth, this.playlist_, stats.bytesReceived);
+      const timeUntilRebuffer$1 = timeUntilRebuffer2(this.buffered_(), currentTime, this.vhs_.tech_.playbackRate()) - 1;
+      if (requestTimeRemaining <= timeUntilRebuffer$1) {
+        return;
+      }
+      const switchCandidate = minRebufferMaxBandwidthSelector2({
+        main: this.vhs_.playlists.main,
+        currentTime,
+        bandwidth: measuredBandwidth,
+        duration: this.duration_(),
+        segmentDuration,
+        timeUntilRebuffer: timeUntilRebuffer$1,
+        currentTimeline: this.currentTimeline_,
+        syncController: this.syncController_
+      });
+      if (!switchCandidate) {
+        return;
+      }
+      const rebufferingImpact = requestTimeRemaining - timeUntilRebuffer$1;
+      const timeSavedBySwitching = rebufferingImpact - switchCandidate.rebufferingImpact;
+      let minimumTimeSaving = 0.5;
+      if (timeUntilRebuffer$1 <= TIME_FUDGE_FACTOR2) {
+        minimumTimeSaving = 1;
+      }
+      if (!switchCandidate.playlist || switchCandidate.playlist.uri === this.playlist_.uri || timeSavedBySwitching < minimumTimeSaving) {
+        return;
+      }
+      this.bandwidth = switchCandidate.playlist.attributes.BANDWIDTH * Config2.BANDWIDTH_VARIANCE + 1;
+      this.trigger("earlyabort");
+    }
+    handleAbort_(segmentInfo) {
+      this.logger_(`Aborting ${segmentInfoString2(segmentInfo)}`);
+      this.mediaRequestsAborted += 1;
+    }
+    /**
+     * XHR `progress` event handler
+     *
+     * @param {Event}
+     *        The XHR `progress` event
+     * @param {Object} simpleSegment
+     *        A simplified segment object copy
+     * @private
+     */
+    handleProgress_(event, simpleSegment) {
+      this.earlyAbortWhenNeeded_(simpleSegment.stats);
+      if (this.checkForAbort_(simpleSegment.requestId)) {
+        return;
+      }
+      this.trigger("progress");
+    }
+    handleTrackInfo_(simpleSegment, trackInfo) {
+      this.earlyAbortWhenNeeded_(simpleSegment.stats);
+      if (this.checkForAbort_(simpleSegment.requestId)) {
+        return;
+      }
+      if (this.checkForIllegalMediaSwitch(trackInfo)) {
+        return;
+      }
+      trackInfo = trackInfo || {};
+      if (!shallowEqual2(this.currentMediaInfo_, trackInfo)) {
+        this.appendInitSegment_ = {
+          audio: true,
+          video: true
+        };
+        this.startingMediaInfo_ = trackInfo;
+        this.currentMediaInfo_ = trackInfo;
+        this.logger_("trackinfo update", trackInfo);
+        this.trigger("trackinfo");
+      }
+      if (this.checkForAbort_(simpleSegment.requestId)) {
+        return;
+      }
+      this.pendingSegment_.trackInfo = trackInfo;
+      if (this.hasEnoughInfoToAppend_()) {
+        this.processCallQueue_();
+      }
+    }
+    handleTimingInfo_(simpleSegment, mediaType, timeType, time) {
+      this.earlyAbortWhenNeeded_(simpleSegment.stats);
+      if (this.checkForAbort_(simpleSegment.requestId)) {
+        return;
+      }
+      const segmentInfo = this.pendingSegment_;
+      const timingInfoProperty = timingInfoPropertyForMedia2(mediaType);
+      segmentInfo[timingInfoProperty] = segmentInfo[timingInfoProperty] || {};
+      segmentInfo[timingInfoProperty][timeType] = time;
+      this.logger_(`timinginfo: ${mediaType} - ${timeType} - ${time}`);
+      if (this.hasEnoughInfoToAppend_()) {
+        this.processCallQueue_();
+      }
+    }
+    handleCaptions_(simpleSegment, captionData) {
+      this.earlyAbortWhenNeeded_(simpleSegment.stats);
+      if (this.checkForAbort_(simpleSegment.requestId)) {
+        return;
+      }
+      if (captionData.length === 0) {
+        this.logger_("SegmentLoader received no captions from a caption event");
+        return;
+      }
+      const segmentInfo = this.pendingSegment_;
+      if (!segmentInfo.hasAppendedData_) {
+        this.metadataQueue_.caption.push(this.handleCaptions_.bind(this, simpleSegment, captionData));
+        return;
+      }
+      const timestampOffset = this.sourceUpdater_.videoTimestampOffset() === null ? this.sourceUpdater_.audioTimestampOffset() : this.sourceUpdater_.videoTimestampOffset();
+      const captionTracks = {};
+      captionData.forEach((caption) => {
+        captionTracks[caption.stream] = captionTracks[caption.stream] || {
+          // Infinity, as any other value will be less than this
+          startTime: Infinity,
+          captions: [],
+          // 0 as an other value will be more than this
+          endTime: 0
+        };
+        const captionTrack = captionTracks[caption.stream];
+        captionTrack.startTime = Math.min(captionTrack.startTime, caption.startTime + timestampOffset);
+        captionTrack.endTime = Math.max(captionTrack.endTime, caption.endTime + timestampOffset);
+        captionTrack.captions.push(caption);
+      });
+      Object.keys(captionTracks).forEach((trackName) => {
+        const {
+          startTime,
+          endTime,
+          captions
+        } = captionTracks[trackName];
+        const inbandTextTracks = this.inbandTextTracks_;
+        this.logger_(`adding cues from ${startTime} -> ${endTime} for ${trackName}`);
+        createCaptionsTrackIfNotExists2(inbandTextTracks, this.vhs_.tech_, trackName);
+        removeCuesFromTrack2(startTime, endTime, inbandTextTracks[trackName]);
+        addCaptionData2({
+          captionArray: captions,
+          inbandTextTracks,
+          timestampOffset
+        });
+      });
+      if (this.transmuxer_) {
+        this.transmuxer_.postMessage({
+          action: "clearParsedMp4Captions"
+        });
+      }
+    }
+    handleId3_(simpleSegment, id3Frames, dispatchType) {
+      this.earlyAbortWhenNeeded_(simpleSegment.stats);
+      if (this.checkForAbort_(simpleSegment.requestId)) {
+        return;
+      }
+      const segmentInfo = this.pendingSegment_;
+      if (!segmentInfo.hasAppendedData_) {
+        this.metadataQueue_.id3.push(this.handleId3_.bind(this, simpleSegment, id3Frames, dispatchType));
+        return;
+      }
+      this.addMetadataToTextTrack(dispatchType, id3Frames, this.duration_());
+    }
+    processMetadataQueue_() {
+      this.metadataQueue_.id3.forEach((fn) => fn());
+      this.metadataQueue_.caption.forEach((fn) => fn());
+      this.metadataQueue_.id3 = [];
+      this.metadataQueue_.caption = [];
+    }
+    processCallQueue_() {
+      const callQueue = this.callQueue_;
+      this.callQueue_ = [];
+      callQueue.forEach((fun) => fun());
+    }
+    processLoadQueue_() {
+      const loadQueue = this.loadQueue_;
+      this.loadQueue_ = [];
+      loadQueue.forEach((fun) => fun());
+    }
+    /**
+     * Determines whether the loader has enough info to load the next segment.
+     *
+     * @return {boolean}
+     *         Whether or not the loader has enough info to load the next segment
+     */
+    hasEnoughInfoToLoad_() {
+      if (this.loaderType_ !== "audio") {
+        return true;
+      }
+      const segmentInfo = this.pendingSegment_;
+      if (!segmentInfo) {
+        return false;
+      }
+      if (!this.getCurrentMediaInfo_()) {
+        return true;
+      }
+      if (
+        // Technically, instead of waiting to load a segment on timeline changes, a segment
+        // can be requested and downloaded and only wait before it is transmuxed or parsed.
+        // But in practice, there are a few reasons why it is better to wait until a loader
+        // is ready to append that segment before requesting and downloading:
+        //
+        // 1. Because audio and main loaders cross discontinuities together, if this loader
+        //    is waiting for the other to catch up, then instead of requesting another
+        //    segment and using up more bandwidth, by not yet loading, more bandwidth is
+        //    allotted to the loader currently behind.
+        // 2. media-segment-request doesn't have to have logic to consider whether a segment
+        // is ready to be processed or not, isolating the queueing behavior to the loader.
+        // 3. The audio loader bases some of its segment properties on timing information
+        //    provided by the main loader, meaning that, if the logic for waiting on
+        //    processing was in media-segment-request, then it would also need to know how
+        //    to re-generate the segment information after the main loader caught up.
+        shouldWaitForTimelineChange2({
+          timelineChangeController: this.timelineChangeController_,
+          currentTimeline: this.currentTimeline_,
+          segmentTimeline: segmentInfo.timeline,
+          loaderType: this.loaderType_,
+          audioDisabled: this.audioDisabled_
+        })
+      ) {
+        return false;
+      }
+      return true;
+    }
+    getCurrentMediaInfo_(segmentInfo = this.pendingSegment_) {
+      return segmentInfo && segmentInfo.trackInfo || this.currentMediaInfo_;
+    }
+    getMediaInfo_(segmentInfo = this.pendingSegment_) {
+      return this.getCurrentMediaInfo_(segmentInfo) || this.startingMediaInfo_;
+    }
+    getPendingSegmentPlaylist() {
+      return this.pendingSegment_ ? this.pendingSegment_.playlist : null;
+    }
+    hasEnoughInfoToAppend_() {
+      if (!this.sourceUpdater_.ready()) {
+        return false;
+      }
+      if (this.waitingOnRemove_ || this.quotaExceededErrorRetryTimeout_) {
+        return false;
+      }
+      const segmentInfo = this.pendingSegment_;
+      const trackInfo = this.getCurrentMediaInfo_();
+      if (!segmentInfo || !trackInfo) {
+        return false;
+      }
+      const {
+        hasAudio,
+        hasVideo,
+        isMuxed: isMuxed3
+      } = trackInfo;
+      if (hasVideo && !segmentInfo.videoTimingInfo) {
+        return false;
+      }
+      if (hasAudio && !this.audioDisabled_ && !isMuxed3 && !segmentInfo.audioTimingInfo) {
+        return false;
+      }
+      if (shouldWaitForTimelineChange2({
+        timelineChangeController: this.timelineChangeController_,
+        currentTimeline: this.currentTimeline_,
+        segmentTimeline: segmentInfo.timeline,
+        loaderType: this.loaderType_,
+        audioDisabled: this.audioDisabled_
+      })) {
+        return false;
+      }
+      return true;
+    }
+    handleData_(simpleSegment, result) {
+      this.earlyAbortWhenNeeded_(simpleSegment.stats);
+      if (this.checkForAbort_(simpleSegment.requestId)) {
+        return;
+      }
+      if (this.callQueue_.length || !this.hasEnoughInfoToAppend_()) {
+        this.callQueue_.push(this.handleData_.bind(this, simpleSegment, result));
+        return;
+      }
+      const segmentInfo = this.pendingSegment_;
+      this.setTimeMapping_(segmentInfo.timeline);
+      this.updateMediaSecondsLoaded_(segmentInfo.part || segmentInfo.segment);
+      if (this.mediaSource_.readyState === "closed") {
+        return;
+      }
+      if (simpleSegment.map) {
+        simpleSegment.map = this.initSegmentForMap(simpleSegment.map, true);
+        segmentInfo.segment.map = simpleSegment.map;
+      }
+      if (simpleSegment.key) {
+        this.segmentKey(simpleSegment.key, true);
+      }
+      segmentInfo.isFmp4 = simpleSegment.isFmp4;
+      segmentInfo.timingInfo = segmentInfo.timingInfo || {};
+      if (segmentInfo.isFmp4) {
+        this.trigger("fmp4");
+        segmentInfo.timingInfo.start = segmentInfo[timingInfoPropertyForMedia2(result.type)].start;
+      } else {
+        const trackInfo = this.getCurrentMediaInfo_();
+        const useVideoTimingInfo = this.loaderType_ === "main" && trackInfo && trackInfo.hasVideo;
+        let firstVideoFrameTimeForData;
+        if (useVideoTimingInfo) {
+          firstVideoFrameTimeForData = segmentInfo.videoTimingInfo.start;
+        }
+        segmentInfo.timingInfo.start = this.trueSegmentStart_({
+          currentStart: segmentInfo.timingInfo.start,
+          playlist: segmentInfo.playlist,
+          mediaIndex: segmentInfo.mediaIndex,
+          currentVideoTimestampOffset: this.sourceUpdater_.videoTimestampOffset(),
+          useVideoTimingInfo,
+          firstVideoFrameTimeForData,
+          videoTimingInfo: segmentInfo.videoTimingInfo,
+          audioTimingInfo: segmentInfo.audioTimingInfo
+        });
+      }
+      this.updateAppendInitSegmentStatus(segmentInfo, result.type);
+      this.updateSourceBufferTimestampOffset_(segmentInfo);
+      if (segmentInfo.isSyncRequest) {
+        this.updateTimingInfoEnd_(segmentInfo);
+        this.syncController_.saveSegmentTimingInfo({
+          segmentInfo,
+          shouldSaveTimelineMapping: this.loaderType_ === "main"
+        });
+        const next = this.chooseNextRequest_();
+        if (next.mediaIndex !== segmentInfo.mediaIndex || next.partIndex !== segmentInfo.partIndex) {
+          this.logger_("sync segment was incorrect, not appending");
+          return;
+        }
+        this.logger_("sync segment was correct, appending");
+      }
+      segmentInfo.hasAppendedData_ = true;
+      this.processMetadataQueue_();
+      this.appendData_(segmentInfo, result);
+    }
+    updateAppendInitSegmentStatus(segmentInfo, type) {
+      if (this.loaderType_ === "main" && typeof segmentInfo.timestampOffset === "number" && // in the case that we're handling partial data, we don't want to append an init
+      // segment for each chunk
+      !segmentInfo.changedTimestampOffset) {
+        this.appendInitSegment_ = {
+          audio: true,
+          video: true
+        };
+      }
+      if (this.playlistOfLastInitSegment_[type] !== segmentInfo.playlist) {
+        this.appendInitSegment_[type] = true;
+      }
+    }
+    getInitSegmentAndUpdateState_({
+      type,
+      initSegment,
+      map,
+      playlist
+    }) {
+      if (map) {
+        const id = initSegmentId2(map);
+        if (this.activeInitSegmentId_ === id) {
+          return null;
+        }
+        initSegment = this.initSegmentForMap(map, true).bytes;
+        this.activeInitSegmentId_ = id;
+      }
+      if (initSegment && this.appendInitSegment_[type]) {
+        this.playlistOfLastInitSegment_[type] = playlist;
+        this.appendInitSegment_[type] = false;
+        this.activeInitSegmentId_ = null;
+        return initSegment;
+      }
+      return null;
+    }
+    handleQuotaExceededError_({
+      segmentInfo,
+      type,
+      bytes
+    }, error) {
+      const audioBuffered = this.sourceUpdater_.audioBuffered();
+      const videoBuffered = this.sourceUpdater_.videoBuffered();
+      if (audioBuffered.length > 1) {
+        this.logger_("On QUOTA_EXCEEDED_ERR, found gaps in the audio buffer: " + timeRangesToArray2(audioBuffered).join(", "));
+      }
+      if (videoBuffered.length > 1) {
+        this.logger_("On QUOTA_EXCEEDED_ERR, found gaps in the video buffer: " + timeRangesToArray2(videoBuffered).join(", "));
+      }
+      const audioBufferStart = audioBuffered.length ? audioBuffered.start(0) : 0;
+      const audioBufferEnd = audioBuffered.length ? audioBuffered.end(audioBuffered.length - 1) : 0;
+      const videoBufferStart = videoBuffered.length ? videoBuffered.start(0) : 0;
+      const videoBufferEnd = videoBuffered.length ? videoBuffered.end(videoBuffered.length - 1) : 0;
+      if (audioBufferEnd - audioBufferStart <= MIN_BACK_BUFFER2 && videoBufferEnd - videoBufferStart <= MIN_BACK_BUFFER2) {
+        this.logger_(`On QUOTA_EXCEEDED_ERR, single segment too large to append to buffer, triggering an error. Appended byte length: ${bytes.byteLength}, audio buffer: ${timeRangesToArray2(audioBuffered).join(", ")}, video buffer: ${timeRangesToArray2(videoBuffered).join(", ")}, `);
+        this.error({
+          message: "Quota exceeded error with append of a single segment of content",
+          excludeUntil: Infinity
+        });
+        this.trigger("error");
+        return;
+      }
+      this.waitingOnRemove_ = true;
+      this.callQueue_.push(this.appendToSourceBuffer_.bind(this, {
+        segmentInfo,
+        type,
+        bytes
+      }));
+      const currentTime = this.currentTime_();
+      const timeToRemoveUntil = currentTime - MIN_BACK_BUFFER2;
+      this.logger_(`On QUOTA_EXCEEDED_ERR, removing audio/video from 0 to ${timeToRemoveUntil}`);
+      this.remove(0, timeToRemoveUntil, () => {
+        this.logger_(`On QUOTA_EXCEEDED_ERR, retrying append in ${MIN_BACK_BUFFER2}s`);
+        this.waitingOnRemove_ = false;
+        this.quotaExceededErrorRetryTimeout_ = import_window8.default.setTimeout(() => {
+          this.logger_("On QUOTA_EXCEEDED_ERR, re-processing call queue");
+          this.quotaExceededErrorRetryTimeout_ = null;
+          this.processCallQueue_();
+        }, MIN_BACK_BUFFER2 * 1e3);
+      }, true);
+    }
+    handleAppendError_({
+      segmentInfo,
+      type,
+      bytes
+    }, error) {
+      if (!error) {
+        return;
+      }
+      if (error.code === QUOTA_EXCEEDED_ERR2) {
+        this.handleQuotaExceededError_({
+          segmentInfo,
+          type,
+          bytes
+        });
+        return;
+      }
+      this.logger_("Received non QUOTA_EXCEEDED_ERR on append", error);
+      this.error(`${type} append of ${bytes.length}b failed for segment #${segmentInfo.mediaIndex} in playlist ${segmentInfo.playlist.id}`);
+      this.trigger("appenderror");
+    }
+    appendToSourceBuffer_({
+      segmentInfo,
+      type,
+      initSegment,
+      data,
+      bytes
+    }) {
+      if (!bytes) {
+        const segments = [data];
+        let byteLength = data.byteLength;
+        if (initSegment) {
+          segments.unshift(initSegment);
+          byteLength += initSegment.byteLength;
+        }
+        bytes = concatSegments2({
+          bytes: byteLength,
+          segments
+        });
+      }
+      this.sourceUpdater_.appendBuffer({
+        segmentInfo,
+        type,
+        bytes
+      }, this.handleAppendError_.bind(this, {
+        segmentInfo,
+        type,
+        bytes
+      }));
+    }
+    handleSegmentTimingInfo_(type, requestId, segmentTimingInfo) {
+      if (!this.pendingSegment_ || requestId !== this.pendingSegment_.requestId) {
+        return;
+      }
+      const segment = this.pendingSegment_.segment;
+      const timingInfoProperty = `${type}TimingInfo`;
+      if (!segment[timingInfoProperty]) {
+        segment[timingInfoProperty] = {};
+      }
+      segment[timingInfoProperty].transmuxerPrependedSeconds = segmentTimingInfo.prependedContentDuration || 0;
+      segment[timingInfoProperty].transmuxedPresentationStart = segmentTimingInfo.start.presentation;
+      segment[timingInfoProperty].transmuxedDecodeStart = segmentTimingInfo.start.decode;
+      segment[timingInfoProperty].transmuxedPresentationEnd = segmentTimingInfo.end.presentation;
+      segment[timingInfoProperty].transmuxedDecodeEnd = segmentTimingInfo.end.decode;
+      segment[timingInfoProperty].baseMediaDecodeTime = segmentTimingInfo.baseMediaDecodeTime;
+    }
+    appendData_(segmentInfo, result) {
+      const {
+        type,
+        data
+      } = result;
+      if (!data || !data.byteLength) {
+        return;
+      }
+      if (type === "audio" && this.audioDisabled_) {
+        return;
+      }
+      const initSegment = this.getInitSegmentAndUpdateState_({
+        type,
+        initSegment: result.initSegment,
+        playlist: segmentInfo.playlist,
+        map: segmentInfo.isFmp4 ? segmentInfo.segment.map : null
+      });
+      this.appendToSourceBuffer_({
+        segmentInfo,
+        type,
+        initSegment,
+        data
+      });
+    }
+    /**
+     * load a specific segment from a request into the buffer
+     *
+     * @private
+     */
+    loadSegment_(segmentInfo) {
+      this.state = "WAITING";
+      this.pendingSegment_ = segmentInfo;
+      this.trimBackBuffer_(segmentInfo);
+      if (typeof segmentInfo.timestampOffset === "number") {
+        if (this.transmuxer_) {
+          this.transmuxer_.postMessage({
+            action: "clearAllMp4Captions"
+          });
+        }
+      }
+      if (!this.hasEnoughInfoToLoad_()) {
+        this.loadQueue_.push(() => {
+          const options = _extends({}, segmentInfo, {
+            forceTimestampOffset: true
+          });
+          _extends(segmentInfo, this.generateSegmentInfo_(options));
+          this.isPendingTimestampOffset_ = false;
+          this.updateTransmuxerAndRequestSegment_(segmentInfo);
+        });
+        return;
+      }
+      this.updateTransmuxerAndRequestSegment_(segmentInfo);
+    }
+    updateTransmuxerAndRequestSegment_(segmentInfo) {
+      if (this.shouldUpdateTransmuxerTimestampOffset_(segmentInfo.timestampOffset)) {
+        this.gopBuffer_.length = 0;
+        segmentInfo.gopsToAlignWith = [];
+        this.timeMapping_ = 0;
+        this.transmuxer_.postMessage({
+          action: "reset"
+        });
+        this.transmuxer_.postMessage({
+          action: "setTimestampOffset",
+          timestampOffset: segmentInfo.timestampOffset
+        });
+      }
+      const simpleSegment = this.createSimplifiedSegmentObj_(segmentInfo);
+      const isEndOfStream = this.isEndOfStream_(segmentInfo.mediaIndex, segmentInfo.playlist, segmentInfo.partIndex);
+      const isWalkingForward = this.mediaIndex !== null;
+      const isDiscontinuity = segmentInfo.timeline !== this.currentTimeline_ && // currentTimeline starts at -1, so we shouldn't end the timeline switching to 0,
+      // the first timeline
+      segmentInfo.timeline > 0;
+      const isEndOfTimeline = isEndOfStream || isWalkingForward && isDiscontinuity;
+      this.logger_(`Requesting ${segmentInfoString2(segmentInfo)}`);
+      if (simpleSegment.map && !simpleSegment.map.bytes) {
+        this.logger_("going to request init segment.");
+        this.appendInitSegment_ = {
+          video: true,
+          audio: true
+        };
+      }
+      segmentInfo.abortRequests = mediaSegmentRequest2({
+        xhr: this.vhs_.xhr,
+        xhrOptions: this.xhrOptions_,
+        decryptionWorker: this.decrypter_,
+        segment: simpleSegment,
+        abortFn: this.handleAbort_.bind(this, segmentInfo),
+        progressFn: this.handleProgress_.bind(this),
+        trackInfoFn: this.handleTrackInfo_.bind(this),
+        timingInfoFn: this.handleTimingInfo_.bind(this),
+        videoSegmentTimingInfoFn: this.handleSegmentTimingInfo_.bind(this, "video", segmentInfo.requestId),
+        audioSegmentTimingInfoFn: this.handleSegmentTimingInfo_.bind(this, "audio", segmentInfo.requestId),
+        captionsFn: this.handleCaptions_.bind(this),
+        isEndOfTimeline,
+        endedTimelineFn: () => {
+          this.logger_("received endedtimeline callback");
+        },
+        id3Fn: this.handleId3_.bind(this),
+        dataFn: this.handleData_.bind(this),
+        doneFn: this.segmentRequestFinished_.bind(this),
+        onTransmuxerLog: ({
+          message,
+          level,
+          stream
+        }) => {
+          this.logger_(`${segmentInfoString2(segmentInfo)} logged from transmuxer stream ${stream} as a ${level}: ${message}`);
+        }
+      });
+    }
+    /**
+     * trim the back buffer so that we don't have too much data
+     * in the source buffer
+     *
+     * @private
+     *
+     * @param {Object} segmentInfo - the current segment
+     */
+    trimBackBuffer_(segmentInfo) {
+      const removeToTime = safeBackBufferTrimTime2(this.seekable_(), this.currentTime_(), this.playlist_.targetDuration || 10);
+      if (removeToTime > 0) {
+        this.remove(0, removeToTime);
+      }
+    }
+    /**
+     * created a simplified copy of the segment object with just the
+     * information necessary to perform the XHR and decryption
+     *
+     * @private
+     *
+     * @param {Object} segmentInfo - the current segment
+     * @return {Object} a simplified segment object copy
+     */
+    createSimplifiedSegmentObj_(segmentInfo) {
+      const segment = segmentInfo.segment;
+      const part = segmentInfo.part;
+      const simpleSegment = {
+        resolvedUri: part ? part.resolvedUri : segment.resolvedUri,
+        byterange: part ? part.byterange : segment.byterange,
+        requestId: segmentInfo.requestId,
+        transmuxer: segmentInfo.transmuxer,
+        audioAppendStart: segmentInfo.audioAppendStart,
+        gopsToAlignWith: segmentInfo.gopsToAlignWith,
+        part: segmentInfo.part
+      };
+      const previousSegment = segmentInfo.playlist.segments[segmentInfo.mediaIndex - 1];
+      if (previousSegment && previousSegment.timeline === segment.timeline) {
+        if (previousSegment.videoTimingInfo) {
+          simpleSegment.baseStartTime = previousSegment.videoTimingInfo.transmuxedDecodeEnd;
+        } else if (previousSegment.audioTimingInfo) {
+          simpleSegment.baseStartTime = previousSegment.audioTimingInfo.transmuxedDecodeEnd;
+        }
+      }
+      if (segment.key) {
+        const iv = segment.key.iv || new Uint32Array([0, 0, 0, segmentInfo.mediaIndex + segmentInfo.playlist.mediaSequence]);
+        simpleSegment.key = this.segmentKey(segment.key);
+        simpleSegment.key.iv = iv;
+      }
+      if (segment.map) {
+        simpleSegment.map = this.initSegmentForMap(segment.map);
+      }
+      return simpleSegment;
+    }
+    saveTransferStats_(stats) {
+      this.mediaRequests += 1;
+      if (stats) {
+        this.mediaBytesTransferred += stats.bytesReceived;
+        this.mediaTransferDuration += stats.roundTripTime;
+      }
+    }
+    saveBandwidthRelatedStats_(duration3, stats) {
+      this.pendingSegment_.byteLength = stats.bytesReceived;
+      if (duration3 < MIN_SEGMENT_DURATION_TO_SAVE_STATS2) {
+        this.logger_(`Ignoring segment's bandwidth because its duration of ${duration3} is less than the min to record ${MIN_SEGMENT_DURATION_TO_SAVE_STATS2}`);
+        return;
+      }
+      this.bandwidth = stats.bandwidth;
+      this.roundTrip = stats.roundTripTime;
+    }
+    handleTimeout_() {
+      this.mediaRequestsTimedout += 1;
+      this.bandwidth = 1;
+      this.roundTrip = NaN;
+      this.trigger("bandwidthupdate");
+      this.trigger("timeout");
+    }
+    /**
+     * Handle the callback from the segmentRequest function and set the
+     * associated SegmentLoader state and errors if necessary
+     *
+     * @private
+     */
+    segmentRequestFinished_(error, simpleSegment, result) {
+      if (this.callQueue_.length) {
+        this.callQueue_.push(this.segmentRequestFinished_.bind(this, error, simpleSegment, result));
+        return;
+      }
+      this.saveTransferStats_(simpleSegment.stats);
+      if (!this.pendingSegment_) {
+        return;
+      }
+      if (simpleSegment.requestId !== this.pendingSegment_.requestId) {
+        return;
+      }
+      if (error) {
+        this.pendingSegment_ = null;
+        this.state = "READY";
+        if (error.code === REQUEST_ERRORS2.ABORTED) {
+          return;
+        }
+        this.pause();
+        if (error.code === REQUEST_ERRORS2.TIMEOUT) {
+          this.handleTimeout_();
+          return;
+        }
+        this.mediaRequestsErrored += 1;
+        this.error(error);
+        this.trigger("error");
+        return;
+      }
+      const segmentInfo = this.pendingSegment_;
+      this.saveBandwidthRelatedStats_(segmentInfo.duration, simpleSegment.stats);
+      segmentInfo.endOfAllRequests = simpleSegment.endOfAllRequests;
+      if (result.gopInfo) {
+        this.gopBuffer_ = updateGopBuffer2(this.gopBuffer_, result.gopInfo, this.safeAppend_);
+      }
+      this.state = "APPENDING";
+      this.trigger("appending");
+      this.waitForAppendsToComplete_(segmentInfo);
+    }
+    setTimeMapping_(timeline) {
+      const timelineMapping = this.syncController_.mappingForTimeline(timeline);
+      if (timelineMapping !== null) {
+        this.timeMapping_ = timelineMapping;
+      }
+    }
+    updateMediaSecondsLoaded_(segment) {
+      if (typeof segment.start === "number" && typeof segment.end === "number") {
+        this.mediaSecondsLoaded += segment.end - segment.start;
+      } else {
+        this.mediaSecondsLoaded += segment.duration;
+      }
+    }
+    shouldUpdateTransmuxerTimestampOffset_(timestampOffset) {
+      if (timestampOffset === null) {
+        return false;
+      }
+      if (this.loaderType_ === "main" && timestampOffset !== this.sourceUpdater_.videoTimestampOffset()) {
+        return true;
+      }
+      if (!this.audioDisabled_ && timestampOffset !== this.sourceUpdater_.audioTimestampOffset()) {
+        return true;
+      }
+      return false;
+    }
+    trueSegmentStart_({
+      currentStart,
+      playlist,
+      mediaIndex,
+      firstVideoFrameTimeForData,
+      currentVideoTimestampOffset,
+      useVideoTimingInfo,
+      videoTimingInfo,
+      audioTimingInfo
+    }) {
+      if (typeof currentStart !== "undefined") {
+        return currentStart;
+      }
+      if (!useVideoTimingInfo) {
+        return audioTimingInfo.start;
+      }
+      const previousSegment = playlist.segments[mediaIndex - 1];
+      if (mediaIndex === 0 || !previousSegment || typeof previousSegment.start === "undefined" || previousSegment.end !== firstVideoFrameTimeForData + currentVideoTimestampOffset) {
+        return firstVideoFrameTimeForData;
+      }
+      return videoTimingInfo.start;
+    }
+    waitForAppendsToComplete_(segmentInfo) {
+      const trackInfo = this.getCurrentMediaInfo_(segmentInfo);
+      if (!trackInfo) {
+        this.error({
+          message: "No starting media returned, likely due to an unsupported media format.",
+          playlistExclusionDuration: Infinity
+        });
+        this.trigger("error");
+        return;
+      }
+      const {
+        hasAudio,
+        hasVideo,
+        isMuxed: isMuxed3
+      } = trackInfo;
+      const waitForVideo = this.loaderType_ === "main" && hasVideo;
+      const waitForAudio = !this.audioDisabled_ && hasAudio && !isMuxed3;
+      segmentInfo.waitingOnAppends = 0;
+      if (!segmentInfo.hasAppendedData_) {
+        if (!segmentInfo.timingInfo && typeof segmentInfo.timestampOffset === "number") {
+          this.isPendingTimestampOffset_ = true;
+        }
+        segmentInfo.timingInfo = {
+          start: 0
+        };
+        segmentInfo.waitingOnAppends++;
+        if (!this.isPendingTimestampOffset_) {
+          this.updateSourceBufferTimestampOffset_(segmentInfo);
+          this.processMetadataQueue_();
+        }
+        this.checkAppendsDone_(segmentInfo);
+        return;
+      }
+      if (waitForVideo) {
+        segmentInfo.waitingOnAppends++;
+      }
+      if (waitForAudio) {
+        segmentInfo.waitingOnAppends++;
+      }
+      if (waitForVideo) {
+        this.sourceUpdater_.videoQueueCallback(this.checkAppendsDone_.bind(this, segmentInfo));
+      }
+      if (waitForAudio) {
+        this.sourceUpdater_.audioQueueCallback(this.checkAppendsDone_.bind(this, segmentInfo));
+      }
+    }
+    checkAppendsDone_(segmentInfo) {
+      if (this.checkForAbort_(segmentInfo.requestId)) {
+        return;
+      }
+      segmentInfo.waitingOnAppends--;
+      if (segmentInfo.waitingOnAppends === 0) {
+        this.handleAppendsDone_();
+      }
+    }
+    checkForIllegalMediaSwitch(trackInfo) {
+      const illegalMediaSwitchError = illegalMediaSwitch2(this.loaderType_, this.getCurrentMediaInfo_(), trackInfo);
+      if (illegalMediaSwitchError) {
+        this.error({
+          message: illegalMediaSwitchError,
+          playlistExclusionDuration: Infinity
+        });
+        this.trigger("error");
+        return true;
+      }
+      return false;
+    }
+    updateSourceBufferTimestampOffset_(segmentInfo) {
+      if (segmentInfo.timestampOffset === null || // we don't yet have the start for whatever media type (video or audio) has
+      // priority, timing-wise, so we must wait
+      typeof segmentInfo.timingInfo.start !== "number" || // already updated the timestamp offset for this segment
+      segmentInfo.changedTimestampOffset || // the alt audio loader should not be responsible for setting the timestamp offset
+      this.loaderType_ !== "main") {
+        return;
+      }
+      let didChange = false;
+      segmentInfo.timestampOffset -= this.getSegmentStartTimeForTimestampOffsetCalculation_({
+        videoTimingInfo: segmentInfo.segment.videoTimingInfo,
+        audioTimingInfo: segmentInfo.segment.audioTimingInfo,
+        timingInfo: segmentInfo.timingInfo
+      });
+      segmentInfo.changedTimestampOffset = true;
+      if (segmentInfo.timestampOffset !== this.sourceUpdater_.videoTimestampOffset()) {
+        this.sourceUpdater_.videoTimestampOffset(segmentInfo.timestampOffset);
+        didChange = true;
+      }
+      if (segmentInfo.timestampOffset !== this.sourceUpdater_.audioTimestampOffset()) {
+        this.sourceUpdater_.audioTimestampOffset(segmentInfo.timestampOffset);
+        didChange = true;
+      }
+      if (didChange) {
+        this.trigger("timestampoffset");
+      }
+    }
+    getSegmentStartTimeForTimestampOffsetCalculation_({
+      videoTimingInfo,
+      audioTimingInfo,
+      timingInfo
+    }) {
+      if (!this.useDtsForTimestampOffset_) {
+        return timingInfo.start;
+      }
+      if (videoTimingInfo && typeof videoTimingInfo.transmuxedDecodeStart === "number") {
+        return videoTimingInfo.transmuxedDecodeStart;
+      }
+      if (audioTimingInfo && typeof audioTimingInfo.transmuxedDecodeStart === "number") {
+        return audioTimingInfo.transmuxedDecodeStart;
+      }
+      return timingInfo.start;
+    }
+    updateTimingInfoEnd_(segmentInfo) {
+      segmentInfo.timingInfo = segmentInfo.timingInfo || {};
+      const trackInfo = this.getMediaInfo_();
+      const useVideoTimingInfo = this.loaderType_ === "main" && trackInfo && trackInfo.hasVideo;
+      const prioritizedTimingInfo = useVideoTimingInfo && segmentInfo.videoTimingInfo ? segmentInfo.videoTimingInfo : segmentInfo.audioTimingInfo;
+      if (!prioritizedTimingInfo) {
+        return;
+      }
+      segmentInfo.timingInfo.end = typeof prioritizedTimingInfo.end === "number" ? (
+        // End time may not exist in a case where we aren't parsing the full segment (one
+        // current example is the case of fmp4), so use the rough duration to calculate an
+        // end time.
+        prioritizedTimingInfo.end
+      ) : prioritizedTimingInfo.start + segmentInfo.duration;
+    }
+    /**
+     * callback to run when appendBuffer is finished. detects if we are
+     * in a good state to do things with the data we got, or if we need
+     * to wait for more
+     *
+     * @private
+     */
+    handleAppendsDone_() {
+      if (this.pendingSegment_) {
+        this.trigger("appendsdone");
+      }
+      if (!this.pendingSegment_) {
+        this.state = "READY";
+        if (!this.paused()) {
+          this.monitorBuffer_();
+        }
+        return;
+      }
+      const segmentInfo = this.pendingSegment_;
+      this.updateTimingInfoEnd_(segmentInfo);
+      if (this.shouldSaveSegmentTimingInfo_) {
+        this.syncController_.saveSegmentTimingInfo({
+          segmentInfo,
+          shouldSaveTimelineMapping: this.loaderType_ === "main"
+        });
+      }
+      const segmentDurationMessage = getTroublesomeSegmentDurationMessage2(segmentInfo, this.sourceType_);
+      if (segmentDurationMessage) {
+        if (segmentDurationMessage.severity === "warn") {
+          videojs.log.warn(segmentDurationMessage.message);
+        } else {
+          this.logger_(segmentDurationMessage.message);
+        }
+      }
+      this.recordThroughput_(segmentInfo);
+      this.pendingSegment_ = null;
+      this.state = "READY";
+      if (segmentInfo.isSyncRequest) {
+        this.trigger("syncinfoupdate");
+        if (!segmentInfo.hasAppendedData_) {
+          this.logger_(`Throwing away un-appended sync request ${segmentInfoString2(segmentInfo)}`);
+          return;
+        }
+      }
+      this.logger_(`Appended ${segmentInfoString2(segmentInfo)}`);
+      this.addSegmentMetadataCue_(segmentInfo);
+      this.fetchAtBuffer_ = true;
+      if (this.currentTimeline_ !== segmentInfo.timeline) {
+        this.timelineChangeController_.lastTimelineChange({
+          type: this.loaderType_,
+          from: this.currentTimeline_,
+          to: segmentInfo.timeline
+        });
+        if (this.loaderType_ === "main" && !this.audioDisabled_) {
+          this.timelineChangeController_.lastTimelineChange({
+            type: "audio",
+            from: this.currentTimeline_,
+            to: segmentInfo.timeline
+          });
+        }
+      }
+      this.currentTimeline_ = segmentInfo.timeline;
+      this.trigger("syncinfoupdate");
+      const segment = segmentInfo.segment;
+      const part = segmentInfo.part;
+      const badSegmentGuess = segment.end && this.currentTime_() - segment.end > segmentInfo.playlist.targetDuration * 3;
+      const badPartGuess = part && part.end && this.currentTime_() - part.end > segmentInfo.playlist.partTargetDuration * 3;
+      if (badSegmentGuess || badPartGuess) {
+        this.logger_(`bad ${badSegmentGuess ? "segment" : "part"} ${segmentInfoString2(segmentInfo)}`);
+        this.resetEverything();
+        return;
+      }
+      const isWalkingForward = this.mediaIndex !== null;
+      if (isWalkingForward) {
+        this.trigger("bandwidthupdate");
+      }
+      this.trigger("progress");
+      this.mediaIndex = segmentInfo.mediaIndex;
+      this.partIndex = segmentInfo.partIndex;
+      if (this.isEndOfStream_(segmentInfo.mediaIndex, segmentInfo.playlist, segmentInfo.partIndex)) {
+        this.endOfStream();
+      }
+      this.trigger("appended");
+      if (segmentInfo.hasAppendedData_) {
+        this.mediaAppends++;
+      }
+      if (!this.paused()) {
+        this.monitorBuffer_();
+      }
+    }
+    /**
+     * Records the current throughput of the decrypt, transmux, and append
+     * portion of the semgment pipeline. `throughput.rate` is a the cumulative
+     * moving average of the throughput. `throughput.count` is the number of
+     * data points in the average.
+     *
+     * @private
+     * @param {Object} segmentInfo the object returned by loadSegment
+     */
+    recordThroughput_(segmentInfo) {
+      if (segmentInfo.duration < MIN_SEGMENT_DURATION_TO_SAVE_STATS2) {
+        this.logger_(`Ignoring segment's throughput because its duration of ${segmentInfo.duration} is less than the min to record ${MIN_SEGMENT_DURATION_TO_SAVE_STATS2}`);
+        return;
+      }
+      const rate = this.throughput.rate;
+      const segmentProcessingTime = Date.now() - segmentInfo.endOfAllRequests + 1;
+      const segmentProcessingThroughput = Math.floor(segmentInfo.byteLength / segmentProcessingTime * 8 * 1e3);
+      this.throughput.rate += (segmentProcessingThroughput - rate) / ++this.throughput.count;
+    }
+    /**
+     * Adds a cue to the segment-metadata track with some metadata information about the
+     * segment
+     *
+     * @private
+     * @param {Object} segmentInfo
+     *        the object returned by loadSegment
+     * @method addSegmentMetadataCue_
+     */
+    addSegmentMetadataCue_(segmentInfo) {
+      if (!this.segmentMetadataTrack_) {
+        return;
+      }
+      const segment = segmentInfo.segment;
+      const start = segment.start;
+      const end = segment.end;
+      if (!finite2(start) || !finite2(end)) {
+        return;
+      }
+      removeCuesFromTrack2(start, end, this.segmentMetadataTrack_);
+      const Cue = import_window8.default.WebKitDataCue || import_window8.default.VTTCue;
+      const value = {
+        custom: segment.custom,
+        dateTimeObject: segment.dateTimeObject,
+        dateTimeString: segment.dateTimeString,
+        programDateTime: segment.programDateTime,
+        bandwidth: segmentInfo.playlist.attributes.BANDWIDTH,
+        resolution: segmentInfo.playlist.attributes.RESOLUTION,
+        codecs: segmentInfo.playlist.attributes.CODECS,
+        byteLength: segmentInfo.byteLength,
+        uri: segmentInfo.uri,
+        timeline: segmentInfo.timeline,
+        playlist: segmentInfo.playlist.id,
+        start,
+        end
+      };
+      const data = JSON.stringify(value);
+      const cue = new Cue(start, end, data);
+      cue.value = value;
+      this.segmentMetadataTrack_.addCue(cue);
+    }
+  };
+  function noop2() {
+  }
+  var toTitleCase2 = function(string) {
+    if (typeof string !== "string") {
+      return string;
+    }
+    return string.replace(/./, (w2) => w2.toUpperCase());
+  };
+  var bufferTypes2 = ["video", "audio"];
+  var updating2 = (type, sourceUpdater) => {
+    const sourceBuffer = sourceUpdater[`${type}Buffer`];
+    return sourceBuffer && sourceBuffer.updating || sourceUpdater.queuePending[type];
+  };
+  var nextQueueIndexOfType2 = (type, queue) => {
+    for (let i2 = 0; i2 < queue.length; i2++) {
+      const queueEntry = queue[i2];
+      if (queueEntry.type === "mediaSource") {
+        return null;
+      }
+      if (queueEntry.type === type) {
+        return i2;
+      }
+    }
+    return null;
+  };
+  var shiftQueue2 = (type, sourceUpdater) => {
+    if (sourceUpdater.queue.length === 0) {
+      return;
+    }
+    let queueIndex = 0;
+    let queueEntry = sourceUpdater.queue[queueIndex];
+    if (queueEntry.type === "mediaSource") {
+      if (!sourceUpdater.updating() && sourceUpdater.mediaSource.readyState !== "closed") {
+        sourceUpdater.queue.shift();
+        queueEntry.action(sourceUpdater);
+        if (queueEntry.doneFn) {
+          queueEntry.doneFn();
+        }
+        shiftQueue2("audio", sourceUpdater);
+        shiftQueue2("video", sourceUpdater);
+      }
+      return;
+    }
+    if (type === "mediaSource") {
+      return;
+    }
+    if (!sourceUpdater.ready() || sourceUpdater.mediaSource.readyState === "closed" || updating2(type, sourceUpdater)) {
+      return;
+    }
+    if (queueEntry.type !== type) {
+      queueIndex = nextQueueIndexOfType2(type, sourceUpdater.queue);
+      if (queueIndex === null) {
+        return;
+      }
+      queueEntry = sourceUpdater.queue[queueIndex];
+    }
+    sourceUpdater.queue.splice(queueIndex, 1);
+    sourceUpdater.queuePending[type] = queueEntry;
+    queueEntry.action(type, sourceUpdater);
+    if (!queueEntry.doneFn) {
+      sourceUpdater.queuePending[type] = null;
+      shiftQueue2(type, sourceUpdater);
+      return;
+    }
+  };
+  var cleanupBuffer2 = (type, sourceUpdater) => {
+    const buffer = sourceUpdater[`${type}Buffer`];
+    const titleType = toTitleCase2(type);
+    if (!buffer) {
+      return;
+    }
+    buffer.removeEventListener("updateend", sourceUpdater[`on${titleType}UpdateEnd_`]);
+    buffer.removeEventListener("error", sourceUpdater[`on${titleType}Error_`]);
+    sourceUpdater.codecs[type] = null;
+    sourceUpdater[`${type}Buffer`] = null;
+  };
+  var inSourceBuffers2 = (mediaSource, sourceBuffer) => mediaSource && sourceBuffer && Array.prototype.indexOf.call(mediaSource.sourceBuffers, sourceBuffer) !== -1;
+  var actions2 = {
+    appendBuffer: (bytes, segmentInfo, onError3) => (type, sourceUpdater) => {
+      const sourceBuffer = sourceUpdater[`${type}Buffer`];
+      if (!inSourceBuffers2(sourceUpdater.mediaSource, sourceBuffer)) {
+        return;
+      }
+      sourceUpdater.logger_(`Appending segment ${segmentInfo.mediaIndex}'s ${bytes.length} bytes to ${type}Buffer`);
+      try {
+        sourceBuffer.appendBuffer(bytes);
+      } catch (e2) {
+        sourceUpdater.logger_(`Error with code ${e2.code} ` + (e2.code === QUOTA_EXCEEDED_ERR2 ? "(QUOTA_EXCEEDED_ERR) " : "") + `when appending segment ${segmentInfo.mediaIndex} to ${type}Buffer`);
+        sourceUpdater.queuePending[type] = null;
+        onError3(e2);
+      }
+    },
+    remove: (start, end) => (type, sourceUpdater) => {
+      const sourceBuffer = sourceUpdater[`${type}Buffer`];
+      if (!inSourceBuffers2(sourceUpdater.mediaSource, sourceBuffer)) {
+        return;
+      }
+      sourceUpdater.logger_(`Removing ${start} to ${end} from ${type}Buffer`);
+      try {
+        sourceBuffer.remove(start, end);
+      } catch (e2) {
+        sourceUpdater.logger_(`Remove ${start} to ${end} from ${type}Buffer failed`);
+      }
+    },
+    timestampOffset: (offset) => (type, sourceUpdater) => {
+      const sourceBuffer = sourceUpdater[`${type}Buffer`];
+      if (!inSourceBuffers2(sourceUpdater.mediaSource, sourceBuffer)) {
+        return;
+      }
+      sourceUpdater.logger_(`Setting ${type}timestampOffset to ${offset}`);
+      sourceBuffer.timestampOffset = offset;
+    },
+    callback: (callback) => (type, sourceUpdater) => {
+      callback();
+    },
+    endOfStream: (error) => (sourceUpdater) => {
+      if (sourceUpdater.mediaSource.readyState !== "open") {
+        return;
+      }
+      sourceUpdater.logger_(`Calling mediaSource endOfStream(${error || ""})`);
+      try {
+        sourceUpdater.mediaSource.endOfStream(error);
+      } catch (e2) {
+        videojs.log.warn("Failed to call media source endOfStream", e2);
+      }
+    },
+    duration: (duration3) => (sourceUpdater) => {
+      sourceUpdater.logger_(`Setting mediaSource duration to ${duration3}`);
+      try {
+        sourceUpdater.mediaSource.duration = duration3;
+      } catch (e2) {
+        videojs.log.warn("Failed to set media source duration", e2);
+      }
+    },
+    abort: () => (type, sourceUpdater) => {
+      if (sourceUpdater.mediaSource.readyState !== "open") {
+        return;
+      }
+      const sourceBuffer = sourceUpdater[`${type}Buffer`];
+      if (!inSourceBuffers2(sourceUpdater.mediaSource, sourceBuffer)) {
+        return;
+      }
+      sourceUpdater.logger_(`calling abort on ${type}Buffer`);
+      try {
+        sourceBuffer.abort();
+      } catch (e2) {
+        videojs.log.warn(`Failed to abort on ${type}Buffer`, e2);
+      }
+    },
+    addSourceBuffer: (type, codec) => (sourceUpdater) => {
+      const titleType = toTitleCase2(type);
+      const mime = getMimeForCodec(codec);
+      sourceUpdater.logger_(`Adding ${type}Buffer with codec ${codec} to mediaSource`);
+      const sourceBuffer = sourceUpdater.mediaSource.addSourceBuffer(mime);
+      sourceBuffer.addEventListener("updateend", sourceUpdater[`on${titleType}UpdateEnd_`]);
+      sourceBuffer.addEventListener("error", sourceUpdater[`on${titleType}Error_`]);
+      sourceUpdater.codecs[type] = codec;
+      sourceUpdater[`${type}Buffer`] = sourceBuffer;
+    },
+    removeSourceBuffer: (type) => (sourceUpdater) => {
+      const sourceBuffer = sourceUpdater[`${type}Buffer`];
+      cleanupBuffer2(type, sourceUpdater);
+      if (!inSourceBuffers2(sourceUpdater.mediaSource, sourceBuffer)) {
+        return;
+      }
+      sourceUpdater.logger_(`Removing ${type}Buffer with codec ${sourceUpdater.codecs[type]} from mediaSource`);
+      try {
+        sourceUpdater.mediaSource.removeSourceBuffer(sourceBuffer);
+      } catch (e2) {
+        videojs.log.warn(`Failed to removeSourceBuffer ${type}Buffer`, e2);
+      }
+    },
+    changeType: (codec) => (type, sourceUpdater) => {
+      const sourceBuffer = sourceUpdater[`${type}Buffer`];
+      const mime = getMimeForCodec(codec);
+      if (!inSourceBuffers2(sourceUpdater.mediaSource, sourceBuffer)) {
+        return;
+      }
+      if (sourceUpdater.codecs[type] === codec) {
+        return;
+      }
+      sourceUpdater.logger_(`changing ${type}Buffer codec from ${sourceUpdater.codecs[type]} to ${codec}`);
+      try {
+        sourceBuffer.changeType(mime);
+        sourceUpdater.codecs[type] = codec;
+      } catch (e2) {
+        videojs.log.warn(`Failed to changeType on ${type}Buffer`, e2);
+      }
+    }
+  };
+  var pushQueue2 = ({
+    type,
+    sourceUpdater,
+    action,
+    doneFn,
+    name
+  }) => {
+    sourceUpdater.queue.push({
+      type,
+      action,
+      doneFn,
+      name
+    });
+    shiftQueue2(type, sourceUpdater);
+  };
+  var onUpdateend2 = (type, sourceUpdater) => (e2) => {
+    if (sourceUpdater.queuePending[type]) {
+      const doneFn = sourceUpdater.queuePending[type].doneFn;
+      sourceUpdater.queuePending[type] = null;
+      if (doneFn) {
+        doneFn(sourceUpdater[`${type}Error_`]);
+      }
+    }
+    shiftQueue2(type, sourceUpdater);
+  };
+  var SourceUpdater2 = class extends videojs.EventTarget {
+    constructor(mediaSource) {
+      super();
+      this.mediaSource = mediaSource;
+      this.sourceopenListener_ = () => shiftQueue2("mediaSource", this);
+      this.mediaSource.addEventListener("sourceopen", this.sourceopenListener_);
+      this.logger_ = logger2("SourceUpdater");
+      this.audioTimestampOffset_ = 0;
+      this.videoTimestampOffset_ = 0;
+      this.queue = [];
+      this.queuePending = {
+        audio: null,
+        video: null
+      };
+      this.delayedAudioAppendQueue_ = [];
+      this.videoAppendQueued_ = false;
+      this.codecs = {};
+      this.onVideoUpdateEnd_ = onUpdateend2("video", this);
+      this.onAudioUpdateEnd_ = onUpdateend2("audio", this);
+      this.onVideoError_ = (e2) => {
+        this.videoError_ = e2;
+      };
+      this.onAudioError_ = (e2) => {
+        this.audioError_ = e2;
+      };
+      this.createdSourceBuffers_ = false;
+      this.initializedEme_ = false;
+      this.triggeredReady_ = false;
+    }
+    initializedEme() {
+      this.initializedEme_ = true;
+      this.triggerReady();
+    }
+    hasCreatedSourceBuffers() {
+      return this.createdSourceBuffers_;
+    }
+    hasInitializedAnyEme() {
+      return this.initializedEme_;
+    }
+    ready() {
+      return this.hasCreatedSourceBuffers() && this.hasInitializedAnyEme();
+    }
+    createSourceBuffers(codecs) {
+      if (this.hasCreatedSourceBuffers()) {
+        return;
+      }
+      this.addOrChangeSourceBuffers(codecs);
+      this.createdSourceBuffers_ = true;
+      this.trigger("createdsourcebuffers");
+      this.triggerReady();
+    }
+    triggerReady() {
+      if (this.ready() && !this.triggeredReady_) {
+        this.triggeredReady_ = true;
+        this.trigger("ready");
+      }
+    }
+    /**
+     * Add a type of source buffer to the media source.
+     *
+     * @param {string} type
+     *        The type of source buffer to add.
+     *
+     * @param {string} codec
+     *        The codec to add the source buffer with.
+     */
+    addSourceBuffer(type, codec) {
+      pushQueue2({
+        type: "mediaSource",
+        sourceUpdater: this,
+        action: actions2.addSourceBuffer(type, codec),
+        name: "addSourceBuffer"
+      });
+    }
+    /**
+     * call abort on a source buffer.
+     *
+     * @param {string} type
+     *        The type of source buffer to call abort on.
+     */
+    abort(type) {
+      pushQueue2({
+        type,
+        sourceUpdater: this,
+        action: actions2.abort(type),
+        name: "abort"
+      });
+    }
+    /**
+     * Call removeSourceBuffer and remove a specific type
+     * of source buffer on the mediaSource.
+     *
+     * @param {string} type
+     *        The type of source buffer to remove.
+     */
+    removeSourceBuffer(type) {
+      if (!this.canRemoveSourceBuffer()) {
+        videojs.log.error("removeSourceBuffer is not supported!");
+        return;
+      }
+      pushQueue2({
+        type: "mediaSource",
+        sourceUpdater: this,
+        action: actions2.removeSourceBuffer(type),
+        name: "removeSourceBuffer"
+      });
+    }
+    /**
+     * Whether or not the removeSourceBuffer function is supported
+     * on the mediaSource.
+     *
+     * @return {boolean}
+     *          if removeSourceBuffer can be called.
+     */
+    canRemoveSourceBuffer() {
+      return !videojs.browser.IS_FIREFOX && import_window8.default.MediaSource && import_window8.default.MediaSource.prototype && typeof import_window8.default.MediaSource.prototype.removeSourceBuffer === "function";
+    }
+    /**
+     * Whether or not the changeType function is supported
+     * on our SourceBuffers.
+     *
+     * @return {boolean}
+     *         if changeType can be called.
+     */
+    static canChangeType() {
+      return import_window8.default.SourceBuffer && import_window8.default.SourceBuffer.prototype && typeof import_window8.default.SourceBuffer.prototype.changeType === "function";
+    }
+    /**
+     * Whether or not the changeType function is supported
+     * on our SourceBuffers.
+     *
+     * @return {boolean}
+     *         if changeType can be called.
+     */
+    canChangeType() {
+      return this.constructor.canChangeType();
+    }
+    /**
+     * Call the changeType function on a source buffer, given the code and type.
+     *
+     * @param {string} type
+     *        The type of source buffer to call changeType on.
+     *
+     * @param {string} codec
+     *        The codec string to change type with on the source buffer.
+     */
+    changeType(type, codec) {
+      if (!this.canChangeType()) {
+        videojs.log.error("changeType is not supported!");
+        return;
+      }
+      pushQueue2({
+        type,
+        sourceUpdater: this,
+        action: actions2.changeType(codec),
+        name: "changeType"
+      });
+    }
+    /**
+     * Add source buffers with a codec or, if they are already created,
+     * call changeType on source buffers using changeType.
+     *
+     * @param {Object} codecs
+     *        Codecs to switch to
+     */
+    addOrChangeSourceBuffers(codecs) {
+      if (!codecs || typeof codecs !== "object" || Object.keys(codecs).length === 0) {
+        throw new Error("Cannot addOrChangeSourceBuffers to undefined codecs");
+      }
+      Object.keys(codecs).forEach((type) => {
+        const codec = codecs[type];
+        if (!this.hasCreatedSourceBuffers()) {
+          return this.addSourceBuffer(type, codec);
+        }
+        if (this.canChangeType()) {
+          this.changeType(type, codec);
+        }
+      });
+    }
+    /**
+     * Queue an update to append an ArrayBuffer.
+     *
+     * @param {MediaObject} object containing audioBytes and/or videoBytes
+     * @param {Function} done the function to call when done
+     * @see http://www.w3.org/TR/media-source/#widl-SourceBuffer-appendBuffer-void-ArrayBuffer-data
+     */
+    appendBuffer(options, doneFn) {
+      const {
+        segmentInfo,
+        type,
+        bytes
+      } = options;
+      this.processedAppend_ = true;
+      if (type === "audio" && this.videoBuffer && !this.videoAppendQueued_) {
+        this.delayedAudioAppendQueue_.push([options, doneFn]);
+        this.logger_(`delayed audio append of ${bytes.length} until video append`);
+        return;
+      }
+      const onError3 = doneFn;
+      pushQueue2({
+        type,
+        sourceUpdater: this,
+        action: actions2.appendBuffer(bytes, segmentInfo || {
+          mediaIndex: -1
+        }, onError3),
+        doneFn,
+        name: "appendBuffer"
+      });
+      if (type === "video") {
+        this.videoAppendQueued_ = true;
+        if (!this.delayedAudioAppendQueue_.length) {
+          return;
+        }
+        const queue = this.delayedAudioAppendQueue_.slice();
+        this.logger_(`queuing delayed audio ${queue.length} appendBuffers`);
+        this.delayedAudioAppendQueue_.length = 0;
+        queue.forEach((que) => {
+          this.appendBuffer.apply(this, que);
+        });
+      }
+    }
+    /**
+     * Get the audio buffer's buffered timerange.
+     *
+     * @return {TimeRange}
+     *         The audio buffer's buffered time range
+     */
+    audioBuffered() {
+      if (!inSourceBuffers2(this.mediaSource, this.audioBuffer)) {
+        return createTimeRanges2();
+      }
+      return this.audioBuffer.buffered ? this.audioBuffer.buffered : createTimeRanges2();
+    }
+    /**
+     * Get the video buffer's buffered timerange.
+     *
+     * @return {TimeRange}
+     *         The video buffer's buffered time range
+     */
+    videoBuffered() {
+      if (!inSourceBuffers2(this.mediaSource, this.videoBuffer)) {
+        return createTimeRanges2();
+      }
+      return this.videoBuffer.buffered ? this.videoBuffer.buffered : createTimeRanges2();
+    }
+    /**
+     * Get a combined video/audio buffer's buffered timerange.
+     *
+     * @return {TimeRange}
+     *         the combined time range
+     */
+    buffered() {
+      const video = inSourceBuffers2(this.mediaSource, this.videoBuffer) ? this.videoBuffer : null;
+      const audio = inSourceBuffers2(this.mediaSource, this.audioBuffer) ? this.audioBuffer : null;
+      if (audio && !video) {
+        return this.audioBuffered();
+      }
+      if (video && !audio) {
+        return this.videoBuffered();
+      }
+      return bufferIntersection2(this.audioBuffered(), this.videoBuffered());
+    }
+    /**
+     * Add a callback to the queue that will set duration on the mediaSource.
+     *
+     * @param {number} duration
+     *        The duration to set
+     *
+     * @param {Function} [doneFn]
+     *        function to run after duration has been set.
+     */
+    setDuration(duration3, doneFn = noop2) {
+      pushQueue2({
+        type: "mediaSource",
+        sourceUpdater: this,
+        action: actions2.duration(duration3),
+        name: "duration",
+        doneFn
+      });
+    }
+    /**
+     * Add a mediaSource endOfStream call to the queue
+     *
+     * @param {Error} [error]
+     *        Call endOfStream with an error
+     *
+     * @param {Function} [doneFn]
+     *        A function that should be called when the
+     *        endOfStream call has finished.
+     */
+    endOfStream(error = null, doneFn = noop2) {
+      if (typeof error !== "string") {
+        error = void 0;
+      }
+      pushQueue2({
+        type: "mediaSource",
+        sourceUpdater: this,
+        action: actions2.endOfStream(error),
+        name: "endOfStream",
+        doneFn
+      });
+    }
+    /**
+     * Queue an update to remove a time range from the buffer.
+     *
+     * @param {number} start where to start the removal
+     * @param {number} end where to end the removal
+     * @param {Function} [done=noop] optional callback to be executed when the remove
+     * operation is complete
+     * @see http://www.w3.org/TR/media-source/#widl-SourceBuffer-remove-void-double-start-unrestricted-double-end
+     */
+    removeAudio(start, end, done = noop2) {
+      if (!this.audioBuffered().length || this.audioBuffered().end(0) === 0) {
+        done();
+        return;
+      }
+      pushQueue2({
+        type: "audio",
+        sourceUpdater: this,
+        action: actions2.remove(start, end),
+        doneFn: done,
+        name: "remove"
+      });
+    }
+    /**
+     * Queue an update to remove a time range from the buffer.
+     *
+     * @param {number} start where to start the removal
+     * @param {number} end where to end the removal
+     * @param {Function} [done=noop] optional callback to be executed when the remove
+     * operation is complete
+     * @see http://www.w3.org/TR/media-source/#widl-SourceBuffer-remove-void-double-start-unrestricted-double-end
+     */
+    removeVideo(start, end, done = noop2) {
+      if (!this.videoBuffered().length || this.videoBuffered().end(0) === 0) {
+        done();
+        return;
+      }
+      pushQueue2({
+        type: "video",
+        sourceUpdater: this,
+        action: actions2.remove(start, end),
+        doneFn: done,
+        name: "remove"
+      });
+    }
+    /**
+     * Whether the underlying sourceBuffer is updating or not
+     *
+     * @return {boolean} the updating status of the SourceBuffer
+     */
+    updating() {
+      if (updating2("audio", this) || updating2("video", this)) {
+        return true;
+      }
+      return false;
+    }
+    /**
+     * Set/get the timestampoffset on the audio SourceBuffer
+     *
+     * @return {number} the timestamp offset
+     */
+    audioTimestampOffset(offset) {
+      if (typeof offset !== "undefined" && this.audioBuffer && // no point in updating if it's the same
+      this.audioTimestampOffset_ !== offset) {
+        pushQueue2({
+          type: "audio",
+          sourceUpdater: this,
+          action: actions2.timestampOffset(offset),
+          name: "timestampOffset"
+        });
+        this.audioTimestampOffset_ = offset;
+      }
+      return this.audioTimestampOffset_;
+    }
+    /**
+     * Set/get the timestampoffset on the video SourceBuffer
+     *
+     * @return {number} the timestamp offset
+     */
+    videoTimestampOffset(offset) {
+      if (typeof offset !== "undefined" && this.videoBuffer && // no point in updating if it's the same
+      this.videoTimestampOffset !== offset) {
+        pushQueue2({
+          type: "video",
+          sourceUpdater: this,
+          action: actions2.timestampOffset(offset),
+          name: "timestampOffset"
+        });
+        this.videoTimestampOffset_ = offset;
+      }
+      return this.videoTimestampOffset_;
+    }
+    /**
+     * Add a function to the queue that will be called
+     * when it is its turn to run in the audio queue.
+     *
+     * @param {Function} callback
+     *        The callback to queue.
+     */
+    audioQueueCallback(callback) {
+      if (!this.audioBuffer) {
+        return;
+      }
+      pushQueue2({
+        type: "audio",
+        sourceUpdater: this,
+        action: actions2.callback(callback),
+        name: "callback"
+      });
+    }
+    /**
+     * Add a function to the queue that will be called
+     * when it is its turn to run in the video queue.
+     *
+     * @param {Function} callback
+     *        The callback to queue.
+     */
+    videoQueueCallback(callback) {
+      if (!this.videoBuffer) {
+        return;
+      }
+      pushQueue2({
+        type: "video",
+        sourceUpdater: this,
+        action: actions2.callback(callback),
+        name: "callback"
+      });
+    }
+    /**
+     * dispose of the source updater and the underlying sourceBuffer
+     */
+    dispose() {
+      this.trigger("dispose");
+      bufferTypes2.forEach((type) => {
+        this.abort(type);
+        if (this.canRemoveSourceBuffer()) {
+          this.removeSourceBuffer(type);
+        } else {
+          this[`${type}QueueCallback`](() => cleanupBuffer2(type, this));
+        }
+      });
+      this.videoAppendQueued_ = false;
+      this.delayedAudioAppendQueue_.length = 0;
+      if (this.sourceopenListener_) {
+        this.mediaSource.removeEventListener("sourceopen", this.sourceopenListener_);
+      }
+      this.off();
+    }
+  };
+  var uint8ToUtf82 = (uintArray) => decodeURIComponent(escape(String.fromCharCode.apply(null, uintArray)));
+  var bufferToHexString2 = (buffer) => {
+    const uInt8Buffer = new Uint8Array(buffer);
+    return Array.from(uInt8Buffer).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  };
+  var VTT_LINE_TERMINATORS2 = new Uint8Array("\n\n".split("").map((char) => char.charCodeAt(0)));
+  var NoVttJsError2 = class extends Error {
+    constructor() {
+      super("Trying to parse received VTT cues, but there is no WebVTT. Make sure vtt.js is loaded.");
+    }
+  };
+  var VTTSegmentLoader2 = class extends SegmentLoader2 {
+    constructor(settings, options = {}) {
+      super(settings, options);
+      this.mediaSource_ = null;
+      this.subtitlesTrack_ = null;
+      this.loaderType_ = "subtitle";
+      this.featuresNativeTextTracks_ = settings.featuresNativeTextTracks;
+      this.loadVttJs = settings.loadVttJs;
+      this.shouldSaveSegmentTimingInfo_ = false;
+    }
+    createTransmuxer_() {
+      return null;
+    }
+    /**
+     * Indicates which time ranges are buffered
+     *
+     * @return {TimeRange}
+     *         TimeRange object representing the current buffered ranges
+     */
+    buffered_() {
+      if (!this.subtitlesTrack_ || !this.subtitlesTrack_.cues || !this.subtitlesTrack_.cues.length) {
+        return createTimeRanges2();
+      }
+      const cues = this.subtitlesTrack_.cues;
+      const start = cues[0].startTime;
+      const end = cues[cues.length - 1].startTime;
+      return createTimeRanges2([[start, end]]);
+    }
+    /**
+     * Gets and sets init segment for the provided map
+     *
+     * @param {Object} map
+     *        The map object representing the init segment to get or set
+     * @param {boolean=} set
+     *        If true, the init segment for the provided map should be saved
+     * @return {Object}
+     *         map object for desired init segment
+     */
+    initSegmentForMap(map, set2 = false) {
+      if (!map) {
+        return null;
+      }
+      const id = initSegmentId2(map);
+      let storedMap = this.initSegments_[id];
+      if (set2 && !storedMap && map.bytes) {
+        const combinedByteLength = VTT_LINE_TERMINATORS2.byteLength + map.bytes.byteLength;
+        const combinedSegment = new Uint8Array(combinedByteLength);
+        combinedSegment.set(map.bytes);
+        combinedSegment.set(VTT_LINE_TERMINATORS2, map.bytes.byteLength);
+        this.initSegments_[id] = storedMap = {
+          resolvedUri: map.resolvedUri,
+          byterange: map.byterange,
+          bytes: combinedSegment
+        };
+      }
+      return storedMap || map;
+    }
+    /**
+     * Returns true if all configuration required for loading is present, otherwise false.
+     *
+     * @return {boolean} True if the all configuration is ready for loading
+     * @private
+     */
+    couldBeginLoading_() {
+      return this.playlist_ && this.subtitlesTrack_ && !this.paused();
+    }
+    /**
+     * Once all the starting parameters have been specified, begin
+     * operation. This method should only be invoked from the INIT
+     * state.
+     *
+     * @private
+     */
+    init_() {
+      this.state = "READY";
+      this.resetEverything();
+      return this.monitorBuffer_();
+    }
+    /**
+     * Set a subtitle track on the segment loader to add subtitles to
+     *
+     * @param {TextTrack=} track
+     *        The text track to add loaded subtitles to
+     * @return {TextTrack}
+     *        Returns the subtitles track
+     */
+    track(track) {
+      if (typeof track === "undefined") {
+        return this.subtitlesTrack_;
+      }
+      this.subtitlesTrack_ = track;
+      if (this.state === "INIT" && this.couldBeginLoading_()) {
+        this.init_();
+      }
+      return this.subtitlesTrack_;
+    }
+    /**
+     * Remove any data in the source buffer between start and end times
+     *
+     * @param {number} start - the start time of the region to remove from the buffer
+     * @param {number} end - the end time of the region to remove from the buffer
+     */
+    remove(start, end) {
+      removeCuesFromTrack2(start, end, this.subtitlesTrack_);
+    }
+    /**
+     * fill the buffer with segements unless the sourceBuffers are
+     * currently updating
+     *
+     * Note: this function should only ever be called by monitorBuffer_
+     * and never directly
+     *
+     * @private
+     */
+    fillBuffer_() {
+      const segmentInfo = this.chooseNextRequest_();
+      if (!segmentInfo) {
+        return;
+      }
+      if (this.syncController_.timestampOffsetForTimeline(segmentInfo.timeline) === null) {
+        const checkTimestampOffset = () => {
+          this.state = "READY";
+          if (!this.paused()) {
+            this.monitorBuffer_();
+          }
+        };
+        this.syncController_.one("timestampoffset", checkTimestampOffset);
+        this.state = "WAITING_ON_TIMELINE";
+        return;
+      }
+      this.loadSegment_(segmentInfo);
+    }
+    // never set a timestamp offset for vtt segments.
+    timestampOffsetForSegment_() {
+      return null;
+    }
+    chooseNextRequest_() {
+      return this.skipEmptySegments_(super.chooseNextRequest_());
+    }
+    /**
+     * Prevents the segment loader from requesting segments we know contain no subtitles
+     * by walking forward until we find the next segment that we don't know whether it is
+     * empty or not.
+     *
+     * @param {Object} segmentInfo
+     *        a segment info object that describes the current segment
+     * @return {Object}
+     *         a segment info object that describes the current segment
+     */
+    skipEmptySegments_(segmentInfo) {
+      while (segmentInfo && segmentInfo.segment.empty) {
+        if (segmentInfo.mediaIndex + 1 >= segmentInfo.playlist.segments.length) {
+          segmentInfo = null;
+          break;
+        }
+        segmentInfo = this.generateSegmentInfo_({
+          playlist: segmentInfo.playlist,
+          mediaIndex: segmentInfo.mediaIndex + 1,
+          startOfSegment: segmentInfo.startOfSegment + segmentInfo.duration,
+          isSyncRequest: segmentInfo.isSyncRequest
+        });
+      }
+      return segmentInfo;
+    }
+    stopForError(error) {
+      this.error(error);
+      this.state = "READY";
+      this.pause();
+      this.trigger("error");
+    }
+    /**
+     * append a decrypted segement to the SourceBuffer through a SourceUpdater
+     *
+     * @private
+     */
+    segmentRequestFinished_(error, simpleSegment, result) {
+      if (!this.subtitlesTrack_) {
+        this.state = "READY";
+        return;
+      }
+      this.saveTransferStats_(simpleSegment.stats);
+      if (!this.pendingSegment_) {
+        this.state = "READY";
+        this.mediaRequestsAborted += 1;
+        return;
+      }
+      if (error) {
+        if (error.code === REQUEST_ERRORS2.TIMEOUT) {
+          this.handleTimeout_();
+        }
+        if (error.code === REQUEST_ERRORS2.ABORTED) {
+          this.mediaRequestsAborted += 1;
+        } else {
+          this.mediaRequestsErrored += 1;
+        }
+        this.stopForError(error);
+        return;
+      }
+      const segmentInfo = this.pendingSegment_;
+      this.saveBandwidthRelatedStats_(segmentInfo.duration, simpleSegment.stats);
+      if (simpleSegment.key) {
+        this.segmentKey(simpleSegment.key, true);
+      }
+      this.state = "APPENDING";
+      this.trigger("appending");
+      const segment = segmentInfo.segment;
+      if (segment.map) {
+        segment.map.bytes = simpleSegment.map.bytes;
+      }
+      segmentInfo.bytes = simpleSegment.bytes;
+      if (typeof import_window8.default.WebVTT !== "function" && typeof this.loadVttJs === "function") {
+        this.state = "WAITING_ON_VTTJS";
+        this.loadVttJs().then(() => this.segmentRequestFinished_(error, simpleSegment, result), () => this.stopForError({
+          message: "Error loading vtt.js"
+        }));
+        return;
+      }
+      segment.requested = true;
+      try {
+        this.parseVTTCues_(segmentInfo);
+      } catch (e2) {
+        this.stopForError({
+          message: e2.message
+        });
+        return;
+      }
+      this.updateTimeMapping_(segmentInfo, this.syncController_.timelines[segmentInfo.timeline], this.playlist_);
+      if (segmentInfo.cues.length) {
+        segmentInfo.timingInfo = {
+          start: segmentInfo.cues[0].startTime,
+          end: segmentInfo.cues[segmentInfo.cues.length - 1].endTime
+        };
+      } else {
+        segmentInfo.timingInfo = {
+          start: segmentInfo.startOfSegment,
+          end: segmentInfo.startOfSegment + segmentInfo.duration
+        };
+      }
+      if (segmentInfo.isSyncRequest) {
+        this.trigger("syncinfoupdate");
+        this.pendingSegment_ = null;
+        this.state = "READY";
+        return;
+      }
+      segmentInfo.byteLength = segmentInfo.bytes.byteLength;
+      this.mediaSecondsLoaded += segment.duration;
+      segmentInfo.cues.forEach((cue) => {
+        this.subtitlesTrack_.addCue(this.featuresNativeTextTracks_ ? new import_window8.default.VTTCue(cue.startTime, cue.endTime, cue.text) : cue);
+      });
+      removeDuplicateCuesFromTrack2(this.subtitlesTrack_);
+      this.handleAppendsDone_();
+    }
+    handleData_() {
+    }
+    updateTimingInfoEnd_() {
+    }
+    /**
+     * Uses the WebVTT parser to parse the segment response
+     *
+     * @throws NoVttJsError
+     *
+     * @param {Object} segmentInfo
+     *        a segment info object that describes the current segment
+     * @private
+     */
+    parseVTTCues_(segmentInfo) {
+      let decoder;
+      let decodeBytesToString = false;
+      if (typeof import_window8.default.WebVTT !== "function") {
+        throw new NoVttJsError2();
+      }
+      if (typeof import_window8.default.TextDecoder === "function") {
+        decoder = new import_window8.default.TextDecoder("utf8");
+      } else {
+        decoder = import_window8.default.WebVTT.StringDecoder();
+        decodeBytesToString = true;
+      }
+      const parser5 = new import_window8.default.WebVTT.Parser(import_window8.default, import_window8.default.vttjs, decoder);
+      segmentInfo.cues = [];
+      segmentInfo.timestampmap = {
+        MPEGTS: 0,
+        LOCAL: 0
+      };
+      parser5.oncue = segmentInfo.cues.push.bind(segmentInfo.cues);
+      parser5.ontimestampmap = (map) => {
+        segmentInfo.timestampmap = map;
+      };
+      parser5.onparsingerror = (error) => {
+        videojs.log.warn("Error encountered when parsing cues: " + error.message);
+      };
+      if (segmentInfo.segment.map) {
+        let mapData = segmentInfo.segment.map.bytes;
+        if (decodeBytesToString) {
+          mapData = uint8ToUtf82(mapData);
+        }
+        parser5.parse(mapData);
+      }
+      let segmentData = segmentInfo.bytes;
+      if (decodeBytesToString) {
+        segmentData = uint8ToUtf82(segmentData);
+      }
+      parser5.parse(segmentData);
+      parser5.flush();
+    }
+    /**
+     * Updates the start and end times of any cues parsed by the WebVTT parser using
+     * the information parsed from the X-TIMESTAMP-MAP header and a TS to media time mapping
+     * from the SyncController
+     *
+     * @param {Object} segmentInfo
+     *        a segment info object that describes the current segment
+     * @param {Object} mappingObj
+     *        object containing a mapping from TS to media time
+     * @param {Object} playlist
+     *        the playlist object containing the segment
+     * @private
+     */
+    updateTimeMapping_(segmentInfo, mappingObj, playlist) {
+      const segment = segmentInfo.segment;
+      if (!mappingObj) {
+        return;
+      }
+      if (!segmentInfo.cues.length) {
+        segment.empty = true;
+        return;
+      }
+      const {
+        MPEGTS,
+        LOCAL
+      } = segmentInfo.timestampmap;
+      const mpegTsInSeconds = MPEGTS / import_clock2.ONE_SECOND_IN_TS;
+      const diff = mpegTsInSeconds - LOCAL + mappingObj.mapping;
+      segmentInfo.cues.forEach((cue) => {
+        const duration3 = cue.endTime - cue.startTime;
+        const startTime = MPEGTS === 0 ? cue.startTime + diff : this.handleRollover_(cue.startTime + diff, mappingObj.time);
+        cue.startTime = Math.max(startTime, 0);
+        cue.endTime = Math.max(startTime + duration3, 0);
+      });
+      if (!playlist.syncInfo) {
+        const firstStart = segmentInfo.cues[0].startTime;
+        const lastStart = segmentInfo.cues[segmentInfo.cues.length - 1].startTime;
+        playlist.syncInfo = {
+          mediaSequence: playlist.mediaSequence + segmentInfo.mediaIndex,
+          time: Math.min(firstStart, lastStart - segment.duration)
+        };
+      }
+    }
+    /**
+     * MPEG-TS PES timestamps are limited to 2^33.
+     * Once they reach 2^33, they roll over to 0.
+     * mux.js handles PES timestamp rollover for the following scenarios:
+     * [forward rollover(right)] ->
+     *    PES timestamps monotonically increase, and once they reach 2^33, they roll over to 0
+     * [backward rollover(left)] -->
+     *    we seek back to position before rollover.
+     *
+     * According to the HLS SPEC:
+     * When synchronizing WebVTT with PES timestamps, clients SHOULD account
+     * for cases where the 33-bit PES timestamps have wrapped and the WebVTT
+     * cue times have not.  When the PES timestamp wraps, the WebVTT Segment
+     * SHOULD have a X-TIMESTAMP-MAP header that maps the current WebVTT
+     * time to the new (low valued) PES timestamp.
+     *
+     * So we want to handle rollover here and align VTT Cue start/end time to the player's time.
+     */
+    handleRollover_(value, reference) {
+      if (reference === null) {
+        return value;
+      }
+      let valueIn90khz = value * import_clock2.ONE_SECOND_IN_TS;
+      const referenceIn90khz = reference * import_clock2.ONE_SECOND_IN_TS;
+      let offset;
+      if (referenceIn90khz < valueIn90khz) {
+        offset = -8589934592;
+      } else {
+        offset = 8589934592;
+      }
+      while (Math.abs(valueIn90khz - referenceIn90khz) > 4294967296) {
+        valueIn90khz += offset;
+      }
+      return valueIn90khz / import_clock2.ONE_SECOND_IN_TS;
+    }
+  };
+  var findAdCue2 = function(track, mediaTime) {
+    const cues = track.cues;
+    for (let i2 = 0; i2 < cues.length; i2++) {
+      const cue = cues[i2];
+      if (mediaTime >= cue.adStartTime && mediaTime <= cue.adEndTime) {
+        return cue;
+      }
+    }
+    return null;
+  };
+  var updateAdCues2 = function(media, track, offset = 0) {
+    if (!media.segments) {
+      return;
+    }
+    let mediaTime = offset;
+    let cue;
+    for (let i2 = 0; i2 < media.segments.length; i2++) {
+      const segment = media.segments[i2];
+      if (!cue) {
+        cue = findAdCue2(track, mediaTime + segment.duration / 2);
+      }
+      if (cue) {
+        if ("cueIn" in segment) {
+          cue.endTime = mediaTime;
+          cue.adEndTime = mediaTime;
+          mediaTime += segment.duration;
+          cue = null;
+          continue;
+        }
+        if (mediaTime < cue.endTime) {
+          mediaTime += segment.duration;
+          continue;
+        }
+        cue.endTime += segment.duration;
+      } else {
+        if ("cueOut" in segment) {
+          cue = new import_window8.default.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
+          cue.adStartTime = mediaTime;
+          cue.adEndTime = mediaTime + parseFloat(segment.cueOut);
+          track.addCue(cue);
+        }
+        if ("cueOutCont" in segment) {
+          const [adOffset, adTotal] = segment.cueOutCont.split("/").map(parseFloat);
+          cue = new import_window8.default.VTTCue(mediaTime, mediaTime + segment.duration, "");
+          cue.adStartTime = mediaTime - adOffset;
+          cue.adEndTime = cue.adStartTime + adTotal;
+          track.addCue(cue);
+        }
+      }
+      mediaTime += segment.duration;
+    }
+  };
+  var MAX_MEDIA_SEQUENCE_DIFF_FOR_SYNC2 = 86400;
+  var syncPointStrategies2 = [
+    // Stategy "VOD": Handle the VOD-case where the sync-point is *always*
+    //                the equivalence display-time 0 === segment-index 0
+    {
+      name: "VOD",
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
+        if (duration3 !== Infinity) {
+          const syncPoint = {
+            time: 0,
+            segmentIndex: 0,
+            partIndex: null
+          };
+          return syncPoint;
+        }
+        return null;
+      }
+    },
+    {
+      name: "MediaSequence",
+      /**
+       * run media sequence strategy
+       *
+       * @param {SyncController} syncController
+       * @param {Object} playlist
+       * @param {number} duration
+       * @param {number} currentTimeline
+       * @param {number} currentTime
+       * @param {string} type
+       */
+      run: (syncController, playlist, duration3, currentTimeline, currentTime, type) => {
+        if (!type) {
+          return null;
+        }
+        const mediaSequenceMap = syncController.getMediaSequenceMap(type);
+        if (!mediaSequenceMap || mediaSequenceMap.size === 0) {
+          return null;
+        }
+        if (playlist.mediaSequence === void 0 || !Array.isArray(playlist.segments) || !playlist.segments.length) {
+          return null;
+        }
+        let currentMediaSequence = playlist.mediaSequence;
+        let segmentIndex = 0;
+        for (const segment of playlist.segments) {
+          const range2 = mediaSequenceMap.get(currentMediaSequence);
+          if (!range2) {
+            break;
+          }
+          if (currentTime >= range2.start && currentTime < range2.end) {
+            if (Array.isArray(segment.parts) && segment.parts.length) {
+              let currentPartStart = range2.start;
+              let partIndex = 0;
+              for (const part of segment.parts) {
+                const start = currentPartStart;
+                const end = start + part.duration;
+                if (currentTime >= start && currentTime < end) {
+                  return {
+                    time: range2.start,
+                    segmentIndex,
+                    partIndex
+                  };
+                }
+                partIndex++;
+                currentPartStart = end;
+              }
+            }
+            return {
+              time: range2.start,
+              segmentIndex,
+              partIndex: null
+            };
+          }
+          segmentIndex++;
+          currentMediaSequence++;
+        }
+        return null;
+      }
+    },
+    // Stategy "ProgramDateTime": We have a program-date-time tag in this playlist
+    {
+      name: "ProgramDateTime",
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
+        if (!Object.keys(syncController.timelineToDatetimeMappings).length) {
+          return null;
+        }
+        let syncPoint = null;
+        let lastDistance = null;
+        const partsAndSegments = getPartsAndSegments2(playlist);
+        currentTime = currentTime || 0;
+        for (let i2 = 0; i2 < partsAndSegments.length; i2++) {
+          const index = playlist.endList || currentTime === 0 ? i2 : partsAndSegments.length - (i2 + 1);
+          const partAndSegment = partsAndSegments[index];
+          const segment = partAndSegment.segment;
+          const datetimeMapping = syncController.timelineToDatetimeMappings[segment.timeline];
+          if (!datetimeMapping || !segment.dateTimeObject) {
+            continue;
+          }
+          const segmentTime = segment.dateTimeObject.getTime() / 1e3;
+          let start = segmentTime + datetimeMapping;
+          if (segment.parts && typeof partAndSegment.partIndex === "number") {
+            for (let z2 = 0; z2 < partAndSegment.partIndex; z2++) {
+              start += segment.parts[z2].duration;
+            }
+          }
+          const distance = Math.abs(currentTime - start);
+          if (lastDistance !== null && (distance === 0 || lastDistance < distance)) {
+            break;
+          }
+          lastDistance = distance;
+          syncPoint = {
+            time: start,
+            segmentIndex: partAndSegment.segmentIndex,
+            partIndex: partAndSegment.partIndex
+          };
+        }
+        return syncPoint;
+      }
+    },
+    // Stategy "Segment": We have a known time mapping for a timeline and a
+    //                    segment in the current timeline with timing data
+    {
+      name: "Segment",
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
+        let syncPoint = null;
+        let lastDistance = null;
+        currentTime = currentTime || 0;
+        const partsAndSegments = getPartsAndSegments2(playlist);
+        for (let i2 = 0; i2 < partsAndSegments.length; i2++) {
+          const index = playlist.endList || currentTime === 0 ? i2 : partsAndSegments.length - (i2 + 1);
+          const partAndSegment = partsAndSegments[index];
+          const segment = partAndSegment.segment;
+          const start = partAndSegment.part && partAndSegment.part.start || segment && segment.start;
+          if (segment.timeline === currentTimeline && typeof start !== "undefined") {
+            const distance = Math.abs(currentTime - start);
+            if (lastDistance !== null && lastDistance < distance) {
+              break;
+            }
+            if (!syncPoint || lastDistance === null || lastDistance >= distance) {
+              lastDistance = distance;
+              syncPoint = {
+                time: start,
+                segmentIndex: partAndSegment.segmentIndex,
+                partIndex: partAndSegment.partIndex
+              };
+            }
+          }
+        }
+        return syncPoint;
+      }
+    },
+    // Stategy "Discontinuity": We have a discontinuity with a known
+    //                          display-time
+    {
+      name: "Discontinuity",
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
+        let syncPoint = null;
+        currentTime = currentTime || 0;
+        if (playlist.discontinuityStarts && playlist.discontinuityStarts.length) {
+          let lastDistance = null;
+          for (let i2 = 0; i2 < playlist.discontinuityStarts.length; i2++) {
+            const segmentIndex = playlist.discontinuityStarts[i2];
+            const discontinuity = playlist.discontinuitySequence + i2 + 1;
+            const discontinuitySync = syncController.discontinuities[discontinuity];
+            if (discontinuitySync) {
+              const distance = Math.abs(currentTime - discontinuitySync.time);
+              if (lastDistance !== null && lastDistance < distance) {
+                break;
+              }
+              if (!syncPoint || lastDistance === null || lastDistance >= distance) {
+                lastDistance = distance;
+                syncPoint = {
+                  time: discontinuitySync.time,
+                  segmentIndex,
+                  partIndex: null
+                };
+              }
+            }
+          }
+        }
+        return syncPoint;
+      }
+    },
+    // Stategy "Playlist": We have a playlist with a known mapping of
+    //                     segment index to display time
+    {
+      name: "Playlist",
+      run: (syncController, playlist, duration3, currentTimeline, currentTime) => {
+        if (playlist.syncInfo) {
+          const syncPoint = {
+            time: playlist.syncInfo.time,
+            segmentIndex: playlist.syncInfo.mediaSequence - playlist.mediaSequence,
+            partIndex: null
+          };
+          return syncPoint;
+        }
+        return null;
+      }
+    }
+  ];
+  var SyncController2 = class extends videojs.EventTarget {
+    constructor(options = {}) {
+      super();
+      this.timelines = [];
+      this.discontinuities = [];
+      this.timelineToDatetimeMappings = {};
+      this.mediaSequenceStorage_ = /* @__PURE__ */ new Map();
+      this.logger_ = logger2("SyncController");
+    }
+    /**
+     * Get media sequence map by type
+     *
+     * @param {string} type - segment loader type
+     * @return {Map<number, { start: number, end: number }> | undefined}
+     */
+    getMediaSequenceMap(type) {
+      return this.mediaSequenceStorage_.get(type);
+    }
+    /**
+     * Update Media Sequence Map -> <MediaSequence, Range>
+     *
+     * @param {Object} playlist - parsed playlist
+     * @param {number} currentTime - current player's time
+     * @param {string} type - segment loader type
+     * @return {void}
+     */
+    updateMediaSequenceMap(playlist, currentTime, type) {
+      if (playlist.mediaSequence === void 0 || !Array.isArray(playlist.segments) || !playlist.segments.length) {
+        return;
+      }
+      const currentMap = this.getMediaSequenceMap(type);
+      const result = /* @__PURE__ */ new Map();
+      let currentMediaSequence = playlist.mediaSequence;
+      let currentBaseTime;
+      if (!currentMap) {
+        currentBaseTime = 0;
+      } else if (currentMap.has(playlist.mediaSequence)) {
+        currentBaseTime = currentMap.get(playlist.mediaSequence).start;
+      } else {
+        this.logger_(`MediaSequence sync for ${type} segment loader - received a gap between playlists.
+Fallback base time to: ${currentTime}.
+Received media sequence: ${currentMediaSequence}.
+Current map: `, currentMap);
+        currentBaseTime = currentTime;
+      }
+      this.logger_(`MediaSequence sync for ${type} segment loader.
+Received media sequence: ${currentMediaSequence}.
+base time is ${currentBaseTime}
+Current map: `, currentMap);
+      playlist.segments.forEach((segment) => {
+        const start = currentBaseTime;
+        const end = start + segment.duration;
+        const range2 = {
+          start,
+          end
+        };
+        result.set(currentMediaSequence, range2);
+        currentMediaSequence++;
+        currentBaseTime = end;
+      });
+      this.mediaSequenceStorage_.set(type, result);
+    }
+    /**
+     * Find a sync-point for the playlist specified
+     *
+     * A sync-point is defined as a known mapping from display-time to
+     * a segment-index in the current playlist.
+     *
+     * @param {Playlist} playlist
+     *        The playlist that needs a sync-point
+     * @param {number} duration
+     *        Duration of the MediaSource (Infinite if playing a live source)
+     * @param {number} currentTimeline
+     *        The last timeline from which a segment was loaded
+     * @param {number} currentTime
+     *        Current player's time
+     * @param {string} type
+     *        Segment loader type
+     * @return {Object}
+     *          A sync-point object
+     */
+    getSyncPoint(playlist, duration3, currentTimeline, currentTime, type) {
+      if (duration3 !== Infinity) {
+        const vodSyncPointStrategy = syncPointStrategies2.find(({
+          name
+        }) => name === "VOD");
+        return vodSyncPointStrategy.run(this, playlist, duration3);
+      }
+      const syncPoints = this.runStrategies_(playlist, duration3, currentTimeline, currentTime, type);
+      if (!syncPoints.length) {
+        return null;
+      }
+      for (const syncPointInfo of syncPoints) {
+        const {
+          syncPoint,
+          strategy
+        } = syncPointInfo;
+        const {
+          segmentIndex,
+          time
+        } = syncPoint;
+        if (segmentIndex < 0) {
+          continue;
+        }
+        const selectedSegment = playlist.segments[segmentIndex];
+        const start = time;
+        const end = start + selectedSegment.duration;
+        this.logger_(`Strategy: ${strategy}. Current time: ${currentTime}. selected segment: ${segmentIndex}. Time: [${start} -> ${end}]}`);
+        if (currentTime >= start && currentTime < end) {
+          this.logger_("Found sync point with exact match: ", syncPoint);
+          return syncPoint;
+        }
+      }
+      return this.selectSyncPoint_(syncPoints, {
+        key: "time",
+        value: currentTime
+      });
+    }
+    /**
+     * Calculate the amount of time that has expired off the playlist during playback
+     *
+     * @param {Playlist} playlist
+     *        Playlist object to calculate expired from
+     * @param {number} duration
+     *        Duration of the MediaSource (Infinity if playling a live source)
+     * @return {number|null}
+     *          The amount of time that has expired off the playlist during playback. Null
+     *          if no sync-points for the playlist can be found.
+     */
+    getExpiredTime(playlist, duration3) {
+      if (!playlist || !playlist.segments) {
+        return null;
+      }
+      const syncPoints = this.runStrategies_(playlist, duration3, playlist.discontinuitySequence, 0, "main");
+      if (!syncPoints.length) {
+        return null;
+      }
+      const syncPoint = this.selectSyncPoint_(syncPoints, {
+        key: "segmentIndex",
+        value: 0
+      });
+      if (syncPoint.segmentIndex > 0) {
+        syncPoint.time *= -1;
+      }
+      return Math.abs(syncPoint.time + sumDurations2({
+        defaultDuration: playlist.targetDuration,
+        durationList: playlist.segments,
+        startIndex: syncPoint.segmentIndex,
+        endIndex: 0
+      }));
+    }
+    /**
+     * Runs each sync-point strategy and returns a list of sync-points returned by the
+     * strategies
+     *
+     * @private
+     * @param {Playlist} playlist
+     *        The playlist that needs a sync-point
+     * @param {number} duration
+     *        Duration of the MediaSource (Infinity if playing a live source)
+     * @param {number} currentTimeline
+     *        The last timeline from which a segment was loaded
+     * @param {number} currentTime
+     *        Current player's time
+     * @param {string} type
+     *        Segment loader type
+     * @return {Array}
+     *          A list of sync-point objects
+     */
+    runStrategies_(playlist, duration3, currentTimeline, currentTime, type) {
+      const syncPoints = [];
+      for (let i2 = 0; i2 < syncPointStrategies2.length; i2++) {
+        const strategy = syncPointStrategies2[i2];
+        const syncPoint = strategy.run(this, playlist, duration3, currentTimeline, currentTime, type);
+        if (syncPoint) {
+          syncPoint.strategy = strategy.name;
+          syncPoints.push({
+            strategy: strategy.name,
+            syncPoint
+          });
+        }
+      }
+      return syncPoints;
+    }
+    /**
+     * Selects the sync-point nearest the specified target
+     *
+     * @private
+     * @param {Array} syncPoints
+     *        List of sync-points to select from
+     * @param {Object} target
+     *        Object specifying the property and value we are targeting
+     * @param {string} target.key
+     *        Specifies the property to target. Must be either 'time' or 'segmentIndex'
+     * @param {number} target.value
+     *        The value to target for the specified key.
+     * @return {Object}
+     *          The sync-point nearest the target
+     */
+    selectSyncPoint_(syncPoints, target) {
+      let bestSyncPoint = syncPoints[0].syncPoint;
+      let bestDistance = Math.abs(syncPoints[0].syncPoint[target.key] - target.value);
+      let bestStrategy = syncPoints[0].strategy;
+      for (let i2 = 1; i2 < syncPoints.length; i2++) {
+        const newDistance = Math.abs(syncPoints[i2].syncPoint[target.key] - target.value);
+        if (newDistance < bestDistance) {
+          bestDistance = newDistance;
+          bestSyncPoint = syncPoints[i2].syncPoint;
+          bestStrategy = syncPoints[i2].strategy;
+        }
+      }
+      this.logger_(`syncPoint for [${target.key}: ${target.value}] chosen with strategy [${bestStrategy}]: [time:${bestSyncPoint.time}, segmentIndex:${bestSyncPoint.segmentIndex}` + (typeof bestSyncPoint.partIndex === "number" ? `,partIndex:${bestSyncPoint.partIndex}` : "") + "]");
+      return bestSyncPoint;
+    }
+    /**
+     * Save any meta-data present on the segments when segments leave
+     * the live window to the playlist to allow for synchronization at the
+     * playlist level later.
+     *
+     * @param {Playlist} oldPlaylist - The previous active playlist
+     * @param {Playlist} newPlaylist - The updated and most current playlist
+     */
+    saveExpiredSegmentInfo(oldPlaylist, newPlaylist) {
+      const mediaSequenceDiff = newPlaylist.mediaSequence - oldPlaylist.mediaSequence;
+      if (mediaSequenceDiff > MAX_MEDIA_SEQUENCE_DIFF_FOR_SYNC2) {
+        videojs.log.warn(`Not saving expired segment info. Media sequence gap ${mediaSequenceDiff} is too large.`);
+        return;
+      }
+      for (let i2 = mediaSequenceDiff - 1; i2 >= 0; i2--) {
+        const lastRemovedSegment = oldPlaylist.segments[i2];
+        if (lastRemovedSegment && typeof lastRemovedSegment.start !== "undefined") {
+          newPlaylist.syncInfo = {
+            mediaSequence: oldPlaylist.mediaSequence + i2,
+            time: lastRemovedSegment.start
+          };
+          this.logger_(`playlist refresh sync: [time:${newPlaylist.syncInfo.time}, mediaSequence: ${newPlaylist.syncInfo.mediaSequence}]`);
+          this.trigger("syncinfoupdate");
+          break;
+        }
+      }
+    }
+    /**
+     * Save the mapping from playlist's ProgramDateTime to display. This should only happen
+     * before segments start to load.
+     *
+     * @param {Playlist} playlist - The currently active playlist
+     */
+    setDateTimeMappingForStart(playlist) {
+      this.timelineToDatetimeMappings = {};
+      if (playlist.segments && playlist.segments.length && playlist.segments[0].dateTimeObject) {
+        const firstSegment = playlist.segments[0];
+        const playlistTimestamp = firstSegment.dateTimeObject.getTime() / 1e3;
+        this.timelineToDatetimeMappings[firstSegment.timeline] = -playlistTimestamp;
+      }
+    }
+    /**
+     * Calculates and saves timeline mappings, playlist sync info, and segment timing values
+     * based on the latest timing information.
+     *
+     * @param {Object} options
+     *        Options object
+     * @param {SegmentInfo} options.segmentInfo
+     *        The current active request information
+     * @param {boolean} options.shouldSaveTimelineMapping
+     *        If there's a timeline change, determines if the timeline mapping should be
+     *        saved for timeline mapping and program date time mappings.
+     */
+    saveSegmentTimingInfo({
+      segmentInfo,
+      shouldSaveTimelineMapping
+    }) {
+      const didCalculateSegmentTimeMapping = this.calculateSegmentTimeMapping_(segmentInfo, segmentInfo.timingInfo, shouldSaveTimelineMapping);
+      const segment = segmentInfo.segment;
+      if (didCalculateSegmentTimeMapping) {
+        this.saveDiscontinuitySyncInfo_(segmentInfo);
+        if (!segmentInfo.playlist.syncInfo) {
+          segmentInfo.playlist.syncInfo = {
+            mediaSequence: segmentInfo.playlist.mediaSequence + segmentInfo.mediaIndex,
+            time: segment.start
+          };
+        }
+      }
+      const dateTime = segment.dateTimeObject;
+      if (segment.discontinuity && shouldSaveTimelineMapping && dateTime) {
+        this.timelineToDatetimeMappings[segment.timeline] = -(dateTime.getTime() / 1e3);
+      }
+    }
+    timestampOffsetForTimeline(timeline) {
+      if (typeof this.timelines[timeline] === "undefined") {
+        return null;
+      }
+      return this.timelines[timeline].time;
+    }
+    mappingForTimeline(timeline) {
+      if (typeof this.timelines[timeline] === "undefined") {
+        return null;
+      }
+      return this.timelines[timeline].mapping;
+    }
+    /**
+     * Use the "media time" for a segment to generate a mapping to "display time" and
+     * save that display time to the segment.
+     *
+     * @private
+     * @param {SegmentInfo} segmentInfo
+     *        The current active request information
+     * @param {Object} timingInfo
+     *        The start and end time of the current segment in "media time"
+     * @param {boolean} shouldSaveTimelineMapping
+     *        If there's a timeline change, determines if the timeline mapping should be
+     *        saved in timelines.
+     * @return {boolean}
+     *          Returns false if segment time mapping could not be calculated
+     */
+    calculateSegmentTimeMapping_(segmentInfo, timingInfo, shouldSaveTimelineMapping) {
+      const segment = segmentInfo.segment;
+      const part = segmentInfo.part;
+      let mappingObj = this.timelines[segmentInfo.timeline];
+      let start;
+      let end;
+      if (typeof segmentInfo.timestampOffset === "number") {
+        mappingObj = {
+          time: segmentInfo.startOfSegment,
+          mapping: segmentInfo.startOfSegment - timingInfo.start
+        };
+        if (shouldSaveTimelineMapping) {
+          this.timelines[segmentInfo.timeline] = mappingObj;
+          this.trigger("timestampoffset");
+          this.logger_(`time mapping for timeline ${segmentInfo.timeline}: [time: ${mappingObj.time}] [mapping: ${mappingObj.mapping}]`);
+        }
+        start = segmentInfo.startOfSegment;
+        end = timingInfo.end + mappingObj.mapping;
+      } else if (mappingObj) {
+        start = timingInfo.start + mappingObj.mapping;
+        end = timingInfo.end + mappingObj.mapping;
+      } else {
+        return false;
+      }
+      if (part) {
+        part.start = start;
+        part.end = end;
+      }
+      if (!segment.start || start < segment.start) {
+        segment.start = start;
+      }
+      segment.end = end;
+      return true;
+    }
+    /**
+     * Each time we have discontinuity in the playlist, attempt to calculate the location
+     * in display of the start of the discontinuity and save that. We also save an accuracy
+     * value so that we save values with the most accuracy (closest to 0.)
+     *
+     * @private
+     * @param {SegmentInfo} segmentInfo - The current active request information
+     */
+    saveDiscontinuitySyncInfo_(segmentInfo) {
+      const playlist = segmentInfo.playlist;
+      const segment = segmentInfo.segment;
+      if (segment.discontinuity) {
+        this.discontinuities[segment.timeline] = {
+          time: segment.start,
+          accuracy: 0
+        };
+      } else if (playlist.discontinuityStarts && playlist.discontinuityStarts.length) {
+        for (let i2 = 0; i2 < playlist.discontinuityStarts.length; i2++) {
+          const segmentIndex = playlist.discontinuityStarts[i2];
+          const discontinuity = playlist.discontinuitySequence + i2 + 1;
+          const mediaIndexDiff = segmentIndex - segmentInfo.mediaIndex;
+          const accuracy = Math.abs(mediaIndexDiff);
+          if (!this.discontinuities[discontinuity] || this.discontinuities[discontinuity].accuracy > accuracy) {
+            let time;
+            if (mediaIndexDiff < 0) {
+              time = segment.start - sumDurations2({
+                defaultDuration: playlist.targetDuration,
+                durationList: playlist.segments,
+                startIndex: segmentInfo.mediaIndex,
+                endIndex: segmentIndex
+              });
+            } else {
+              time = segment.end + sumDurations2({
+                defaultDuration: playlist.targetDuration,
+                durationList: playlist.segments,
+                startIndex: segmentInfo.mediaIndex + 1,
+                endIndex: segmentIndex
+              });
+            }
+            this.discontinuities[discontinuity] = {
+              time,
+              accuracy
+            };
+          }
+        }
+      }
+    }
+    dispose() {
+      this.trigger("dispose");
+      this.off();
+    }
+  };
+  var TimelineChangeController2 = class extends videojs.EventTarget {
+    constructor() {
+      super();
+      this.pendingTimelineChanges_ = {};
+      this.lastTimelineChanges_ = {};
+    }
+    clearPendingTimelineChange(type) {
+      this.pendingTimelineChanges_[type] = null;
+      this.trigger("pendingtimelinechange");
+    }
+    pendingTimelineChange({
+      type,
+      from: from2,
+      to
+    }) {
+      if (typeof from2 === "number" && typeof to === "number") {
+        this.pendingTimelineChanges_[type] = {
+          type,
+          from: from2,
+          to
+        };
+        this.trigger("pendingtimelinechange");
+      }
+      return this.pendingTimelineChanges_[type];
+    }
+    lastTimelineChange({
+      type,
+      from: from2,
+      to
+    }) {
+      if (typeof from2 === "number" && typeof to === "number") {
+        this.lastTimelineChanges_[type] = {
+          type,
+          from: from2,
+          to
+        };
+        delete this.pendingTimelineChanges_[type];
+        this.trigger("timelinechange");
+      }
+      return this.lastTimelineChanges_[type];
+    }
+    dispose() {
+      this.trigger("dispose");
+      this.pendingTimelineChanges_ = {};
+      this.lastTimelineChanges_ = {};
+      this.off();
+    }
+  };
+  var workerCode2 = transform2(getWorkerString2(function() {
+    var Stream2 = /* @__PURE__ */ function() {
+      function Stream3() {
+        this.listeners = {};
+      }
+      var _proto = Stream3.prototype;
+      _proto.on = function on2(type, listener) {
+        if (!this.listeners[type]) {
+          this.listeners[type] = [];
+        }
+        this.listeners[type].push(listener);
+      };
+      _proto.off = function off2(type, listener) {
+        if (!this.listeners[type]) {
+          return false;
+        }
+        var index = this.listeners[type].indexOf(listener);
+        this.listeners[type] = this.listeners[type].slice(0);
+        this.listeners[type].splice(index, 1);
+        return index > -1;
+      };
+      _proto.trigger = function trigger2(type) {
+        var callbacks = this.listeners[type];
+        if (!callbacks) {
+          return;
+        }
+        if (arguments.length === 2) {
+          var length = callbacks.length;
+          for (var i2 = 0; i2 < length; ++i2) {
+            callbacks[i2].call(this, arguments[1]);
+          }
+        } else {
+          var args = Array.prototype.slice.call(arguments, 1);
+          var _length = callbacks.length;
+          for (var _i = 0; _i < _length; ++_i) {
+            callbacks[_i].apply(this, args);
+          }
+        }
+      };
+      _proto.dispose = function dispose() {
+        this.listeners = {};
+      };
+      _proto.pipe = function pipe(destination) {
+        this.on("data", function(data) {
+          destination.push(data);
+        });
+      };
+      return Stream3;
+    }();
+    function unpad(padded) {
+      return padded.subarray(0, padded.byteLength - padded[padded.byteLength - 1]);
+    }
+    const precompute = function() {
+      const tables = [[[], [], [], [], []], [[], [], [], [], []]];
+      const encTable = tables[0];
+      const decTable = tables[1];
+      const sbox = encTable[4];
+      const sboxInv = decTable[4];
+      let i2;
+      let x2;
+      let xInv;
+      const d2 = [];
+      const th = [];
+      let x22;
+      let x4;
+      let x8;
+      let s2;
+      let tEnc;
+      let tDec;
+      for (i2 = 0; i2 < 256; i2++) {
+        th[(d2[i2] = i2 << 1 ^ (i2 >> 7) * 283) ^ i2] = i2;
+      }
+      for (x2 = xInv = 0; !sbox[x2]; x2 ^= x22 || 1, xInv = th[xInv] || 1) {
+        s2 = xInv ^ xInv << 1 ^ xInv << 2 ^ xInv << 3 ^ xInv << 4;
+        s2 = s2 >> 8 ^ s2 & 255 ^ 99;
+        sbox[x2] = s2;
+        sboxInv[s2] = x2;
+        x8 = d2[x4 = d2[x22 = d2[x2]]];
+        tDec = x8 * 16843009 ^ x4 * 65537 ^ x22 * 257 ^ x2 * 16843008;
+        tEnc = d2[s2] * 257 ^ s2 * 16843008;
+        for (i2 = 0; i2 < 4; i2++) {
+          encTable[i2][x2] = tEnc = tEnc << 24 ^ tEnc >>> 8;
+          decTable[i2][s2] = tDec = tDec << 24 ^ tDec >>> 8;
+        }
+      }
+      for (i2 = 0; i2 < 5; i2++) {
+        encTable[i2] = encTable[i2].slice(0);
+        decTable[i2] = decTable[i2].slice(0);
+      }
+      return tables;
+    };
+    let aesTables = null;
+    class AES {
+      constructor(key) {
+        if (!aesTables) {
+          aesTables = precompute();
+        }
+        this._tables = [[aesTables[0][0].slice(), aesTables[0][1].slice(), aesTables[0][2].slice(), aesTables[0][3].slice(), aesTables[0][4].slice()], [aesTables[1][0].slice(), aesTables[1][1].slice(), aesTables[1][2].slice(), aesTables[1][3].slice(), aesTables[1][4].slice()]];
+        let i2;
+        let j2;
+        let tmp;
+        const sbox = this._tables[0][4];
+        const decTable = this._tables[1];
+        const keyLen = key.length;
+        let rcon = 1;
+        if (keyLen !== 4 && keyLen !== 6 && keyLen !== 8) {
+          throw new Error("Invalid aes key size");
+        }
+        const encKey = key.slice(0);
+        const decKey = [];
+        this._key = [encKey, decKey];
+        for (i2 = keyLen; i2 < 4 * keyLen + 28; i2++) {
+          tmp = encKey[i2 - 1];
+          if (i2 % keyLen === 0 || keyLen === 8 && i2 % keyLen === 4) {
+            tmp = sbox[tmp >>> 24] << 24 ^ sbox[tmp >> 16 & 255] << 16 ^ sbox[tmp >> 8 & 255] << 8 ^ sbox[tmp & 255];
+            if (i2 % keyLen === 0) {
+              tmp = tmp << 8 ^ tmp >>> 24 ^ rcon << 24;
+              rcon = rcon << 1 ^ (rcon >> 7) * 283;
+            }
+          }
+          encKey[i2] = encKey[i2 - keyLen] ^ tmp;
+        }
+        for (j2 = 0; i2; j2++, i2--) {
+          tmp = encKey[j2 & 3 ? i2 : i2 - 4];
+          if (i2 <= 4 || j2 < 4) {
+            decKey[j2] = tmp;
+          } else {
+            decKey[j2] = decTable[0][sbox[tmp >>> 24]] ^ decTable[1][sbox[tmp >> 16 & 255]] ^ decTable[2][sbox[tmp >> 8 & 255]] ^ decTable[3][sbox[tmp & 255]];
+          }
+        }
+      }
+      /**
+       * Decrypt 16 bytes, specified as four 32-bit words.
+       *
+       * @param {number} encrypted0 the first word to decrypt
+       * @param {number} encrypted1 the second word to decrypt
+       * @param {number} encrypted2 the third word to decrypt
+       * @param {number} encrypted3 the fourth word to decrypt
+       * @param {Int32Array} out the array to write the decrypted words
+       * into
+       * @param {number} offset the offset into the output array to start
+       * writing results
+       * @return {Array} The plaintext.
+       */
+      decrypt(encrypted0, encrypted1, encrypted2, encrypted3, out, offset) {
+        const key = this._key[1];
+        let a2 = encrypted0 ^ key[0];
+        let b2 = encrypted3 ^ key[1];
+        let c2 = encrypted2 ^ key[2];
+        let d2 = encrypted1 ^ key[3];
+        let a22;
+        let b22;
+        let c22;
+        const nInnerRounds = key.length / 4 - 2;
+        let i2;
+        let kIndex = 4;
+        const table = this._tables[1];
+        const table0 = table[0];
+        const table1 = table[1];
+        const table2 = table[2];
+        const table3 = table[3];
+        const sbox = table[4];
+        for (i2 = 0; i2 < nInnerRounds; i2++) {
+          a22 = table0[a2 >>> 24] ^ table1[b2 >> 16 & 255] ^ table2[c2 >> 8 & 255] ^ table3[d2 & 255] ^ key[kIndex];
+          b22 = table0[b2 >>> 24] ^ table1[c2 >> 16 & 255] ^ table2[d2 >> 8 & 255] ^ table3[a2 & 255] ^ key[kIndex + 1];
+          c22 = table0[c2 >>> 24] ^ table1[d2 >> 16 & 255] ^ table2[a2 >> 8 & 255] ^ table3[b2 & 255] ^ key[kIndex + 2];
+          d2 = table0[d2 >>> 24] ^ table1[a2 >> 16 & 255] ^ table2[b2 >> 8 & 255] ^ table3[c2 & 255] ^ key[kIndex + 3];
+          kIndex += 4;
+          a2 = a22;
+          b2 = b22;
+          c2 = c22;
+        }
+        for (i2 = 0; i2 < 4; i2++) {
+          out[(3 & -i2) + offset] = sbox[a2 >>> 24] << 24 ^ sbox[b2 >> 16 & 255] << 16 ^ sbox[c2 >> 8 & 255] << 8 ^ sbox[d2 & 255] ^ key[kIndex++];
+          a22 = a2;
+          a2 = b2;
+          b2 = c2;
+          c2 = d2;
+          d2 = a22;
+        }
+      }
+    }
+    class AsyncStream extends Stream2 {
+      constructor() {
+        super(Stream2);
+        this.jobs = [];
+        this.delay = 1;
+        this.timeout_ = null;
+      }
+      /**
+       * process an async job
+       *
+       * @private
+       */
+      processJob_() {
+        this.jobs.shift()();
+        if (this.jobs.length) {
+          this.timeout_ = setTimeout(this.processJob_.bind(this), this.delay);
+        } else {
+          this.timeout_ = null;
+        }
+      }
+      /**
+       * push a job into the stream
+       *
+       * @param {Function} job the job to push into the stream
+       */
+      push(job) {
+        this.jobs.push(job);
+        if (!this.timeout_) {
+          this.timeout_ = setTimeout(this.processJob_.bind(this), this.delay);
+        }
+      }
+    }
+    const ntoh = function(word) {
+      return word << 24 | (word & 65280) << 8 | (word & 16711680) >> 8 | word >>> 24;
+    };
+    const decrypt3 = function(encrypted, key, initVector) {
+      const encrypted32 = new Int32Array(encrypted.buffer, encrypted.byteOffset, encrypted.byteLength >> 2);
+      const decipher = new AES(Array.prototype.slice.call(key));
+      const decrypted = new Uint8Array(encrypted.byteLength);
+      const decrypted32 = new Int32Array(decrypted.buffer);
+      let init0;
+      let init1;
+      let init2;
+      let init3;
+      let encrypted0;
+      let encrypted1;
+      let encrypted2;
+      let encrypted3;
+      let wordIx;
+      init0 = initVector[0];
+      init1 = initVector[1];
+      init2 = initVector[2];
+      init3 = initVector[3];
+      for (wordIx = 0; wordIx < encrypted32.length; wordIx += 4) {
+        encrypted0 = ntoh(encrypted32[wordIx]);
+        encrypted1 = ntoh(encrypted32[wordIx + 1]);
+        encrypted2 = ntoh(encrypted32[wordIx + 2]);
+        encrypted3 = ntoh(encrypted32[wordIx + 3]);
+        decipher.decrypt(encrypted0, encrypted1, encrypted2, encrypted3, decrypted32, wordIx);
+        decrypted32[wordIx] = ntoh(decrypted32[wordIx] ^ init0);
+        decrypted32[wordIx + 1] = ntoh(decrypted32[wordIx + 1] ^ init1);
+        decrypted32[wordIx + 2] = ntoh(decrypted32[wordIx + 2] ^ init2);
+        decrypted32[wordIx + 3] = ntoh(decrypted32[wordIx + 3] ^ init3);
+        init0 = encrypted0;
+        init1 = encrypted1;
+        init2 = encrypted2;
+        init3 = encrypted3;
+      }
+      return decrypted;
+    };
+    class Decrypter3 {
+      constructor(encrypted, key, initVector, done) {
+        const step = Decrypter3.STEP;
+        const encrypted32 = new Int32Array(encrypted.buffer);
+        const decrypted = new Uint8Array(encrypted.byteLength);
+        let i2 = 0;
+        this.asyncStream_ = new AsyncStream();
+        this.asyncStream_.push(this.decryptChunk_(encrypted32.subarray(i2, i2 + step), key, initVector, decrypted));
+        for (i2 = step; i2 < encrypted32.length; i2 += step) {
+          initVector = new Uint32Array([ntoh(encrypted32[i2 - 4]), ntoh(encrypted32[i2 - 3]), ntoh(encrypted32[i2 - 2]), ntoh(encrypted32[i2 - 1])]);
+          this.asyncStream_.push(this.decryptChunk_(encrypted32.subarray(i2, i2 + step), key, initVector, decrypted));
+        }
+        this.asyncStream_.push(function() {
+          done(null, unpad(decrypted));
+        });
+      }
+      /**
+       * a getter for step the maximum number of bytes to process at one time
+       *
+       * @return {number} the value of step 32000
+       */
+      static get STEP() {
+        return 32e3;
+      }
+      /**
+       * @private
+       */
+      decryptChunk_(encrypted, key, initVector, decrypted) {
+        return function() {
+          const bytes = decrypt3(encrypted, key, initVector);
+          decrypted.set(bytes, encrypted.byteOffset);
+        };
+      }
+    }
+    var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+    var win;
+    if (typeof window !== "undefined") {
+      win = window;
+    } else if (typeof commonjsGlobal !== "undefined") {
+      win = commonjsGlobal;
+    } else if (typeof self !== "undefined") {
+      win = self;
+    } else {
+      win = {};
+    }
+    var window_1 = win;
+    var isArrayBufferView3 = function isArrayBufferView4(obj) {
+      if (ArrayBuffer.isView === "function") {
+        return ArrayBuffer.isView(obj);
+      }
+      return obj && obj.buffer instanceof ArrayBuffer;
+    };
+    var BigInt2 = window_1.BigInt || Number;
+    [BigInt2("0x1"), BigInt2("0x100"), BigInt2("0x10000"), BigInt2("0x1000000"), BigInt2("0x100000000"), BigInt2("0x10000000000"), BigInt2("0x1000000000000"), BigInt2("0x100000000000000"), BigInt2("0x10000000000000000")];
+    (function() {
+      var a2 = new Uint16Array([65484]);
+      var b2 = new Uint8Array(a2.buffer, a2.byteOffset, a2.byteLength);
+      if (b2[0] === 255) {
+        return "big";
+      }
+      if (b2[0] === 204) {
+        return "little";
+      }
+      return "unknown";
+    })();
+    const createTransferableMessage3 = function(message) {
+      const transferable = {};
+      Object.keys(message).forEach((key) => {
+        const value = message[key];
+        if (isArrayBufferView3(value)) {
+          transferable[key] = {
+            bytes: value.buffer,
+            byteOffset: value.byteOffset,
+            byteLength: value.byteLength
+          };
+        } else {
+          transferable[key] = value;
+        }
+      });
+      return transferable;
+    };
+    self.onmessage = function(event) {
+      const data = event.data;
+      const encrypted = new Uint8Array(data.encrypted.bytes, data.encrypted.byteOffset, data.encrypted.byteLength);
+      const key = new Uint32Array(data.key.bytes, data.key.byteOffset, data.key.byteLength / 4);
+      const iv = new Uint32Array(data.iv.bytes, data.iv.byteOffset, data.iv.byteLength / 4);
+      new Decrypter3(encrypted, key, iv, function(err, bytes) {
+        self.postMessage(createTransferableMessage3({
+          source: data.source,
+          decrypted: bytes
+        }), [bytes.buffer]);
+      });
+    };
+  }));
+  var Decrypter2 = factory2(workerCode2);
+  var audioTrackKind_2 = (properties) => {
+    let kind = properties.default ? "main" : "alternative";
+    if (properties.characteristics && properties.characteristics.indexOf("public.accessibility.describes-video") >= 0) {
+      kind = "main-desc";
+    }
+    return kind;
+  };
+  var stopLoaders2 = (segmentLoader, mediaType) => {
+    segmentLoader.abort();
+    segmentLoader.pause();
+    if (mediaType && mediaType.activePlaylistLoader) {
+      mediaType.activePlaylistLoader.pause();
+      mediaType.activePlaylistLoader = null;
+    }
+  };
+  var startLoaders2 = (playlistLoader, mediaType) => {
+    mediaType.activePlaylistLoader = playlistLoader;
+    playlistLoader.load();
+  };
+  var onGroupChanged2 = (type, settings) => () => {
+    const {
+      segmentLoaders: {
+        [type]: segmentLoader,
+        main: mainSegmentLoader
+      },
+      mediaTypes: {
+        [type]: mediaType
+      }
+    } = settings;
+    const activeTrack3 = mediaType.activeTrack();
+    const activeGroup3 = mediaType.getActiveGroup();
+    const previousActiveLoader = mediaType.activePlaylistLoader;
+    const lastGroup = mediaType.lastGroup_;
+    if (activeGroup3 && lastGroup && activeGroup3.id === lastGroup.id) {
+      return;
+    }
+    mediaType.lastGroup_ = activeGroup3;
+    mediaType.lastTrack_ = activeTrack3;
+    stopLoaders2(segmentLoader, mediaType);
+    if (!activeGroup3 || activeGroup3.isMainPlaylist) {
+      return;
+    }
+    if (!activeGroup3.playlistLoader) {
+      if (previousActiveLoader) {
+        mainSegmentLoader.resetEverything();
+      }
+      return;
+    }
+    segmentLoader.resyncLoader();
+    startLoaders2(activeGroup3.playlistLoader, mediaType);
+  };
+  var onGroupChanging2 = (type, settings) => () => {
+    const {
+      segmentLoaders: {
+        [type]: segmentLoader
+      },
+      mediaTypes: {
+        [type]: mediaType
+      }
+    } = settings;
+    mediaType.lastGroup_ = null;
+    segmentLoader.abort();
+    segmentLoader.pause();
+  };
+  var onTrackChanged2 = (type, settings) => () => {
+    const {
+      mainPlaylistLoader,
+      segmentLoaders: {
+        [type]: segmentLoader,
+        main: mainSegmentLoader
+      },
+      mediaTypes: {
+        [type]: mediaType
+      }
+    } = settings;
+    const activeTrack3 = mediaType.activeTrack();
+    const activeGroup3 = mediaType.getActiveGroup();
+    const previousActiveLoader = mediaType.activePlaylistLoader;
+    const lastTrack = mediaType.lastTrack_;
+    if (lastTrack && activeTrack3 && lastTrack.id === activeTrack3.id) {
+      return;
+    }
+    mediaType.lastGroup_ = activeGroup3;
+    mediaType.lastTrack_ = activeTrack3;
+    stopLoaders2(segmentLoader, mediaType);
+    if (!activeGroup3) {
+      return;
+    }
+    if (activeGroup3.isMainPlaylist) {
+      if (!activeTrack3 || !lastTrack || activeTrack3.id === lastTrack.id) {
+        return;
+      }
+      const pc = settings.vhs.playlistController_;
+      const newPlaylist = pc.selectPlaylist();
+      if (pc.media() === newPlaylist) {
+        return;
+      }
+      mediaType.logger_(`track change. Switching main audio from ${lastTrack.id} to ${activeTrack3.id}`);
+      mainPlaylistLoader.pause();
+      mainSegmentLoader.resetEverything();
+      pc.fastQualityChange_(newPlaylist);
+      return;
+    }
+    if (type === "AUDIO") {
+      if (!activeGroup3.playlistLoader) {
+        mainSegmentLoader.setAudio(true);
+        mainSegmentLoader.resetEverything();
+        return;
+      }
+      segmentLoader.setAudio(true);
+      mainSegmentLoader.setAudio(false);
+    }
+    if (previousActiveLoader === activeGroup3.playlistLoader) {
+      startLoaders2(activeGroup3.playlistLoader, mediaType);
+      return;
+    }
+    if (segmentLoader.track) {
+      segmentLoader.track(activeTrack3);
+    }
+    segmentLoader.resetEverything();
+    startLoaders2(activeGroup3.playlistLoader, mediaType);
+  };
+  var onError2 = {
+    /**
+     * Returns a function to be called when a SegmentLoader or PlaylistLoader encounters
+     * an error.
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @return {Function}
+     *         Error handler. Logs warning (or error if the playlist is excluded) to
+     *         console and switches back to default audio track.
+     * @function onError.AUDIO
+     */
+    AUDIO: (type, settings) => () => {
+      const {
+        mediaTypes: {
+          [type]: mediaType
+        },
+        excludePlaylist
+      } = settings;
+      const activeTrack3 = mediaType.activeTrack();
+      const activeGroup3 = mediaType.activeGroup();
+      const id = (activeGroup3.filter((group) => group.default)[0] || activeGroup3[0]).id;
+      const defaultTrack = mediaType.tracks[id];
+      if (activeTrack3 === defaultTrack) {
+        excludePlaylist({
+          error: {
+            message: "Problem encountered loading the default audio track."
+          }
+        });
+        return;
+      }
+      videojs.log.warn("Problem encountered loading the alternate audio track.Switching back to default.");
+      for (const trackId in mediaType.tracks) {
+        mediaType.tracks[trackId].enabled = mediaType.tracks[trackId] === defaultTrack;
+      }
+      mediaType.onTrackChanged();
+    },
+    /**
+     * Returns a function to be called when a SegmentLoader or PlaylistLoader encounters
+     * an error.
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @return {Function}
+     *         Error handler. Logs warning to console and disables the active subtitle track
+     * @function onError.SUBTITLES
+     */
+    SUBTITLES: (type, settings) => () => {
+      const {
+        mediaTypes: {
+          [type]: mediaType
+        }
+      } = settings;
+      videojs.log.warn("Problem encountered loading the subtitle track.Disabling subtitle track.");
+      const track = mediaType.activeTrack();
+      if (track) {
+        track.mode = "disabled";
+      }
+      mediaType.onTrackChanged();
+    }
+  };
+  var setupListeners2 = {
+    /**
+     * Setup event listeners for audio playlist loader
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {PlaylistLoader|null} playlistLoader
+     *        PlaylistLoader to register listeners on
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @function setupListeners.AUDIO
+     */
+    AUDIO: (type, playlistLoader, settings) => {
+      if (!playlistLoader) {
+        return;
+      }
+      const {
+        tech,
+        requestOptions,
+        segmentLoaders: {
+          [type]: segmentLoader
+        }
+      } = settings;
+      playlistLoader.on("loadedmetadata", () => {
+        const media = playlistLoader.media();
+        segmentLoader.playlist(media, requestOptions);
+        if (!tech.paused() || media.endList && tech.preload() !== "none") {
+          segmentLoader.load();
+        }
+      });
+      playlistLoader.on("loadedplaylist", () => {
+        segmentLoader.playlist(playlistLoader.media(), requestOptions);
+        if (!tech.paused()) {
+          segmentLoader.load();
+        }
+      });
+      playlistLoader.on("error", onError2[type](type, settings));
+    },
+    /**
+     * Setup event listeners for subtitle playlist loader
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {PlaylistLoader|null} playlistLoader
+     *        PlaylistLoader to register listeners on
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @function setupListeners.SUBTITLES
+     */
+    SUBTITLES: (type, playlistLoader, settings) => {
+      const {
+        tech,
+        requestOptions,
+        segmentLoaders: {
+          [type]: segmentLoader
+        },
+        mediaTypes: {
+          [type]: mediaType
+        }
+      } = settings;
+      playlistLoader.on("loadedmetadata", () => {
+        const media = playlistLoader.media();
+        segmentLoader.playlist(media, requestOptions);
+        segmentLoader.track(mediaType.activeTrack());
+        if (!tech.paused() || media.endList && tech.preload() !== "none") {
+          segmentLoader.load();
+        }
+      });
+      playlistLoader.on("loadedplaylist", () => {
+        segmentLoader.playlist(playlistLoader.media(), requestOptions);
+        if (!tech.paused()) {
+          segmentLoader.load();
+        }
+      });
+      playlistLoader.on("error", onError2[type](type, settings));
+    }
+  };
+  var initialize2 = {
+    /**
+     * Setup PlaylistLoaders and AudioTracks for the audio groups
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @function initialize.AUDIO
+     */
+    "AUDIO": (type, settings) => {
+      const {
+        vhs,
+        sourceType,
+        segmentLoaders: {
+          [type]: segmentLoader
+        },
+        requestOptions,
+        main: {
+          mediaGroups
+        },
+        mediaTypes: {
+          [type]: {
+            groups,
+            tracks,
+            logger_
+          }
+        },
+        mainPlaylistLoader
+      } = settings;
+      const audioOnlyMain = isAudioOnly2(mainPlaylistLoader.main);
+      if (!mediaGroups[type] || Object.keys(mediaGroups[type]).length === 0) {
+        mediaGroups[type] = {
+          main: {
+            default: {
+              default: true
+            }
+          }
+        };
+        if (audioOnlyMain) {
+          mediaGroups[type].main.default.playlists = mainPlaylistLoader.main.playlists;
+        }
+      }
+      for (const groupId in mediaGroups[type]) {
+        if (!groups[groupId]) {
+          groups[groupId] = [];
+        }
+        for (const variantLabel in mediaGroups[type][groupId]) {
+          let properties = mediaGroups[type][groupId][variantLabel];
+          let playlistLoader;
+          if (audioOnlyMain) {
+            logger_(`AUDIO group '${groupId}' label '${variantLabel}' is a main playlist`);
+            properties.isMainPlaylist = true;
+            playlistLoader = null;
+          } else if (sourceType === "vhs-json" && properties.playlists) {
+            playlistLoader = new PlaylistLoader2(properties.playlists[0], vhs, requestOptions);
+          } else if (properties.resolvedUri) {
+            playlistLoader = new PlaylistLoader2(properties.resolvedUri, vhs, requestOptions);
+          } else if (properties.playlists && sourceType === "dash") {
+            playlistLoader = new DashPlaylistLoader2(properties.playlists[0], vhs, requestOptions, mainPlaylistLoader);
+          } else {
+            playlistLoader = null;
+          }
+          properties = merge3({
+            id: variantLabel,
+            playlistLoader
+          }, properties);
+          setupListeners2[type](type, properties.playlistLoader, settings);
+          groups[groupId].push(properties);
+          if (typeof tracks[variantLabel] === "undefined") {
+            const track = new videojs.AudioTrack({
+              id: variantLabel,
+              kind: audioTrackKind_2(properties),
+              enabled: false,
+              language: properties.language,
+              default: properties.default,
+              label: variantLabel
+            });
+            tracks[variantLabel] = track;
+          }
+        }
+      }
+      segmentLoader.on("error", onError2[type](type, settings));
+    },
+    /**
+     * Setup PlaylistLoaders and TextTracks for the subtitle groups
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @function initialize.SUBTITLES
+     */
+    "SUBTITLES": (type, settings) => {
+      const {
+        tech,
+        vhs,
+        sourceType,
+        segmentLoaders: {
+          [type]: segmentLoader
+        },
+        requestOptions,
+        main: {
+          mediaGroups
+        },
+        mediaTypes: {
+          [type]: {
+            groups,
+            tracks
+          }
+        },
+        mainPlaylistLoader
+      } = settings;
+      for (const groupId in mediaGroups[type]) {
+        if (!groups[groupId]) {
+          groups[groupId] = [];
+        }
+        for (const variantLabel in mediaGroups[type][groupId]) {
+          if (!vhs.options_.useForcedSubtitles && mediaGroups[type][groupId][variantLabel].forced) {
+            continue;
+          }
+          let properties = mediaGroups[type][groupId][variantLabel];
+          let playlistLoader;
+          if (sourceType === "hls") {
+            playlistLoader = new PlaylistLoader2(properties.resolvedUri, vhs, requestOptions);
+          } else if (sourceType === "dash") {
+            const playlists = properties.playlists.filter((p2) => p2.excludeUntil !== Infinity);
+            if (!playlists.length) {
+              return;
+            }
+            playlistLoader = new DashPlaylistLoader2(properties.playlists[0], vhs, requestOptions, mainPlaylistLoader);
+          } else if (sourceType === "vhs-json") {
+            playlistLoader = new PlaylistLoader2(
+              // if the vhs-json object included the media playlist, use the media playlist
+              // as provided, otherwise use the resolved URI to load the playlist
+              properties.playlists ? properties.playlists[0] : properties.resolvedUri,
+              vhs,
+              requestOptions
+            );
+          }
+          properties = merge3({
+            id: variantLabel,
+            playlistLoader
+          }, properties);
+          setupListeners2[type](type, properties.playlistLoader, settings);
+          groups[groupId].push(properties);
+          if (typeof tracks[variantLabel] === "undefined") {
+            const track = tech.addRemoteTextTrack({
+              id: variantLabel,
+              kind: "subtitles",
+              default: properties.default && properties.autoselect,
+              language: properties.language,
+              label: variantLabel
+            }, false).track;
+            tracks[variantLabel] = track;
+          }
+        }
+      }
+      segmentLoader.on("error", onError2[type](type, settings));
+    },
+    /**
+     * Setup TextTracks for the closed-caption groups
+     *
+     * @param {String} type
+     *        MediaGroup type
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @function initialize['CLOSED-CAPTIONS']
+     */
+    "CLOSED-CAPTIONS": (type, settings) => {
+      const {
+        tech,
+        main: {
+          mediaGroups
+        },
+        mediaTypes: {
+          [type]: {
+            groups,
+            tracks
+          }
+        }
+      } = settings;
+      for (const groupId in mediaGroups[type]) {
+        if (!groups[groupId]) {
+          groups[groupId] = [];
+        }
+        for (const variantLabel in mediaGroups[type][groupId]) {
+          const properties = mediaGroups[type][groupId][variantLabel];
+          if (!/^(?:CC|SERVICE)/.test(properties.instreamId)) {
+            continue;
+          }
+          const captionServices = tech.options_.vhs && tech.options_.vhs.captionServices || {};
+          let newProps = {
+            label: variantLabel,
+            language: properties.language,
+            instreamId: properties.instreamId,
+            default: properties.default && properties.autoselect
+          };
+          if (captionServices[newProps.instreamId]) {
+            newProps = merge3(newProps, captionServices[newProps.instreamId]);
+          }
+          if (newProps.default === void 0) {
+            delete newProps.default;
+          }
+          groups[groupId].push(merge3({
+            id: variantLabel
+          }, properties));
+          if (typeof tracks[variantLabel] === "undefined") {
+            const track = tech.addRemoteTextTrack({
+              id: newProps.instreamId,
+              kind: "captions",
+              default: newProps.default,
+              language: newProps.language,
+              label: newProps.label
+            }, false).track;
+            tracks[variantLabel] = track;
+          }
+        }
+      }
+    }
+  };
+  var groupMatch2 = (list, media) => {
+    for (let i2 = 0; i2 < list.length; i2++) {
+      if (playlistMatch2(media, list[i2])) {
+        return true;
+      }
+      if (list[i2].playlists && groupMatch2(list[i2].playlists, media)) {
+        return true;
+      }
+    }
+    return false;
+  };
+  var activeGroup2 = (type, settings) => (track) => {
+    const {
+      mainPlaylistLoader,
+      mediaTypes: {
+        [type]: {
+          groups
+        }
+      }
+    } = settings;
+    const media = mainPlaylistLoader.media();
+    if (!media) {
+      return null;
+    }
+    let variants = null;
+    if (media.attributes[type]) {
+      variants = groups[media.attributes[type]];
+    }
+    const groupKeys = Object.keys(groups);
+    if (!variants) {
+      if (type === "AUDIO" && groupKeys.length > 1 && isAudioOnly2(settings.main)) {
+        for (let i2 = 0; i2 < groupKeys.length; i2++) {
+          const groupPropertyList = groups[groupKeys[i2]];
+          if (groupMatch2(groupPropertyList, media)) {
+            variants = groupPropertyList;
+            break;
+          }
+        }
+      } else if (groups.main) {
+        variants = groups.main;
+      } else if (groupKeys.length === 1) {
+        variants = groups[groupKeys[0]];
+      }
+    }
+    if (typeof track === "undefined") {
+      return variants;
+    }
+    if (track === null || !variants) {
+      return null;
+    }
+    return variants.filter((props) => props.id === track.id)[0] || null;
+  };
+  var activeTrack2 = {
+    /**
+     * Returns a function used to get the active track of type provided
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @return {Function}
+     *         Function that returns the active media track for the provided type. Returns
+     *         null if no track is active
+     * @function activeTrack.AUDIO
+     */
+    AUDIO: (type, settings) => () => {
+      const {
+        mediaTypes: {
+          [type]: {
+            tracks
+          }
+        }
+      } = settings;
+      for (const id in tracks) {
+        if (tracks[id].enabled) {
+          return tracks[id];
+        }
+      }
+      return null;
+    },
+    /**
+     * Returns a function used to get the active track of type provided
+     *
+     * @param {string} type
+     *        MediaGroup type
+     * @param {Object} settings
+     *        Object containing required information for media groups
+     * @return {Function}
+     *         Function that returns the active media track for the provided type. Returns
+     *         null if no track is active
+     * @function activeTrack.SUBTITLES
+     */
+    SUBTITLES: (type, settings) => () => {
+      const {
+        mediaTypes: {
+          [type]: {
+            tracks
+          }
+        }
+      } = settings;
+      for (const id in tracks) {
+        if (tracks[id].mode === "showing" || tracks[id].mode === "hidden") {
+          return tracks[id];
+        }
+      }
+      return null;
+    }
+  };
+  var getActiveGroup2 = (type, {
+    mediaTypes: mediaTypes2
+  }) => () => {
+    const activeTrack_ = mediaTypes2[type].activeTrack();
+    if (!activeTrack_) {
+      return null;
+    }
+    return mediaTypes2[type].activeGroup(activeTrack_);
+  };
+  var setupMediaGroups2 = (settings) => {
+    ["AUDIO", "SUBTITLES", "CLOSED-CAPTIONS"].forEach((type) => {
+      initialize2[type](type, settings);
+    });
+    const {
+      mediaTypes: mediaTypes2,
+      mainPlaylistLoader,
+      tech,
+      vhs,
+      segmentLoaders: {
+        ["AUDIO"]: audioSegmentLoader,
+        main: mainSegmentLoader
+      }
+    } = settings;
+    ["AUDIO", "SUBTITLES"].forEach((type) => {
+      mediaTypes2[type].activeGroup = activeGroup2(type, settings);
+      mediaTypes2[type].activeTrack = activeTrack2[type](type, settings);
+      mediaTypes2[type].onGroupChanged = onGroupChanged2(type, settings);
+      mediaTypes2[type].onGroupChanging = onGroupChanging2(type, settings);
+      mediaTypes2[type].onTrackChanged = onTrackChanged2(type, settings);
+      mediaTypes2[type].getActiveGroup = getActiveGroup2(type, settings);
+    });
+    const audioGroup = mediaTypes2.AUDIO.activeGroup();
+    if (audioGroup) {
+      const groupId = (audioGroup.filter((group) => group.default)[0] || audioGroup[0]).id;
+      mediaTypes2.AUDIO.tracks[groupId].enabled = true;
+      mediaTypes2.AUDIO.onGroupChanged();
+      mediaTypes2.AUDIO.onTrackChanged();
+      const activeAudioGroup = mediaTypes2.AUDIO.getActiveGroup();
+      if (!activeAudioGroup.playlistLoader) {
+        mainSegmentLoader.setAudio(true);
+      } else {
+        mainSegmentLoader.setAudio(false);
+        audioSegmentLoader.setAudio(true);
+      }
+    }
+    mainPlaylistLoader.on("mediachange", () => {
+      ["AUDIO", "SUBTITLES"].forEach((type) => mediaTypes2[type].onGroupChanged());
+    });
+    mainPlaylistLoader.on("mediachanging", () => {
+      ["AUDIO", "SUBTITLES"].forEach((type) => mediaTypes2[type].onGroupChanging());
+    });
+    const onAudioTrackChanged = () => {
+      mediaTypes2.AUDIO.onTrackChanged();
+      tech.trigger({
+        type: "usage",
+        name: "vhs-audio-change"
+      });
+    };
+    tech.audioTracks().addEventListener("change", onAudioTrackChanged);
+    tech.remoteTextTracks().addEventListener("change", mediaTypes2.SUBTITLES.onTrackChanged);
+    vhs.on("dispose", () => {
+      tech.audioTracks().removeEventListener("change", onAudioTrackChanged);
+      tech.remoteTextTracks().removeEventListener("change", mediaTypes2.SUBTITLES.onTrackChanged);
+    });
+    tech.clearTracks("audio");
+    for (const id in mediaTypes2.AUDIO.tracks) {
+      tech.audioTracks().addTrack(mediaTypes2.AUDIO.tracks[id]);
+    }
+  };
+  var createMediaTypes2 = () => {
+    const mediaTypes2 = {};
+    ["AUDIO", "SUBTITLES", "CLOSED-CAPTIONS"].forEach((type) => {
+      mediaTypes2[type] = {
+        groups: {},
+        tracks: {},
+        activePlaylistLoader: null,
+        activeGroup: noop2,
+        activeTrack: noop2,
+        getActiveGroup: noop2,
+        onGroupChanged: noop2,
+        onTrackChanged: noop2,
+        lastTrack_: null,
+        logger_: logger2(`MediaGroups[${type}]`)
+      };
+    });
+    return mediaTypes2;
+  };
+  var SteeringManifest2 = class {
+    constructor() {
+      this.priority_ = [];
+      this.pathwayClones_ = /* @__PURE__ */ new Map();
+    }
+    set version(number) {
+      if (number === 1) {
+        this.version_ = number;
+      }
+    }
+    set ttl(seconds) {
+      this.ttl_ = seconds || 300;
+    }
+    set reloadUri(uri) {
+      if (uri) {
+        this.reloadUri_ = resolveUrl4(this.reloadUri_, uri);
+      }
+    }
+    set priority(array) {
+      if (array && array.length) {
+        this.priority_ = array;
+      }
+    }
+    set pathwayClones(array) {
+      if (array && array.length) {
+        this.pathwayClones_ = new Map(array.map((clone) => [clone.ID, clone]));
+      }
+    }
+    get version() {
+      return this.version_;
+    }
+    get ttl() {
+      return this.ttl_;
+    }
+    get reloadUri() {
+      return this.reloadUri_;
+    }
+    get priority() {
+      return this.priority_;
+    }
+    get pathwayClones() {
+      return this.pathwayClones_;
+    }
+  };
+  var ContentSteeringController2 = class extends videojs.EventTarget {
+    constructor(xhr, bandwidth) {
+      super();
+      this.currentPathway = null;
+      this.defaultPathway = null;
+      this.queryBeforeStart = false;
+      this.availablePathways_ = /* @__PURE__ */ new Set();
+      this.steeringManifest = new SteeringManifest2();
+      this.proxyServerUrl_ = null;
+      this.manifestType_ = null;
+      this.ttlTimeout_ = null;
+      this.request_ = null;
+      this.currentPathwayClones = /* @__PURE__ */ new Map();
+      this.nextPathwayClones = /* @__PURE__ */ new Map();
+      this.excludedSteeringManifestURLs = /* @__PURE__ */ new Set();
+      this.logger_ = logger2("Content Steering");
+      this.xhr_ = xhr;
+      this.getBandwidth_ = bandwidth;
+    }
+    /**
+     * Assigns the content steering tag properties to the steering controller
+     *
+     * @param {string} baseUrl the baseURL from the main manifest for resolving the steering manifest url
+     * @param {Object} steeringTag the content steering tag from the main manifest
+     */
+    assignTagProperties(baseUrl, steeringTag) {
+      this.manifestType_ = steeringTag.serverUri ? "HLS" : "DASH";
+      const steeringUri = steeringTag.serverUri || steeringTag.serverURL;
+      if (!steeringUri) {
+        this.logger_(`steering manifest URL is ${steeringUri}, cannot request steering manifest.`);
+        this.trigger("error");
+        return;
+      }
+      if (steeringUri.startsWith("data:")) {
+        this.decodeDataUriManifest_(steeringUri.substring(steeringUri.indexOf(",") + 1));
+        return;
+      }
+      this.steeringManifest.reloadUri = resolveUrl4(baseUrl, steeringUri);
+      this.defaultPathway = steeringTag.pathwayId || steeringTag.defaultServiceLocation;
+      this.queryBeforeStart = steeringTag.queryBeforeStart;
+      this.proxyServerUrl_ = steeringTag.proxyServerURL;
+      if (this.defaultPathway && !this.queryBeforeStart) {
+        this.trigger("content-steering");
+      }
+    }
+    /**
+     * Requests the content steering manifest and parse the response. This should only be called after
+     * assignTagProperties was called with a content steering tag.
+     *
+     * @param {string} initialUri The optional uri to make the request with.
+     *    If set, the request should be made with exactly what is passed in this variable.
+     *    This scenario should only happen once on initalization.
+     */
+    requestSteeringManifest(initial) {
+      const reloadUri = this.steeringManifest.reloadUri;
+      if (!reloadUri) {
+        return;
+      }
+      const uri = initial ? reloadUri : this.getRequestURI(reloadUri);
+      if (!uri) {
+        this.logger_("No valid content steering manifest URIs. Stopping content steering.");
+        this.trigger("error");
+        this.dispose();
+        return;
+      }
+      this.request_ = this.xhr_({
+        uri
+      }, (error, errorInfo) => {
+        if (error) {
+          if (errorInfo.status === 410) {
+            this.logger_(`manifest request 410 ${error}.`);
+            this.logger_(`There will be no more content steering requests to ${uri} this session.`);
+            this.excludedSteeringManifestURLs.add(uri);
+            return;
+          }
+          if (errorInfo.status === 429) {
+            const retrySeconds = errorInfo.responseHeaders["retry-after"];
+            this.logger_(`manifest request 429 ${error}.`);
+            this.logger_(`content steering will retry in ${retrySeconds} seconds.`);
+            this.startTTLTimeout_(parseInt(retrySeconds, 10));
+            return;
+          }
+          this.logger_(`manifest failed to load ${error}.`);
+          this.startTTLTimeout_();
+          return;
+        }
+        const steeringManifestJson = JSON.parse(this.request_.responseText);
+        this.assignSteeringProperties_(steeringManifestJson);
+        this.startTTLTimeout_();
+      });
+    }
+    /**
+     * Set the proxy server URL and add the steering manifest url as a URI encoded parameter.
+     *
+     * @param {string} steeringUrl the steering manifest url
+     * @return the steering manifest url to a proxy server with all parameters set
+     */
+    setProxyServerUrl_(steeringUrl) {
+      const steeringUrlObject = new import_window8.default.URL(steeringUrl);
+      const proxyServerUrlObject = new import_window8.default.URL(this.proxyServerUrl_);
+      proxyServerUrlObject.searchParams.set("url", encodeURI(steeringUrlObject.toString()));
+      return this.setSteeringParams_(proxyServerUrlObject.toString());
+    }
+    /**
+     * Decodes and parses the data uri encoded steering manifest
+     *
+     * @param {string} dataUri the data uri to be decoded and parsed.
+     */
+    decodeDataUriManifest_(dataUri) {
+      const steeringManifestJson = JSON.parse(import_window8.default.atob(dataUri));
+      this.assignSteeringProperties_(steeringManifestJson);
+    }
+    /**
+     * Set the HLS or DASH content steering manifest request query parameters. For example:
+     * _HLS_pathway="<CURRENT-PATHWAY-ID>" and _HLS_throughput=<THROUGHPUT>
+     * _DASH_pathway and _DASH_throughput
+     *
+     * @param {string} uri to add content steering server parameters to.
+     * @return a new uri as a string with the added steering query parameters.
+     */
+    setSteeringParams_(url) {
+      const urlObject = new import_window8.default.URL(url);
+      const path = this.getPathway();
+      const networkThroughput = this.getBandwidth_();
+      if (path) {
+        const pathwayKey = `_${this.manifestType_}_pathway`;
+        urlObject.searchParams.set(pathwayKey, path);
+      }
+      if (networkThroughput) {
+        const throughputKey = `_${this.manifestType_}_throughput`;
+        urlObject.searchParams.set(throughputKey, networkThroughput);
+      }
+      return urlObject.toString();
+    }
+    /**
+     * Assigns the current steering manifest properties and to the SteeringManifest object
+     *
+     * @param {Object} steeringJson the raw JSON steering manifest
+     */
+    assignSteeringProperties_(steeringJson) {
+      this.steeringManifest.version = steeringJson.VERSION;
+      if (!this.steeringManifest.version) {
+        this.logger_(`manifest version is ${steeringJson.VERSION}, which is not supported.`);
+        this.trigger("error");
+        return;
+      }
+      this.steeringManifest.ttl = steeringJson.TTL;
+      this.steeringManifest.reloadUri = steeringJson["RELOAD-URI"];
+      this.steeringManifest.priority = steeringJson["PATHWAY-PRIORITY"] || steeringJson["SERVICE-LOCATION-PRIORITY"];
+      this.steeringManifest.pathwayClones = steeringJson["PATHWAY-CLONES"];
+      this.nextPathwayClones = this.steeringManifest.pathwayClones;
+      if (!this.availablePathways_.size) {
+        this.logger_("There are no available pathways for content steering. Ending content steering.");
+        this.trigger("error");
+        this.dispose();
+      }
+      const chooseNextPathway = (pathwaysByPriority) => {
+        for (const path of pathwaysByPriority) {
+          if (this.availablePathways_.has(path)) {
+            return path;
+          }
+        }
+        return [...this.availablePathways_][0];
+      };
+      const nextPathway = chooseNextPathway(this.steeringManifest.priority);
+      if (this.currentPathway !== nextPathway) {
+        this.currentPathway = nextPathway;
+        this.trigger("content-steering");
+      }
+    }
+    /**
+     * Returns the pathway to use for steering decisions
+     *
+     * @return {string} returns the current pathway or the default
+     */
+    getPathway() {
+      return this.currentPathway || this.defaultPathway;
+    }
+    /**
+     * Chooses the manifest request URI based on proxy URIs and server URLs.
+     * Also accounts for exclusion on certain manifest URIs.
+     *
+     * @param {string} reloadUri the base uri before parameters
+     *
+     * @return {string} the final URI for the request to the manifest server.
+     */
+    getRequestURI(reloadUri) {
+      if (!reloadUri) {
+        return null;
+      }
+      const isExcluded3 = (uri) => this.excludedSteeringManifestURLs.has(uri);
+      if (this.proxyServerUrl_) {
+        const proxyURI = this.setProxyServerUrl_(reloadUri);
+        if (!isExcluded3(proxyURI)) {
+          return proxyURI;
+        }
+      }
+      const steeringURI = this.setSteeringParams_(reloadUri);
+      if (!isExcluded3(steeringURI)) {
+        return steeringURI;
+      }
+      return null;
+    }
+    /**
+     * Start the timeout for re-requesting the steering manifest at the TTL interval.
+     *
+     * @param {number} ttl time in seconds of the timeout. Defaults to the
+     *        ttl interval in the steering manifest
+     */
+    startTTLTimeout_(ttl = this.steeringManifest.ttl) {
+      const ttlMS = ttl * 1e3;
+      this.ttlTimeout_ = import_window8.default.setTimeout(() => {
+        this.requestSteeringManifest();
+      }, ttlMS);
+    }
+    /**
+     * Clear the TTL timeout if necessary.
+     */
+    clearTTLTimeout_() {
+      import_window8.default.clearTimeout(this.ttlTimeout_);
+      this.ttlTimeout_ = null;
+    }
+    /**
+     * aborts any current steering xhr and sets the current request object to null
+     */
+    abort() {
+      if (this.request_) {
+        this.request_.abort();
+      }
+      this.request_ = null;
+    }
+    /**
+     * aborts steering requests clears the ttl timeout and resets all properties.
+     */
+    dispose() {
+      this.off("content-steering");
+      this.off("error");
+      this.abort();
+      this.clearTTLTimeout_();
+      this.currentPathway = null;
+      this.defaultPathway = null;
+      this.queryBeforeStart = null;
+      this.proxyServerUrl_ = null;
+      this.manifestType_ = null;
+      this.ttlTimeout_ = null;
+      this.request_ = null;
+      this.excludedSteeringManifestURLs = /* @__PURE__ */ new Set();
+      this.availablePathways_ = /* @__PURE__ */ new Set();
+      this.steeringManifest = new SteeringManifest2();
+    }
+    /**
+     * adds a pathway to the available pathways set
+     *
+     * @param {string} pathway the pathway string to add
+     */
+    addAvailablePathway(pathway) {
+      if (pathway) {
+        this.availablePathways_.add(pathway);
+      }
+    }
+    /**
+     * Clears all pathways from the available pathways set
+     */
+    clearAvailablePathways() {
+      this.availablePathways_.clear();
+    }
+    /**
+     * Removes a pathway from the available pathways set.
+     */
+    excludePathway(pathway) {
+      return this.availablePathways_.delete(pathway);
+    }
+    /**
+     * Checks the refreshed DASH manifest content steering tag for changes.
+     *
+     * @param {string} baseURL new steering tag on DASH manifest refresh
+     * @param {Object} newTag the new tag to check for changes
+     * @return a true or false whether the new tag has different values
+     */
+    didDASHTagChange(baseURL, newTag) {
+      return !newTag && this.steeringManifest.reloadUri || newTag && (resolveUrl4(baseURL, newTag.serverURL) !== this.steeringManifest.reloadUri || newTag.defaultServiceLocation !== this.defaultPathway || newTag.queryBeforeStart !== this.queryBeforeStart || newTag.proxyServerURL !== this.proxyServerUrl_);
+    }
+    getAvailablePathways() {
+      return this.availablePathways_;
+    }
+  };
+  var ABORT_EARLY_EXCLUSION_SECONDS2 = 10;
+  var Vhs$12;
+  var loaderStats2 = ["mediaRequests", "mediaRequestsAborted", "mediaRequestsTimedout", "mediaRequestsErrored", "mediaTransferDuration", "mediaBytesTransferred", "mediaAppends"];
+  var sumLoaderStat2 = function(stat) {
+    return this.audioSegmentLoader_[stat] + this.mainSegmentLoader_[stat];
+  };
+  var shouldSwitchToMedia2 = function({
+    currentPlaylist,
+    buffered,
+    currentTime,
+    nextPlaylist,
+    bufferLowWaterLine,
+    bufferHighWaterLine,
+    duration: duration3,
+    bufferBasedABR,
+    log: log3
+  }) {
+    if (!nextPlaylist) {
+      videojs.log.warn("We received no playlist to switch to. Please check your stream.");
+      return false;
+    }
+    const sharedLogLine = `allowing switch ${currentPlaylist && currentPlaylist.id || "null"} -> ${nextPlaylist.id}`;
+    if (!currentPlaylist) {
+      log3(`${sharedLogLine} as current playlist is not set`);
+      return true;
+    }
+    if (nextPlaylist.id === currentPlaylist.id) {
+      return false;
+    }
+    const isBuffered = Boolean(findRange2(buffered, currentTime).length);
+    if (!currentPlaylist.endList) {
+      if (!isBuffered && typeof currentPlaylist.partTargetDuration === "number") {
+        log3(`not ${sharedLogLine} as current playlist is live llhls, but currentTime isn't in buffered.`);
+        return false;
+      }
+      log3(`${sharedLogLine} as current playlist is live`);
+      return true;
+    }
+    const forwardBuffer = timeAheadOf2(buffered, currentTime);
+    const maxBufferLowWaterLine = bufferBasedABR ? Config2.EXPERIMENTAL_MAX_BUFFER_LOW_WATER_LINE : Config2.MAX_BUFFER_LOW_WATER_LINE;
+    if (duration3 < maxBufferLowWaterLine) {
+      log3(`${sharedLogLine} as duration < max low water line (${duration3} < ${maxBufferLowWaterLine})`);
+      return true;
+    }
+    const nextBandwidth = nextPlaylist.attributes.BANDWIDTH;
+    const currBandwidth = currentPlaylist.attributes.BANDWIDTH;
+    if (nextBandwidth < currBandwidth && (!bufferBasedABR || forwardBuffer < bufferHighWaterLine)) {
+      let logLine = `${sharedLogLine} as next bandwidth < current bandwidth (${nextBandwidth} < ${currBandwidth})`;
+      if (bufferBasedABR) {
+        logLine += ` and forwardBuffer < bufferHighWaterLine (${forwardBuffer} < ${bufferHighWaterLine})`;
+      }
+      log3(logLine);
+      return true;
+    }
+    if ((!bufferBasedABR || nextBandwidth > currBandwidth) && forwardBuffer >= bufferLowWaterLine) {
+      let logLine = `${sharedLogLine} as forwardBuffer >= bufferLowWaterLine (${forwardBuffer} >= ${bufferLowWaterLine})`;
+      if (bufferBasedABR) {
+        logLine += ` and next bandwidth > current bandwidth (${nextBandwidth} > ${currBandwidth})`;
+      }
+      log3(logLine);
+      return true;
+    }
+    log3(`not ${sharedLogLine} as no switching criteria met`);
+    return false;
+  };
+  var PlaylistController2 = class extends videojs.EventTarget {
+    constructor(options) {
+      super();
+      const {
+        src,
+        withCredentials,
+        tech,
+        bandwidth,
+        externVhs,
+        useCueTags,
+        playlistExclusionDuration,
+        enableLowInitialPlaylist,
+        sourceType,
+        cacheEncryptionKeys,
+        bufferBasedABR,
+        leastPixelDiffSelector,
+        captionServices
+      } = options;
+      if (!src) {
+        throw new Error("A non-empty playlist URL or JSON manifest string is required");
+      }
+      let {
+        maxPlaylistRetries
+      } = options;
+      if (maxPlaylistRetries === null || typeof maxPlaylistRetries === "undefined") {
+        maxPlaylistRetries = Infinity;
+      }
+      Vhs$12 = externVhs;
+      this.bufferBasedABR = Boolean(bufferBasedABR);
+      this.leastPixelDiffSelector = Boolean(leastPixelDiffSelector);
+      this.withCredentials = withCredentials;
+      this.tech_ = tech;
+      this.vhs_ = tech.vhs;
+      this.sourceType_ = sourceType;
+      this.useCueTags_ = useCueTags;
+      this.playlistExclusionDuration = playlistExclusionDuration;
+      this.maxPlaylistRetries = maxPlaylistRetries;
+      this.enableLowInitialPlaylist = enableLowInitialPlaylist;
+      if (this.useCueTags_) {
+        this.cueTagsTrack_ = this.tech_.addTextTrack("metadata", "ad-cues");
+        this.cueTagsTrack_.inBandMetadataTrackDispatchType = "";
+      }
+      this.requestOptions_ = {
+        withCredentials,
+        maxPlaylistRetries,
+        timeout: null
+      };
+      this.on("error", this.pauseLoading);
+      this.mediaTypes_ = createMediaTypes2();
+      this.mediaSource = new import_window8.default.MediaSource();
+      this.handleDurationChange_ = this.handleDurationChange_.bind(this);
+      this.handleSourceOpen_ = this.handleSourceOpen_.bind(this);
+      this.handleSourceEnded_ = this.handleSourceEnded_.bind(this);
+      this.mediaSource.addEventListener("durationchange", this.handleDurationChange_);
+      this.mediaSource.addEventListener("sourceopen", this.handleSourceOpen_);
+      this.mediaSource.addEventListener("sourceended", this.handleSourceEnded_);
+      this.seekable_ = createTimeRanges2();
+      this.hasPlayed_ = false;
+      this.syncController_ = new SyncController2(options);
+      this.segmentMetadataTrack_ = tech.addRemoteTextTrack({
+        kind: "metadata",
+        label: "segment-metadata"
+      }, false).track;
+      this.decrypter_ = new Decrypter2();
+      this.sourceUpdater_ = new SourceUpdater2(this.mediaSource);
+      this.inbandTextTracks_ = {};
+      this.timelineChangeController_ = new TimelineChangeController2();
+      this.keyStatusMap_ = /* @__PURE__ */ new Map();
+      const segmentLoaderSettings = {
+        vhs: this.vhs_,
+        parse708captions: options.parse708captions,
+        useDtsForTimestampOffset: options.useDtsForTimestampOffset,
+        captionServices,
+        mediaSource: this.mediaSource,
+        currentTime: this.tech_.currentTime.bind(this.tech_),
+        seekable: () => this.seekable(),
+        seeking: () => this.tech_.seeking(),
+        duration: () => this.duration(),
+        hasPlayed: () => this.hasPlayed_,
+        goalBufferLength: () => this.goalBufferLength(),
+        bandwidth,
+        syncController: this.syncController_,
+        decrypter: this.decrypter_,
+        sourceType: this.sourceType_,
+        inbandTextTracks: this.inbandTextTracks_,
+        cacheEncryptionKeys,
+        sourceUpdater: this.sourceUpdater_,
+        timelineChangeController: this.timelineChangeController_,
+        exactManifestTimings: options.exactManifestTimings,
+        addMetadataToTextTrack: this.addMetadataToTextTrack.bind(this)
+      };
+      this.mainPlaylistLoader_ = this.sourceType_ === "dash" ? new DashPlaylistLoader2(src, this.vhs_, merge3(this.requestOptions_, {
+        addMetadataToTextTrack: this.addMetadataToTextTrack.bind(this)
+      })) : new PlaylistLoader2(src, this.vhs_, merge3(this.requestOptions_, {
+        addDateRangesToTextTrack: this.addDateRangesToTextTrack_.bind(this)
+      }));
+      this.setupMainPlaylistLoaderListeners_();
+      this.mainSegmentLoader_ = new SegmentLoader2(merge3(segmentLoaderSettings, {
+        segmentMetadataTrack: this.segmentMetadataTrack_,
+        loaderType: "main"
+      }), options);
+      this.audioSegmentLoader_ = new SegmentLoader2(merge3(segmentLoaderSettings, {
+        loaderType: "audio"
+      }), options);
+      this.subtitleSegmentLoader_ = new VTTSegmentLoader2(merge3(segmentLoaderSettings, {
+        loaderType: "vtt",
+        featuresNativeTextTracks: this.tech_.featuresNativeTextTracks,
+        loadVttJs: () => new Promise((resolve, reject) => {
+          function onLoad() {
+            tech.off("vttjserror", onError3);
+            resolve();
+          }
+          function onError3() {
+            tech.off("vttjsloaded", onLoad);
+            reject();
+          }
+          tech.one("vttjsloaded", onLoad);
+          tech.one("vttjserror", onError3);
+          tech.addWebVttScript_();
+        })
+      }), options);
+      const getBandwidth = () => {
+        return this.mainSegmentLoader_.bandwidth;
+      };
+      this.contentSteeringController_ = new ContentSteeringController2(this.vhs_.xhr, getBandwidth);
+      this.setupSegmentLoaderListeners_();
+      if (this.bufferBasedABR) {
+        this.mainPlaylistLoader_.one("loadedplaylist", () => this.startABRTimer_());
+        this.tech_.on("pause", () => this.stopABRTimer_());
+        this.tech_.on("play", () => this.startABRTimer_());
+      }
+      loaderStats2.forEach((stat) => {
+        this[stat + "_"] = sumLoaderStat2.bind(this, stat);
+      });
+      this.logger_ = logger2("pc");
+      this.triggeredFmp4Usage = false;
+      if (this.tech_.preload() === "none") {
+        this.loadOnPlay_ = () => {
+          this.loadOnPlay_ = null;
+          this.mainPlaylistLoader_.load();
+        };
+        this.tech_.one("play", this.loadOnPlay_);
+      } else {
+        this.mainPlaylistLoader_.load();
+      }
+      this.timeToLoadedData__ = -1;
+      this.mainAppendsToLoadedData__ = -1;
+      this.audioAppendsToLoadedData__ = -1;
+      const event = this.tech_.preload() === "none" ? "play" : "loadstart";
+      this.tech_.one(event, () => {
+        const timeToLoadedDataStart = Date.now();
+        this.tech_.one("loadeddata", () => {
+          this.timeToLoadedData__ = Date.now() - timeToLoadedDataStart;
+          this.mainAppendsToLoadedData__ = this.mainSegmentLoader_.mediaAppends;
+          this.audioAppendsToLoadedData__ = this.audioSegmentLoader_.mediaAppends;
+        });
+      });
+    }
+    mainAppendsToLoadedData_() {
+      return this.mainAppendsToLoadedData__;
+    }
+    audioAppendsToLoadedData_() {
+      return this.audioAppendsToLoadedData__;
+    }
+    appendsToLoadedData_() {
+      const main = this.mainAppendsToLoadedData_();
+      const audio = this.audioAppendsToLoadedData_();
+      if (main === -1 || audio === -1) {
+        return -1;
+      }
+      return main + audio;
+    }
+    timeToLoadedData_() {
+      return this.timeToLoadedData__;
+    }
+    /**
+     * Run selectPlaylist and switch to the new playlist if we should
+     *
+     * @param {string} [reason=abr] a reason for why the ABR check is made
+     * @private
+     */
+    checkABR_(reason = "abr") {
+      const nextPlaylist = this.selectPlaylist();
+      if (nextPlaylist && this.shouldSwitchToMedia_(nextPlaylist)) {
+        this.switchMedia_(nextPlaylist, reason);
+      }
+    }
+    switchMedia_(playlist, cause, delay) {
+      const oldMedia = this.media();
+      const oldId = oldMedia && (oldMedia.id || oldMedia.uri);
+      const newId = playlist && (playlist.id || playlist.uri);
+      if (oldId && oldId !== newId) {
+        this.logger_(`switch media ${oldId} -> ${newId} from ${cause}`);
+        this.tech_.trigger({
+          type: "usage",
+          name: `vhs-rendition-change-${cause}`
+        });
+      }
+      this.mainPlaylistLoader_.media(playlist, delay);
+    }
+    /**
+     * A function that ensures we switch our playlists inside of `mediaTypes`
+     * to match the current `serviceLocation` provided by the contentSteering controller.
+     * We want to check media types of `AUDIO`, `SUBTITLES`, and `CLOSED-CAPTIONS`.
+     *
+     * This should only be called on a DASH playback scenario while using content steering.
+     * This is necessary due to differences in how media in HLS manifests are generally tied to
+     * a video playlist, where in DASH that is not always the case.
+     */
+    switchMediaForDASHContentSteering_() {
+      ["AUDIO", "SUBTITLES", "CLOSED-CAPTIONS"].forEach((type) => {
+        const mediaType = this.mediaTypes_[type];
+        const activeGroup3 = mediaType ? mediaType.activeGroup() : null;
+        const pathway = this.contentSteeringController_.getPathway();
+        if (activeGroup3 && pathway) {
+          const mediaPlaylists = activeGroup3.length ? activeGroup3[0].playlists : activeGroup3.playlists;
+          const dashMediaPlaylists = mediaPlaylists.filter((p2) => p2.attributes.serviceLocation === pathway);
+          if (dashMediaPlaylists.length) {
+            this.mediaTypes_[type].activePlaylistLoader.media(dashMediaPlaylists[0]);
+          }
+        }
+      });
+    }
+    /**
+     * Start a timer that periodically calls checkABR_
+     *
+     * @private
+     */
+    startABRTimer_() {
+      this.stopABRTimer_();
+      this.abrTimer_ = import_window8.default.setInterval(() => this.checkABR_(), 250);
+    }
+    /**
+     * Stop the timer that periodically calls checkABR_
+     *
+     * @private
+     */
+    stopABRTimer_() {
+      if (this.tech_.scrubbing && this.tech_.scrubbing()) {
+        return;
+      }
+      import_window8.default.clearInterval(this.abrTimer_);
+      this.abrTimer_ = null;
+    }
+    /**
+     * Get a list of playlists for the currently selected audio playlist
+     *
+     * @return {Array} the array of audio playlists
+     */
+    getAudioTrackPlaylists_() {
+      const main = this.main();
+      const defaultPlaylists = main && main.playlists || [];
+      if (!main || !main.mediaGroups || !main.mediaGroups.AUDIO) {
+        return defaultPlaylists;
+      }
+      const AUDIO = main.mediaGroups.AUDIO;
+      const groupKeys = Object.keys(AUDIO);
+      let track;
+      if (Object.keys(this.mediaTypes_.AUDIO.groups).length) {
+        track = this.mediaTypes_.AUDIO.activeTrack();
+      } else {
+        const defaultGroup = AUDIO.main || groupKeys.length && AUDIO[groupKeys[0]];
+        for (const label in defaultGroup) {
+          if (defaultGroup[label].default) {
+            track = {
+              label
+            };
+            break;
+          }
+        }
+      }
+      if (!track) {
+        return defaultPlaylists;
+      }
+      const playlists = [];
+      for (const group in AUDIO) {
+        if (AUDIO[group][track.label]) {
+          const properties = AUDIO[group][track.label];
+          if (properties.playlists && properties.playlists.length) {
+            playlists.push.apply(playlists, properties.playlists);
+          } else if (properties.uri) {
+            playlists.push(properties);
+          } else if (main.playlists.length) {
+            for (let i2 = 0; i2 < main.playlists.length; i2++) {
+              const playlist = main.playlists[i2];
+              if (playlist.attributes && playlist.attributes.AUDIO && playlist.attributes.AUDIO === group) {
+                playlists.push(playlist);
+              }
+            }
+          }
+        }
+      }
+      if (!playlists.length) {
+        return defaultPlaylists;
+      }
+      return playlists;
+    }
+    /**
+     * Register event handlers on the main playlist loader. A helper
+     * function for construction time.
+     *
+     * @private
+     */
+    setupMainPlaylistLoaderListeners_() {
+      this.mainPlaylistLoader_.on("loadedmetadata", () => {
+        const media = this.mainPlaylistLoader_.media();
+        const requestTimeout = media.targetDuration * 1.5 * 1e3;
+        if (isLowestEnabledRendition2(this.mainPlaylistLoader_.main, this.mainPlaylistLoader_.media())) {
+          this.requestOptions_.timeout = 0;
+        } else {
+          this.requestOptions_.timeout = requestTimeout;
+        }
+        if (media.endList && this.tech_.preload() !== "none") {
+          this.mainSegmentLoader_.playlist(media, this.requestOptions_);
+          this.mainSegmentLoader_.load();
+        }
+        setupMediaGroups2({
+          sourceType: this.sourceType_,
+          segmentLoaders: {
+            AUDIO: this.audioSegmentLoader_,
+            SUBTITLES: this.subtitleSegmentLoader_,
+            main: this.mainSegmentLoader_
+          },
+          tech: this.tech_,
+          requestOptions: this.requestOptions_,
+          mainPlaylistLoader: this.mainPlaylistLoader_,
+          vhs: this.vhs_,
+          main: this.main(),
+          mediaTypes: this.mediaTypes_,
+          excludePlaylist: this.excludePlaylist.bind(this)
+        });
+        this.triggerPresenceUsage_(this.main(), media);
+        this.setupFirstPlay();
+        if (!this.mediaTypes_.AUDIO.activePlaylistLoader || this.mediaTypes_.AUDIO.activePlaylistLoader.media()) {
+          this.trigger("selectedinitialmedia");
+        } else {
+          this.mediaTypes_.AUDIO.activePlaylistLoader.one("loadedmetadata", () => {
+            this.trigger("selectedinitialmedia");
+          });
+        }
+      });
+      this.mainPlaylistLoader_.on("loadedplaylist", () => {
+        if (this.loadOnPlay_) {
+          this.tech_.off("play", this.loadOnPlay_);
+        }
+        let updatedPlaylist = this.mainPlaylistLoader_.media();
+        if (!updatedPlaylist) {
+          this.attachContentSteeringListeners_();
+          this.initContentSteeringController_();
+          this.excludeUnsupportedVariants_();
+          let selectedMedia;
+          if (this.enableLowInitialPlaylist) {
+            selectedMedia = this.selectInitialPlaylist();
+          }
+          if (!selectedMedia) {
+            selectedMedia = this.selectPlaylist();
+          }
+          if (!selectedMedia || !this.shouldSwitchToMedia_(selectedMedia)) {
+            return;
+          }
+          this.initialMedia_ = selectedMedia;
+          this.switchMedia_(this.initialMedia_, "initial");
+          const haveJsonSource = this.sourceType_ === "vhs-json" && this.initialMedia_.segments;
+          if (!haveJsonSource) {
+            return;
+          }
+          updatedPlaylist = this.initialMedia_;
+        }
+        this.handleUpdatedMediaPlaylist(updatedPlaylist);
+      });
+      this.mainPlaylistLoader_.on("error", () => {
+        const error = this.mainPlaylistLoader_.error;
+        this.excludePlaylist({
+          playlistToExclude: error.playlist,
+          error
+        });
+      });
+      this.mainPlaylistLoader_.on("mediachanging", () => {
+        this.mainSegmentLoader_.abort();
+        this.mainSegmentLoader_.pause();
+      });
+      this.mainPlaylistLoader_.on("mediachange", () => {
+        const media = this.mainPlaylistLoader_.media();
+        const requestTimeout = media.targetDuration * 1.5 * 1e3;
+        if (isLowestEnabledRendition2(this.mainPlaylistLoader_.main, this.mainPlaylistLoader_.media())) {
+          this.requestOptions_.timeout = 0;
+        } else {
+          this.requestOptions_.timeout = requestTimeout;
+        }
+        if (this.sourceType_ === "dash") {
+          this.mainPlaylistLoader_.load();
+        }
+        this.mainSegmentLoader_.pause();
+        this.mainSegmentLoader_.playlist(media, this.requestOptions_);
+        if (this.waitingForFastQualityPlaylistReceived_) {
+          this.runFastQualitySwitch_();
+        } else {
+          this.mainSegmentLoader_.load();
+        }
+        this.tech_.trigger({
+          type: "mediachange",
+          bubbles: true
+        });
+      });
+      this.mainPlaylistLoader_.on("playlistunchanged", () => {
+        const updatedPlaylist = this.mainPlaylistLoader_.media();
+        if (updatedPlaylist.lastExcludeReason_ === "playlist-unchanged") {
+          return;
+        }
+        const playlistOutdated = this.stuckAtPlaylistEnd_(updatedPlaylist);
+        if (playlistOutdated) {
+          this.excludePlaylist({
+            error: {
+              message: "Playlist no longer updating.",
+              reason: "playlist-unchanged"
+            }
+          });
+          this.tech_.trigger("playliststuck");
+        }
+      });
+      this.mainPlaylistLoader_.on("renditiondisabled", () => {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-rendition-disabled"
+        });
+      });
+      this.mainPlaylistLoader_.on("renditionenabled", () => {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-rendition-enabled"
+        });
+      });
+    }
+    /**
+     * Given an updated media playlist (whether it was loaded for the first time, or
+     * refreshed for live playlists), update any relevant properties and state to reflect
+     * changes in the media that should be accounted for (e.g., cues and duration).
+     *
+     * @param {Object} updatedPlaylist the updated media playlist object
+     *
+     * @private
+     */
+    handleUpdatedMediaPlaylist(updatedPlaylist) {
+      if (this.useCueTags_) {
+        this.updateAdCues_(updatedPlaylist);
+      }
+      this.mainSegmentLoader_.pause();
+      this.mainSegmentLoader_.playlist(updatedPlaylist, this.requestOptions_);
+      if (this.waitingForFastQualityPlaylistReceived_) {
+        this.runFastQualitySwitch_();
+      }
+      this.updateDuration(!updatedPlaylist.endList);
+      if (!this.tech_.paused()) {
+        this.mainSegmentLoader_.load();
+        if (this.audioSegmentLoader_) {
+          this.audioSegmentLoader_.load();
+        }
+      }
+    }
+    /**
+     * A helper function for triggerring presence usage events once per source
+     *
+     * @private
+     */
+    triggerPresenceUsage_(main, media) {
+      const mediaGroups = main.mediaGroups || {};
+      let defaultDemuxed = true;
+      const audioGroupKeys = Object.keys(mediaGroups.AUDIO);
+      for (const mediaGroup in mediaGroups.AUDIO) {
+        for (const label in mediaGroups.AUDIO[mediaGroup]) {
+          const properties = mediaGroups.AUDIO[mediaGroup][label];
+          if (!properties.uri) {
+            defaultDemuxed = false;
+          }
+        }
+      }
+      if (defaultDemuxed) {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-demuxed"
+        });
+      }
+      if (Object.keys(mediaGroups.SUBTITLES).length) {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-webvtt"
+        });
+      }
+      if (Vhs$12.Playlist.isAes(media)) {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-aes"
+        });
+      }
+      if (audioGroupKeys.length && Object.keys(mediaGroups.AUDIO[audioGroupKeys[0]]).length > 1) {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-alternate-audio"
+        });
+      }
+      if (this.useCueTags_) {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-playlist-cue-tags"
+        });
+      }
+    }
+    shouldSwitchToMedia_(nextPlaylist) {
+      const currentPlaylist = this.mainPlaylistLoader_.media() || this.mainPlaylistLoader_.pendingMedia_;
+      const currentTime = this.tech_.currentTime();
+      const bufferLowWaterLine = this.bufferLowWaterLine();
+      const bufferHighWaterLine = this.bufferHighWaterLine();
+      const buffered = this.tech_.buffered();
+      return shouldSwitchToMedia2({
+        buffered,
+        currentTime,
+        currentPlaylist,
+        nextPlaylist,
+        bufferLowWaterLine,
+        bufferHighWaterLine,
+        duration: this.duration(),
+        bufferBasedABR: this.bufferBasedABR,
+        log: this.logger_
+      });
+    }
+    /**
+     * Register event handlers on the segment loaders. A helper function
+     * for construction time.
+     *
+     * @private
+     */
+    setupSegmentLoaderListeners_() {
+      this.mainSegmentLoader_.on("bandwidthupdate", () => {
+        this.checkABR_("bandwidthupdate");
+        this.tech_.trigger("bandwidthupdate");
+      });
+      this.mainSegmentLoader_.on("timeout", () => {
+        if (this.bufferBasedABR) {
+          this.mainSegmentLoader_.load();
+        }
+      });
+      if (!this.bufferBasedABR) {
+        this.mainSegmentLoader_.on("progress", () => {
+          this.trigger("progress");
+        });
+      }
+      this.mainSegmentLoader_.on("error", () => {
+        const error = this.mainSegmentLoader_.error();
+        this.excludePlaylist({
+          playlistToExclude: error.playlist,
+          error
+        });
+      });
+      this.mainSegmentLoader_.on("appenderror", () => {
+        this.error = this.mainSegmentLoader_.error_;
+        this.trigger("error");
+      });
+      this.mainSegmentLoader_.on("syncinfoupdate", () => {
+        this.onSyncInfoUpdate_();
+      });
+      this.mainSegmentLoader_.on("timestampoffset", () => {
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-timestamp-offset"
+        });
+      });
+      this.audioSegmentLoader_.on("syncinfoupdate", () => {
+        this.onSyncInfoUpdate_();
+      });
+      this.audioSegmentLoader_.on("appenderror", () => {
+        this.error = this.audioSegmentLoader_.error_;
+        this.trigger("error");
+      });
+      this.mainSegmentLoader_.on("ended", () => {
+        this.logger_("main segment loader ended");
+        this.onEndOfStream();
+      });
+      this.mainSegmentLoader_.on("earlyabort", (event) => {
+        if (this.bufferBasedABR) {
+          return;
+        }
+        this.delegateLoaders_("all", ["abort"]);
+        this.excludePlaylist({
+          error: {
+            message: "Aborted early because there isn't enough bandwidth to complete the request without rebuffering."
+          },
+          playlistExclusionDuration: ABORT_EARLY_EXCLUSION_SECONDS2
+        });
+      });
+      const updateCodecs = () => {
+        if (!this.sourceUpdater_.hasCreatedSourceBuffers()) {
+          return this.tryToCreateSourceBuffers_();
+        }
+        const codecs = this.getCodecsOrExclude_();
+        if (!codecs) {
+          return;
+        }
+        this.sourceUpdater_.addOrChangeSourceBuffers(codecs);
+      };
+      this.mainSegmentLoader_.on("trackinfo", updateCodecs);
+      this.audioSegmentLoader_.on("trackinfo", updateCodecs);
+      this.mainSegmentLoader_.on("fmp4", () => {
+        if (!this.triggeredFmp4Usage) {
+          this.tech_.trigger({
+            type: "usage",
+            name: "vhs-fmp4"
+          });
+          this.triggeredFmp4Usage = true;
+        }
+      });
+      this.audioSegmentLoader_.on("fmp4", () => {
+        if (!this.triggeredFmp4Usage) {
+          this.tech_.trigger({
+            type: "usage",
+            name: "vhs-fmp4"
+          });
+          this.triggeredFmp4Usage = true;
+        }
+      });
+      this.audioSegmentLoader_.on("ended", () => {
+        this.logger_("audioSegmentLoader ended");
+        this.onEndOfStream();
+      });
+    }
+    mediaSecondsLoaded_() {
+      return Math.max(this.audioSegmentLoader_.mediaSecondsLoaded + this.mainSegmentLoader_.mediaSecondsLoaded);
+    }
+    /**
+     * Call load on our SegmentLoaders
+     */
+    load() {
+      this.mainSegmentLoader_.load();
+      if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
+        this.audioSegmentLoader_.load();
+      }
+      if (this.mediaTypes_.SUBTITLES.activePlaylistLoader) {
+        this.subtitleSegmentLoader_.load();
+      }
+    }
+    /**
+     * Re-tune playback quality level for the current player
+     * conditions. This method will perform destructive actions like removing
+     * already buffered content in order to readjust the currently active
+     * playlist quickly. This is good for manual quality changes
+     *
+     * @private
+     */
+    fastQualityChange_(media = this.selectPlaylist()) {
+      if (media && media === this.mainPlaylistLoader_.media()) {
+        this.logger_("skipping fastQualityChange because new media is same as old");
+        return;
+      }
+      this.switchMedia_(media, "fast-quality");
+      this.waitingForFastQualityPlaylistReceived_ = true;
+    }
+    runFastQualitySwitch_() {
+      this.waitingForFastQualityPlaylistReceived_ = false;
+      this.mainSegmentLoader_.pause();
+      this.mainSegmentLoader_.resetEverything(() => {
+        this.tech_.setCurrentTime(this.tech_.currentTime());
+      });
+    }
+    /**
+     * Begin playback.
+     */
+    play() {
+      if (this.setupFirstPlay()) {
+        return;
+      }
+      if (this.tech_.ended()) {
+        this.tech_.setCurrentTime(0);
+      }
+      if (this.hasPlayed_) {
+        this.load();
+      }
+      const seekable3 = this.tech_.seekable();
+      if (this.tech_.duration() === Infinity) {
+        if (this.tech_.currentTime() < seekable3.start(0)) {
+          return this.tech_.setCurrentTime(seekable3.end(seekable3.length - 1));
+        }
+      }
+    }
+    /**
+     * Seek to the latest media position if this is a live video and the
+     * player and video are loaded and initialized.
+     */
+    setupFirstPlay() {
+      const media = this.mainPlaylistLoader_.media();
+      if (!media || this.tech_.paused() || this.hasPlayed_) {
+        return false;
+      }
+      if (!media.endList || media.start) {
+        const seekable3 = this.seekable();
+        if (!seekable3.length) {
+          return false;
+        }
+        const seekableEnd = seekable3.end(0);
+        let startPoint = seekableEnd;
+        if (media.start) {
+          const offset = media.start.timeOffset;
+          if (offset < 0) {
+            startPoint = Math.max(seekableEnd + offset, seekable3.start(0));
+          } else {
+            startPoint = Math.min(seekableEnd, offset);
+          }
+        }
+        this.trigger("firstplay");
+        this.tech_.setCurrentTime(startPoint);
+      }
+      this.hasPlayed_ = true;
+      this.load();
+      return true;
+    }
+    /**
+     * handle the sourceopen event on the MediaSource
+     *
+     * @private
+     */
+    handleSourceOpen_() {
+      this.tryToCreateSourceBuffers_();
+      if (this.tech_.autoplay()) {
+        const playPromise = this.tech_.play();
+        if (typeof playPromise !== "undefined" && typeof playPromise.then === "function") {
+          playPromise.then(null, (e2) => {
+          });
+        }
+      }
+      this.trigger("sourceopen");
+    }
+    /**
+     * handle the sourceended event on the MediaSource
+     *
+     * @private
+     */
+    handleSourceEnded_() {
+      if (!this.inbandTextTracks_.metadataTrack_) {
+        return;
+      }
+      const cues = this.inbandTextTracks_.metadataTrack_.cues;
+      if (!cues || !cues.length) {
+        return;
+      }
+      const duration3 = this.duration();
+      cues[cues.length - 1].endTime = isNaN(duration3) || Math.abs(duration3) === Infinity ? Number.MAX_VALUE : duration3;
+    }
+    /**
+     * handle the durationchange event on the MediaSource
+     *
+     * @private
+     */
+    handleDurationChange_() {
+      this.tech_.trigger("durationchange");
+    }
+    /**
+     * Calls endOfStream on the media source when all active stream types have called
+     * endOfStream
+     *
+     * @param {string} streamType
+     *        Stream type of the segment loader that called endOfStream
+     * @private
+     */
+    onEndOfStream() {
+      let isEndOfStream = this.mainSegmentLoader_.ended_;
+      if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
+        const mainMediaInfo = this.mainSegmentLoader_.getCurrentMediaInfo_();
+        if (!mainMediaInfo || mainMediaInfo.hasVideo) {
+          isEndOfStream = isEndOfStream && this.audioSegmentLoader_.ended_;
+        } else {
+          isEndOfStream = this.audioSegmentLoader_.ended_;
+        }
+      }
+      if (!isEndOfStream) {
+        return;
+      }
+      this.stopABRTimer_();
+      this.sourceUpdater_.endOfStream();
+    }
+    /**
+     * Check if a playlist has stopped being updated
+     *
+     * @param {Object} playlist the media playlist object
+     * @return {boolean} whether the playlist has stopped being updated or not
+     */
+    stuckAtPlaylistEnd_(playlist) {
+      const seekable3 = this.seekable();
+      if (!seekable3.length) {
+        return false;
+      }
+      const expired = this.syncController_.getExpiredTime(playlist, this.duration());
+      if (expired === null) {
+        return false;
+      }
+      const absolutePlaylistEnd = Vhs$12.Playlist.playlistEnd(playlist, expired);
+      const currentTime = this.tech_.currentTime();
+      const buffered = this.tech_.buffered();
+      if (!buffered.length) {
+        return absolutePlaylistEnd - currentTime <= SAFE_TIME_DELTA2;
+      }
+      const bufferedEnd = buffered.end(buffered.length - 1);
+      return bufferedEnd - currentTime <= SAFE_TIME_DELTA2 && absolutePlaylistEnd - bufferedEnd <= SAFE_TIME_DELTA2;
+    }
+    /**
+     * Exclude a playlist for a set amount of time, making it unavailable for selection by
+     * the rendition selection algorithm, then force a new playlist (rendition) selection.
+     *
+     * @param {Object=} playlistToExclude
+     *                  the playlist to exclude, defaults to the currently selected playlist
+     * @param {Object=} error
+     *                  an optional error
+     * @param {number=} playlistExclusionDuration
+     *                  an optional number of seconds to exclude the playlist
+     */
+    excludePlaylist({
+      playlistToExclude = this.mainPlaylistLoader_.media(),
+      error = {},
+      playlistExclusionDuration
+    }) {
+      playlistToExclude = playlistToExclude || this.mainPlaylistLoader_.media();
+      playlistExclusionDuration = playlistExclusionDuration || error.playlistExclusionDuration || this.playlistExclusionDuration;
+      if (!playlistToExclude) {
+        this.error = error;
+        if (this.mediaSource.readyState !== "open") {
+          this.trigger("error");
+        } else {
+          this.sourceUpdater_.endOfStream("network");
+        }
+        return;
+      }
+      playlistToExclude.playlistErrors_++;
+      const playlists = this.mainPlaylistLoader_.main.playlists;
+      const enabledPlaylists = playlists.filter(isEnabled2);
+      const isFinalRendition = enabledPlaylists.length === 1 && enabledPlaylists[0] === playlistToExclude;
+      if (playlists.length === 1 && playlistExclusionDuration !== Infinity) {
+        videojs.log.warn(`Problem encountered with playlist ${playlistToExclude.id}. Trying again since it is the only playlist.`);
+        this.tech_.trigger("retryplaylist");
+        return this.mainPlaylistLoader_.load(isFinalRendition);
+      }
+      if (isFinalRendition) {
+        if (this.main().contentSteering) {
+          const pathway = this.pathwayAttribute_(playlistToExclude);
+          const reIncludeDelay = this.contentSteeringController_.steeringManifest.ttl * 1e3;
+          this.contentSteeringController_.excludePathway(pathway);
+          this.excludeThenChangePathway_();
+          setTimeout(() => {
+            this.contentSteeringController_.addAvailablePathway(pathway);
+          }, reIncludeDelay);
+          return;
+        }
+        let reincluded = false;
+        playlists.forEach((playlist) => {
+          if (playlist === playlistToExclude) {
+            return;
+          }
+          const excludeUntil2 = playlist.excludeUntil;
+          if (typeof excludeUntil2 !== "undefined" && excludeUntil2 !== Infinity) {
+            reincluded = true;
+            delete playlist.excludeUntil;
+          }
+        });
+        if (reincluded) {
+          videojs.log.warn("Removing other playlists from the exclusion list because the last rendition is about to be excluded.");
+          this.tech_.trigger("retryplaylist");
+        }
+      }
+      let excludeUntil;
+      if (playlistToExclude.playlistErrors_ > this.maxPlaylistRetries) {
+        excludeUntil = Infinity;
+      } else {
+        excludeUntil = Date.now() + playlistExclusionDuration * 1e3;
+      }
+      playlistToExclude.excludeUntil = excludeUntil;
+      if (error.reason) {
+        playlistToExclude.lastExcludeReason_ = error.reason;
+      }
+      this.tech_.trigger("excludeplaylist");
+      this.tech_.trigger({
+        type: "usage",
+        name: "vhs-rendition-excluded"
+      });
+      const nextPlaylist = this.selectPlaylist();
+      if (!nextPlaylist) {
+        this.error = "Playback cannot continue. No available working or supported playlists.";
+        this.trigger("error");
+        return;
+      }
+      const logFn3 = error.internal ? this.logger_ : videojs.log.warn;
+      const errorMessage = error.message ? " " + error.message : "";
+      logFn3(`${error.internal ? "Internal problem" : "Problem"} encountered with playlist ${playlistToExclude.id}.${errorMessage} Switching to playlist ${nextPlaylist.id}.`);
+      if (nextPlaylist.attributes.AUDIO !== playlistToExclude.attributes.AUDIO) {
+        this.delegateLoaders_("audio", ["abort", "pause"]);
+      }
+      if (nextPlaylist.attributes.SUBTITLES !== playlistToExclude.attributes.SUBTITLES) {
+        this.delegateLoaders_("subtitle", ["abort", "pause"]);
+      }
+      this.delegateLoaders_("main", ["abort", "pause"]);
+      const delayDuration = nextPlaylist.targetDuration / 2 * 1e3 || 5 * 1e3;
+      const shouldDelay = typeof nextPlaylist.lastRequest === "number" && Date.now() - nextPlaylist.lastRequest <= delayDuration;
+      return this.switchMedia_(nextPlaylist, "exclude", isFinalRendition || shouldDelay);
+    }
+    /**
+     * Pause all segment/playlist loaders
+     */
+    pauseLoading() {
+      this.delegateLoaders_("all", ["abort", "pause"]);
+      this.stopABRTimer_();
+    }
+    /**
+     * Call a set of functions in order on playlist loaders, segment loaders,
+     * or both types of loaders.
+     *
+     * @param {string} filter
+     *        Filter loaders that should call fnNames using a string. Can be:
+     *        * all - run on all loaders
+     *        * audio - run on all audio loaders
+     *        * subtitle - run on all subtitle loaders
+     *        * main - run on the main loaders
+     *
+     * @param {Array|string} fnNames
+     *        A string or array of function names to call.
+     */
+    delegateLoaders_(filter, fnNames) {
+      const loaders = [];
+      const dontFilterPlaylist = filter === "all";
+      if (dontFilterPlaylist || filter === "main") {
+        loaders.push(this.mainPlaylistLoader_);
+      }
+      const mediaTypes2 = [];
+      if (dontFilterPlaylist || filter === "audio") {
+        mediaTypes2.push("AUDIO");
+      }
+      if (dontFilterPlaylist || filter === "subtitle") {
+        mediaTypes2.push("CLOSED-CAPTIONS");
+        mediaTypes2.push("SUBTITLES");
+      }
+      mediaTypes2.forEach((mediaType) => {
+        const loader = this.mediaTypes_[mediaType] && this.mediaTypes_[mediaType].activePlaylistLoader;
+        if (loader) {
+          loaders.push(loader);
+        }
+      });
+      ["main", "audio", "subtitle"].forEach((name) => {
+        const loader = this[`${name}SegmentLoader_`];
+        if (loader && (filter === name || filter === "all")) {
+          loaders.push(loader);
+        }
+      });
+      loaders.forEach((loader) => fnNames.forEach((fnName) => {
+        if (typeof loader[fnName] === "function") {
+          loader[fnName]();
+        }
+      }));
+    }
+    /**
+     * set the current time on all segment loaders
+     *
+     * @param {TimeRange} currentTime the current time to set
+     * @return {TimeRange} the current time
+     */
+    setCurrentTime(currentTime) {
+      const buffered = findRange2(this.tech_.buffered(), currentTime);
+      if (!(this.mainPlaylistLoader_ && this.mainPlaylistLoader_.media())) {
+        return 0;
+      }
+      if (!this.mainPlaylistLoader_.media().segments) {
+        return 0;
+      }
+      if (buffered && buffered.length) {
+        return currentTime;
+      }
+      this.mainSegmentLoader_.pause();
+      this.mainSegmentLoader_.resetEverything();
+      if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
+        this.audioSegmentLoader_.pause();
+        this.audioSegmentLoader_.resetEverything();
+      }
+      if (this.mediaTypes_.SUBTITLES.activePlaylistLoader) {
+        this.subtitleSegmentLoader_.pause();
+        this.subtitleSegmentLoader_.resetEverything();
+      }
+      this.load();
+    }
+    /**
+     * get the current duration
+     *
+     * @return {TimeRange} the duration
+     */
+    duration() {
+      if (!this.mainPlaylistLoader_) {
+        return 0;
+      }
+      const media = this.mainPlaylistLoader_.media();
+      if (!media) {
+        return 0;
+      }
+      if (!media.endList) {
+        return Infinity;
+      }
+      if (this.mediaSource) {
+        return this.mediaSource.duration;
+      }
+      return Vhs$12.Playlist.duration(media);
+    }
+    /**
+     * check the seekable range
+     *
+     * @return {TimeRange} the seekable range
+     */
+    seekable() {
+      return this.seekable_;
+    }
+    onSyncInfoUpdate_() {
+      let audioSeekable;
+      if (!this.mainPlaylistLoader_) {
+        return;
+      }
+      let media = this.mainPlaylistLoader_.media();
+      if (!media) {
+        return;
+      }
+      let expired = this.syncController_.getExpiredTime(media, this.duration());
+      if (expired === null) {
+        return;
+      }
+      const main = this.mainPlaylistLoader_.main;
+      const mainSeekable = Vhs$12.Playlist.seekable(media, expired, Vhs$12.Playlist.liveEdgeDelay(main, media));
+      if (mainSeekable.length === 0) {
+        return;
+      }
+      if (this.mediaTypes_.AUDIO.activePlaylistLoader) {
+        media = this.mediaTypes_.AUDIO.activePlaylistLoader.media();
+        expired = this.syncController_.getExpiredTime(media, this.duration());
+        if (expired === null) {
+          return;
+        }
+        audioSeekable = Vhs$12.Playlist.seekable(media, expired, Vhs$12.Playlist.liveEdgeDelay(main, media));
+        if (audioSeekable.length === 0) {
+          return;
+        }
+      }
+      let oldEnd;
+      let oldStart;
+      if (this.seekable_ && this.seekable_.length) {
+        oldEnd = this.seekable_.end(0);
+        oldStart = this.seekable_.start(0);
+      }
+      if (!audioSeekable) {
+        this.seekable_ = mainSeekable;
+      } else if (audioSeekable.start(0) > mainSeekable.end(0) || mainSeekable.start(0) > audioSeekable.end(0)) {
+        this.seekable_ = mainSeekable;
+      } else {
+        this.seekable_ = createTimeRanges2([[audioSeekable.start(0) > mainSeekable.start(0) ? audioSeekable.start(0) : mainSeekable.start(0), audioSeekable.end(0) < mainSeekable.end(0) ? audioSeekable.end(0) : mainSeekable.end(0)]]);
+      }
+      if (this.seekable_ && this.seekable_.length) {
+        if (this.seekable_.end(0) === oldEnd && this.seekable_.start(0) === oldStart) {
+          return;
+        }
+      }
+      this.logger_(`seekable updated [${printableRange2(this.seekable_)}]`);
+      this.tech_.trigger("seekablechanged");
+    }
+    /**
+     * Update the player duration
+     */
+    updateDuration(isLive) {
+      if (this.updateDuration_) {
+        this.mediaSource.removeEventListener("sourceopen", this.updateDuration_);
+        this.updateDuration_ = null;
+      }
+      if (this.mediaSource.readyState !== "open") {
+        this.updateDuration_ = this.updateDuration.bind(this, isLive);
+        this.mediaSource.addEventListener("sourceopen", this.updateDuration_);
+        return;
+      }
+      if (isLive) {
+        const seekable3 = this.seekable();
+        if (!seekable3.length) {
+          return;
+        }
+        if (isNaN(this.mediaSource.duration) || this.mediaSource.duration < seekable3.end(seekable3.length - 1)) {
+          this.sourceUpdater_.setDuration(seekable3.end(seekable3.length - 1));
+        }
+        return;
+      }
+      const buffered = this.tech_.buffered();
+      let duration3 = Vhs$12.Playlist.duration(this.mainPlaylistLoader_.media());
+      if (buffered.length > 0) {
+        duration3 = Math.max(duration3, buffered.end(buffered.length - 1));
+      }
+      if (this.mediaSource.duration !== duration3) {
+        this.sourceUpdater_.setDuration(duration3);
+      }
+    }
+    /**
+     * dispose of the PlaylistController and everything
+     * that it controls
+     */
+    dispose() {
+      this.trigger("dispose");
+      this.decrypter_.terminate();
+      this.mainPlaylistLoader_.dispose();
+      this.mainSegmentLoader_.dispose();
+      this.contentSteeringController_.dispose();
+      this.keyStatusMap_.clear();
+      if (this.loadOnPlay_) {
+        this.tech_.off("play", this.loadOnPlay_);
+      }
+      ["AUDIO", "SUBTITLES"].forEach((type) => {
+        const groups = this.mediaTypes_[type].groups;
+        for (const id in groups) {
+          groups[id].forEach((group) => {
+            if (group.playlistLoader) {
+              group.playlistLoader.dispose();
+            }
+          });
+        }
+      });
+      this.audioSegmentLoader_.dispose();
+      this.subtitleSegmentLoader_.dispose();
+      this.sourceUpdater_.dispose();
+      this.timelineChangeController_.dispose();
+      this.stopABRTimer_();
+      if (this.updateDuration_) {
+        this.mediaSource.removeEventListener("sourceopen", this.updateDuration_);
+      }
+      this.mediaSource.removeEventListener("durationchange", this.handleDurationChange_);
+      this.mediaSource.removeEventListener("sourceopen", this.handleSourceOpen_);
+      this.mediaSource.removeEventListener("sourceended", this.handleSourceEnded_);
+      this.off();
+    }
+    /**
+     * return the main playlist object if we have one
+     *
+     * @return {Object} the main playlist object that we parsed
+     */
+    main() {
+      return this.mainPlaylistLoader_.main;
+    }
+    /**
+     * return the currently selected playlist
+     *
+     * @return {Object} the currently selected playlist object that we parsed
+     */
+    media() {
+      return this.mainPlaylistLoader_.media() || this.initialMedia_;
+    }
+    areMediaTypesKnown_() {
+      const usingAudioLoader = !!this.mediaTypes_.AUDIO.activePlaylistLoader;
+      const hasMainMediaInfo = !!this.mainSegmentLoader_.getCurrentMediaInfo_();
+      const hasAudioMediaInfo = !usingAudioLoader ? true : !!this.audioSegmentLoader_.getCurrentMediaInfo_();
+      if (!hasMainMediaInfo || !hasAudioMediaInfo) {
+        return false;
+      }
+      return true;
+    }
+    getCodecsOrExclude_() {
+      const media = {
+        main: this.mainSegmentLoader_.getCurrentMediaInfo_() || {},
+        audio: this.audioSegmentLoader_.getCurrentMediaInfo_() || {}
+      };
+      const playlist = this.mainSegmentLoader_.getPendingSegmentPlaylist() || this.media();
+      media.video = media.main;
+      const playlistCodecs = codecsForPlaylist2(this.main(), playlist);
+      const codecs = {};
+      const usingAudioLoader = !!this.mediaTypes_.AUDIO.activePlaylistLoader;
+      if (media.main.hasVideo) {
+        codecs.video = playlistCodecs.video || media.main.videoCodec || DEFAULT_VIDEO_CODEC;
+      }
+      if (media.main.isMuxed) {
+        codecs.video += `,${playlistCodecs.audio || media.main.audioCodec || DEFAULT_AUDIO_CODEC}`;
+      }
+      if (media.main.hasAudio && !media.main.isMuxed || media.audio.hasAudio || usingAudioLoader) {
+        codecs.audio = playlistCodecs.audio || media.main.audioCodec || media.audio.audioCodec || DEFAULT_AUDIO_CODEC;
+        media.audio.isFmp4 = media.main.hasAudio && !media.main.isMuxed ? media.main.isFmp4 : media.audio.isFmp4;
+      }
+      if (!codecs.audio && !codecs.video) {
+        this.excludePlaylist({
+          playlistToExclude: playlist,
+          error: {
+            message: "Could not determine codecs for playlist."
+          },
+          playlistExclusionDuration: Infinity
+        });
+        return;
+      }
+      const supportFunction = (isFmp4, codec) => isFmp4 ? browserSupportsCodec(codec) : muxerSupportsCodec(codec);
+      const unsupportedCodecs = {};
+      let unsupportedAudio;
+      ["video", "audio"].forEach(function(type) {
+        if (codecs.hasOwnProperty(type) && !supportFunction(media[type].isFmp4, codecs[type])) {
+          const supporter = media[type].isFmp4 ? "browser" : "muxer";
+          unsupportedCodecs[supporter] = unsupportedCodecs[supporter] || [];
+          unsupportedCodecs[supporter].push(codecs[type]);
+          if (type === "audio") {
+            unsupportedAudio = supporter;
+          }
+        }
+      });
+      if (usingAudioLoader && unsupportedAudio && playlist.attributes.AUDIO) {
+        const audioGroup = playlist.attributes.AUDIO;
+        this.main().playlists.forEach((variant) => {
+          const variantAudioGroup = variant.attributes && variant.attributes.AUDIO;
+          if (variantAudioGroup === audioGroup && variant !== playlist) {
+            variant.excludeUntil = Infinity;
+          }
+        });
+        this.logger_(`excluding audio group ${audioGroup} as ${unsupportedAudio} does not support codec(s): "${codecs.audio}"`);
+      }
+      if (Object.keys(unsupportedCodecs).length) {
+        const message = Object.keys(unsupportedCodecs).reduce((acc, supporter) => {
+          if (acc) {
+            acc += ", ";
+          }
+          acc += `${supporter} does not support codec(s): "${unsupportedCodecs[supporter].join(",")}"`;
+          return acc;
+        }, "") + ".";
+        this.excludePlaylist({
+          playlistToExclude: playlist,
+          error: {
+            internal: true,
+            message
+          },
+          playlistExclusionDuration: Infinity
+        });
+        return;
+      }
+      if (this.sourceUpdater_.hasCreatedSourceBuffers() && !this.sourceUpdater_.canChangeType()) {
+        const switchMessages = [];
+        ["video", "audio"].forEach((type) => {
+          const newCodec = (parseCodecs(this.sourceUpdater_.codecs[type] || "")[0] || {}).type;
+          const oldCodec = (parseCodecs(codecs[type] || "")[0] || {}).type;
+          if (newCodec && oldCodec && newCodec.toLowerCase() !== oldCodec.toLowerCase()) {
+            switchMessages.push(`"${this.sourceUpdater_.codecs[type]}" -> "${codecs[type]}"`);
+          }
+        });
+        if (switchMessages.length) {
+          this.excludePlaylist({
+            playlistToExclude: playlist,
+            error: {
+              message: `Codec switching not supported: ${switchMessages.join(", ")}.`,
+              internal: true
+            },
+            playlistExclusionDuration: Infinity
+          });
+          return;
+        }
+      }
+      return codecs;
+    }
+    /**
+     * Create source buffers and exlude any incompatible renditions.
+     *
+     * @private
+     */
+    tryToCreateSourceBuffers_() {
+      if (this.mediaSource.readyState !== "open" || this.sourceUpdater_.hasCreatedSourceBuffers()) {
+        return;
+      }
+      if (!this.areMediaTypesKnown_()) {
+        return;
+      }
+      const codecs = this.getCodecsOrExclude_();
+      if (!codecs) {
+        return;
+      }
+      this.sourceUpdater_.createSourceBuffers(codecs);
+      const codecString = [codecs.video, codecs.audio].filter(Boolean).join(",");
+      this.excludeIncompatibleVariants_(codecString);
+    }
+    /**
+     * Excludes playlists with codecs that are unsupported by the muxer and browser.
+     */
+    excludeUnsupportedVariants_() {
+      const playlists = this.main().playlists;
+      const ids = [];
+      Object.keys(playlists).forEach((key) => {
+        const variant = playlists[key];
+        if (ids.indexOf(variant.id) !== -1) {
+          return;
+        }
+        ids.push(variant.id);
+        const codecs = codecsForPlaylist2(this.main, variant);
+        const unsupported = [];
+        if (codecs.audio && !muxerSupportsCodec(codecs.audio) && !browserSupportsCodec(codecs.audio)) {
+          unsupported.push(`audio codec ${codecs.audio}`);
+        }
+        if (codecs.video && !muxerSupportsCodec(codecs.video) && !browserSupportsCodec(codecs.video)) {
+          unsupported.push(`video codec ${codecs.video}`);
+        }
+        if (codecs.text && codecs.text === "stpp.ttml.im1t") {
+          unsupported.push(`text codec ${codecs.text}`);
+        }
+        if (unsupported.length) {
+          variant.excludeUntil = Infinity;
+          this.logger_(`excluding ${variant.id} for unsupported: ${unsupported.join(", ")}`);
+        }
+      });
+    }
+    /**
+     * Exclude playlists that are known to be codec or
+     * stream-incompatible with the SourceBuffer configuration. For
+     * instance, Media Source Extensions would cause the video element to
+     * stall waiting for video data if you switched from a variant with
+     * video and audio to an audio-only one.
+     *
+     * @param {Object} media a media playlist compatible with the current
+     * set of SourceBuffers. Variants in the current main playlist that
+     * do not appear to have compatible codec or stream configurations
+     * will be excluded from the default playlist selection algorithm
+     * indefinitely.
+     * @private
+     */
+    excludeIncompatibleVariants_(codecString) {
+      const ids = [];
+      const playlists = this.main().playlists;
+      const codecs = unwrapCodecList2(parseCodecs(codecString));
+      const codecCount_ = codecCount2(codecs);
+      const videoDetails = codecs.video && parseCodecs(codecs.video)[0] || null;
+      const audioDetails = codecs.audio && parseCodecs(codecs.audio)[0] || null;
+      Object.keys(playlists).forEach((key) => {
+        const variant = playlists[key];
+        if (ids.indexOf(variant.id) !== -1 || variant.excludeUntil === Infinity) {
+          return;
+        }
+        ids.push(variant.id);
+        const exclusionReasons = [];
+        const variantCodecs = codecsForPlaylist2(this.mainPlaylistLoader_.main, variant);
+        const variantCodecCount = codecCount2(variantCodecs);
+        if (!variantCodecs.audio && !variantCodecs.video) {
+          return;
+        }
+        if (variantCodecCount !== codecCount_) {
+          exclusionReasons.push(`codec count "${variantCodecCount}" !== "${codecCount_}"`);
+        }
+        if (!this.sourceUpdater_.canChangeType()) {
+          const variantVideoDetails = variantCodecs.video && parseCodecs(variantCodecs.video)[0] || null;
+          const variantAudioDetails = variantCodecs.audio && parseCodecs(variantCodecs.audio)[0] || null;
+          if (variantVideoDetails && videoDetails && variantVideoDetails.type.toLowerCase() !== videoDetails.type.toLowerCase()) {
+            exclusionReasons.push(`video codec "${variantVideoDetails.type}" !== "${videoDetails.type}"`);
+          }
+          if (variantAudioDetails && audioDetails && variantAudioDetails.type.toLowerCase() !== audioDetails.type.toLowerCase()) {
+            exclusionReasons.push(`audio codec "${variantAudioDetails.type}" !== "${audioDetails.type}"`);
+          }
+        }
+        if (exclusionReasons.length) {
+          variant.excludeUntil = Infinity;
+          this.logger_(`excluding ${variant.id}: ${exclusionReasons.join(" && ")}`);
+        }
+      });
+    }
+    updateAdCues_(media) {
+      let offset = 0;
+      const seekable3 = this.seekable();
+      if (seekable3.length) {
+        offset = seekable3.start(0);
+      }
+      updateAdCues2(media, this.cueTagsTrack_, offset);
+    }
+    /**
+     * Calculates the desired forward buffer length based on current time
+     *
+     * @return {number} Desired forward buffer length in seconds
+     */
+    goalBufferLength() {
+      const currentTime = this.tech_.currentTime();
+      const initial = Config2.GOAL_BUFFER_LENGTH;
+      const rate = Config2.GOAL_BUFFER_LENGTH_RATE;
+      const max = Math.max(initial, Config2.MAX_GOAL_BUFFER_LENGTH);
+      return Math.min(initial + currentTime * rate, max);
+    }
+    /**
+     * Calculates the desired buffer low water line based on current time
+     *
+     * @return {number} Desired buffer low water line in seconds
+     */
+    bufferLowWaterLine() {
+      const currentTime = this.tech_.currentTime();
+      const initial = Config2.BUFFER_LOW_WATER_LINE;
+      const rate = Config2.BUFFER_LOW_WATER_LINE_RATE;
+      const max = Math.max(initial, Config2.MAX_BUFFER_LOW_WATER_LINE);
+      const newMax = Math.max(initial, Config2.EXPERIMENTAL_MAX_BUFFER_LOW_WATER_LINE);
+      return Math.min(initial + currentTime * rate, this.bufferBasedABR ? newMax : max);
+    }
+    bufferHighWaterLine() {
+      return Config2.BUFFER_HIGH_WATER_LINE;
+    }
+    addDateRangesToTextTrack_(dateRanges) {
+      createMetadataTrackIfNotExists2(this.inbandTextTracks_, "com.apple.streaming", this.tech_);
+      addDateRangeMetadata2({
+        inbandTextTracks: this.inbandTextTracks_,
+        dateRanges
+      });
+    }
+    addMetadataToTextTrack(dispatchType, metadataArray, videoDuration) {
+      const timestampOffset = this.sourceUpdater_.videoBuffer ? this.sourceUpdater_.videoTimestampOffset() : this.sourceUpdater_.audioTimestampOffset();
+      createMetadataTrackIfNotExists2(this.inbandTextTracks_, dispatchType, this.tech_);
+      addMetadata2({
+        inbandTextTracks: this.inbandTextTracks_,
+        metadataArray,
+        timestampOffset,
+        videoDuration
+      });
+    }
+    /**
+     * Utility for getting the pathway or service location from an HLS or DASH playlist.
+     *
+     * @param {Object} playlist for getting pathway from.
+     * @return the pathway attribute of a playlist
+     */
+    pathwayAttribute_(playlist) {
+      return playlist.attributes["PATHWAY-ID"] || playlist.attributes.serviceLocation;
+    }
+    /**
+     * Initialize available pathways and apply the tag properties.
+     */
+    initContentSteeringController_() {
+      const main = this.main();
+      if (!main.contentSteering) {
+        return;
+      }
+      for (const playlist of main.playlists) {
+        this.contentSteeringController_.addAvailablePathway(this.pathwayAttribute_(playlist));
+      }
+      this.contentSteeringController_.assignTagProperties(main.uri, main.contentSteering);
+      if (this.contentSteeringController_.queryBeforeStart) {
+        this.contentSteeringController_.requestSteeringManifest(true);
+        return;
+      }
+      this.tech_.one("canplay", () => {
+        this.contentSteeringController_.requestSteeringManifest();
+      });
+    }
+    /**
+     * Reset the content steering controller and re-init.
+     */
+    resetContentSteeringController_() {
+      this.contentSteeringController_.clearAvailablePathways();
+      this.contentSteeringController_.dispose();
+      this.initContentSteeringController_();
+    }
+    /**
+     * Attaches the listeners for content steering.
+     */
+    attachContentSteeringListeners_() {
+      this.contentSteeringController_.on("content-steering", this.excludeThenChangePathway_.bind(this));
+      if (this.sourceType_ === "dash") {
+        this.mainPlaylistLoader_.on("loadedplaylist", () => {
+          const main = this.main();
+          const didDashTagChange = this.contentSteeringController_.didDASHTagChange(main.uri, main.contentSteering);
+          const didPathwaysChange = () => {
+            const availablePathways = this.contentSteeringController_.getAvailablePathways();
+            const newPathways = [];
+            for (const playlist of main.playlists) {
+              const serviceLocation = playlist.attributes.serviceLocation;
+              if (serviceLocation) {
+                newPathways.push(serviceLocation);
+                if (!availablePathways.has(serviceLocation)) {
+                  return true;
+                }
+              }
+            }
+            if (!newPathways.length && availablePathways.size) {
+              return true;
+            }
+            return false;
+          };
+          if (didDashTagChange || didPathwaysChange()) {
+            this.resetContentSteeringController_();
+          }
+        });
+      }
+    }
+    /**
+     * Simple exclude and change playlist logic for content steering.
+     */
+    excludeThenChangePathway_() {
+      const currentPathway = this.contentSteeringController_.getPathway();
+      if (!currentPathway) {
+        return;
+      }
+      this.handlePathwayClones_();
+      const main = this.main();
+      const playlists = main.playlists;
+      const ids = /* @__PURE__ */ new Set();
+      let didEnablePlaylists = false;
+      Object.keys(playlists).forEach((key) => {
+        const variant = playlists[key];
+        const pathwayId = this.pathwayAttribute_(variant);
+        const differentPathwayId = pathwayId && currentPathway !== pathwayId;
+        const steeringExclusion = variant.excludeUntil === Infinity && variant.lastExcludeReason_ === "content-steering";
+        if (steeringExclusion && !differentPathwayId) {
+          delete variant.excludeUntil;
+          delete variant.lastExcludeReason_;
+          didEnablePlaylists = true;
+        }
+        const noExcludeUntil = !variant.excludeUntil && variant.excludeUntil !== Infinity;
+        const shouldExclude = !ids.has(variant.id) && differentPathwayId && noExcludeUntil;
+        if (!shouldExclude) {
+          return;
+        }
+        ids.add(variant.id);
+        variant.excludeUntil = Infinity;
+        variant.lastExcludeReason_ = "content-steering";
+        this.logger_(`excluding ${variant.id} for ${variant.lastExcludeReason_}`);
+      });
+      if (this.contentSteeringController_.manifestType_ === "DASH") {
+        Object.keys(this.mediaTypes_).forEach((key) => {
+          const type = this.mediaTypes_[key];
+          if (type.activePlaylistLoader) {
+            const currentPlaylist = type.activePlaylistLoader.media_;
+            if (currentPlaylist && currentPlaylist.attributes.serviceLocation !== currentPathway) {
+              didEnablePlaylists = true;
+            }
+          }
+        });
+      }
+      if (didEnablePlaylists) {
+        this.changeSegmentPathway_();
+      }
+    }
+    /**
+     * Add, update, or delete playlists and media groups for
+     * the pathway clones for HLS Content Steering.
+     *
+     * See https://datatracker.ietf.org/doc/draft-pantos-hls-rfc8216bis/
+     *
+     * NOTE: Pathway cloning does not currently support the `PER_VARIANT_URIS` and
+     * `PER_RENDITION_URIS` as we do not handle `STABLE-VARIANT-ID` or
+     * `STABLE-RENDITION-ID` values.
+     */
+    handlePathwayClones_() {
+      const main = this.main();
+      const playlists = main.playlists;
+      const currentPathwayClones = this.contentSteeringController_.currentPathwayClones;
+      const nextPathwayClones = this.contentSteeringController_.nextPathwayClones;
+      const hasClones = currentPathwayClones && currentPathwayClones.size || nextPathwayClones && nextPathwayClones.size;
+      if (!hasClones) {
+        return;
+      }
+      for (const [id, clone] of currentPathwayClones.entries()) {
+        const newClone = nextPathwayClones.get(id);
+        if (!newClone) {
+          this.mainPlaylistLoader_.updateOrDeleteClone(clone);
+          this.contentSteeringController_.excludePathway(id);
+        }
+      }
+      for (const [id, clone] of nextPathwayClones.entries()) {
+        const oldClone = currentPathwayClones.get(id);
+        if (!oldClone) {
+          const playlistsToClone = playlists.filter((p2) => {
+            return p2.attributes["PATHWAY-ID"] === clone["BASE-ID"];
+          });
+          playlistsToClone.forEach((p2) => {
+            this.mainPlaylistLoader_.addClonePathway(clone, p2);
+          });
+          this.contentSteeringController_.addAvailablePathway(id);
+          continue;
+        }
+        if (this.equalPathwayClones_(oldClone, clone)) {
+          continue;
+        }
+        this.mainPlaylistLoader_.updateOrDeleteClone(clone, true);
+        this.contentSteeringController_.addAvailablePathway(id);
+      }
+      this.contentSteeringController_.currentPathwayClones = new Map(JSON.parse(JSON.stringify([...nextPathwayClones])));
+    }
+    /**
+     * Determines whether two pathway clone objects are equivalent.
+     *
+     * @param {Object} a The first pathway clone object.
+     * @param {Object} b The second pathway clone object.
+     * @return {boolean} True if the pathway clone objects are equal, false otherwise.
+     */
+    equalPathwayClones_(a2, b2) {
+      if (a2["BASE-ID"] !== b2["BASE-ID"] || a2.ID !== b2.ID || a2["URI-REPLACEMENT"].HOST !== b2["URI-REPLACEMENT"].HOST) {
+        return false;
+      }
+      const aParams = a2["URI-REPLACEMENT"].PARAMS;
+      const bParams = b2["URI-REPLACEMENT"].PARAMS;
+      for (const p2 in aParams) {
+        if (aParams[p2] !== bParams[p2]) {
+          return false;
+        }
+      }
+      for (const p2 in bParams) {
+        if (aParams[p2] !== bParams[p2]) {
+          return false;
+        }
+      }
+      return true;
+    }
+    /**
+     * Changes the current playlists for audio, video and subtitles after a new pathway
+     * is chosen from content steering.
+     */
+    changeSegmentPathway_() {
+      const nextPlaylist = this.selectPlaylist();
+      this.pauseLoading();
+      if (this.contentSteeringController_.manifestType_ === "DASH") {
+        this.switchMediaForDASHContentSteering_();
+      }
+      this.switchMedia_(nextPlaylist, "content-steering");
+    }
+    /**
+     * Iterates through playlists and check their keyId set and compare with the
+     * keyStatusMap, only enable playlists that have a usable key. If the playlist
+     * has no keyId leave it enabled by default.
+     */
+    excludeNonUsablePlaylistsByKeyId_() {
+      if (!this.mainPlaylistLoader_ || !this.mainPlaylistLoader_.main) {
+        return;
+      }
+      let nonUsableKeyStatusCount = 0;
+      const NON_USABLE = "non-usable";
+      this.mainPlaylistLoader_.main.playlists.forEach((playlist) => {
+        const keyIdSet = this.mainPlaylistLoader_.getKeyIdSet(playlist);
+        if (!keyIdSet || !keyIdSet.size) {
+          return;
+        }
+        keyIdSet.forEach((key) => {
+          const USABLE = "usable";
+          const hasUsableKeyStatus = this.keyStatusMap_.has(key) && this.keyStatusMap_.get(key) === USABLE;
+          const nonUsableExclusion = playlist.lastExcludeReason_ === NON_USABLE && playlist.excludeUntil === Infinity;
+          if (!hasUsableKeyStatus) {
+            if (playlist.excludeUntil !== Infinity && playlist.lastExcludeReason_ !== NON_USABLE) {
+              playlist.excludeUntil = Infinity;
+              playlist.lastExcludeReason_ = NON_USABLE;
+              this.logger_(`excluding playlist ${playlist.id} because the key ID ${key} doesn't exist in the keyStatusMap or is not ${USABLE}`);
+            }
+            nonUsableKeyStatusCount++;
+          } else if (hasUsableKeyStatus && nonUsableExclusion) {
+            delete playlist.excludeUntil;
+            delete playlist.lastExcludeReason_;
+            this.logger_(`enabling playlist ${playlist.id} because key ID ${key} is ${USABLE}`);
+          }
+        });
+      });
+      if (nonUsableKeyStatusCount >= this.mainPlaylistLoader_.main.playlists.length) {
+        this.mainPlaylistLoader_.main.playlists.forEach((playlist) => {
+          const isNonHD = playlist && playlist.attributes && playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.height < 720;
+          const excludedForNonUsableKey = playlist.excludeUntil === Infinity && playlist.lastExcludeReason_ === NON_USABLE;
+          if (isNonHD && excludedForNonUsableKey) {
+            delete playlist.excludeUntil;
+            videojs.log.warn(`enabling non-HD playlist ${playlist.id} because all playlists were excluded due to ${NON_USABLE} key IDs`);
+          }
+        });
+      }
+    }
+    /**
+     * Adds a keystatus to the keystatus map, tries to convert to string if necessary.
+     *
+     * @param {any} keyId the keyId to add a status for
+     * @param {string} status the status of the keyId
+     */
+    addKeyStatus_(keyId, status) {
+      const isString = typeof keyId === "string";
+      const keyIdHexString = isString ? keyId : bufferToHexString2(keyId);
+      const formattedKeyIdString = keyIdHexString.slice(0, 32).toLowerCase();
+      this.logger_(`KeyStatus '${status}' with key ID ${formattedKeyIdString} added to the keyStatusMap`);
+      this.keyStatusMap_.set(formattedKeyIdString, status);
+    }
+    /**
+     * Utility function for adding key status to the keyStatusMap and filtering usable encrypted playlists.
+     *
+     * @param {any} keyId the keyId from the keystatuschange event
+     * @param {string} status the key status string
+     */
+    updatePlaylistByKeyStatus(keyId, status) {
+      this.addKeyStatus_(keyId, status);
+      if (!this.waitingForFastQualityPlaylistReceived_) {
+        this.excludeNonUsableThenChangePlaylist_();
+      }
+      this.mainPlaylistLoader_.off("loadedplaylist", this.excludeNonUsableThenChangePlaylist_.bind(this));
+      this.mainPlaylistLoader_.on("loadedplaylist", this.excludeNonUsableThenChangePlaylist_.bind(this));
+    }
+    excludeNonUsableThenChangePlaylist_() {
+      this.excludeNonUsablePlaylistsByKeyId_();
+      this.fastQualityChange_();
+    }
+  };
+  var enableFunction2 = (loader, playlistID, changePlaylistFn) => (enable) => {
+    const playlist = loader.main.playlists[playlistID];
+    const incompatible = isIncompatible2(playlist);
+    const currentlyEnabled = isEnabled2(playlist);
+    if (typeof enable === "undefined") {
+      return currentlyEnabled;
+    }
+    if (enable) {
+      delete playlist.disabled;
+    } else {
+      playlist.disabled = true;
+    }
+    if (enable !== currentlyEnabled && !incompatible) {
+      changePlaylistFn();
+      if (enable) {
+        loader.trigger("renditionenabled");
+      } else {
+        loader.trigger("renditiondisabled");
+      }
+    }
+    return enable;
+  };
+  var Representation2 = class {
+    constructor(vhsHandler, playlist, id) {
+      const {
+        playlistController_: pc
+      } = vhsHandler;
+      const qualityChangeFunction = pc.fastQualityChange_.bind(pc);
+      if (playlist.attributes) {
+        const resolution = playlist.attributes.RESOLUTION;
+        this.width = resolution && resolution.width;
+        this.height = resolution && resolution.height;
+        this.bandwidth = playlist.attributes.BANDWIDTH;
+        this.frameRate = playlist.attributes["FRAME-RATE"];
+      }
+      this.codecs = codecsForPlaylist2(pc.main(), playlist);
+      this.playlist = playlist;
+      this.id = id;
+      this.enabled = enableFunction2(vhsHandler.playlists, playlist.id, qualityChangeFunction);
+    }
+  };
+  var renditionSelectionMixin2 = function(vhsHandler) {
+    vhsHandler.representations = () => {
+      const main = vhsHandler.playlistController_.main();
+      const playlists = isAudioOnly2(main) ? vhsHandler.playlistController_.getAudioTrackPlaylists_() : main.playlists;
+      if (!playlists) {
+        return [];
+      }
+      return playlists.filter((media) => !isIncompatible2(media)).map((e2, i2) => new Representation2(vhsHandler, e2, e2.id));
+    };
+  };
+  var timerCancelEvents2 = ["seeking", "seeked", "pause", "playing", "error"];
+  var PlaybackWatcher2 = class {
+    /**
+     * Represents an PlaybackWatcher object.
+     *
+     * @class
+     * @param {Object} options an object that includes the tech and settings
+     */
+    constructor(options) {
+      this.playlistController_ = options.playlistController;
+      this.tech_ = options.tech;
+      this.seekable = options.seekable;
+      this.allowSeeksWithinUnsafeLiveWindow = options.allowSeeksWithinUnsafeLiveWindow;
+      this.liveRangeSafeTimeDelta = options.liveRangeSafeTimeDelta;
+      this.media = options.media;
+      this.consecutiveUpdates = 0;
+      this.lastRecordedTime = null;
+      this.checkCurrentTimeTimeout_ = null;
+      this.logger_ = logger2("PlaybackWatcher");
+      this.logger_("initialize");
+      const playHandler = () => this.monitorCurrentTime_();
+      const canPlayHandler = () => this.monitorCurrentTime_();
+      const waitingHandler = () => this.techWaiting_();
+      const cancelTimerHandler = () => this.resetTimeUpdate_();
+      const pc = this.playlistController_;
+      const loaderTypes = ["main", "subtitle", "audio"];
+      const loaderChecks = {};
+      loaderTypes.forEach((type) => {
+        loaderChecks[type] = {
+          reset: () => this.resetSegmentDownloads_(type),
+          updateend: () => this.checkSegmentDownloads_(type)
+        };
+        pc[`${type}SegmentLoader_`].on("appendsdone", loaderChecks[type].updateend);
+        pc[`${type}SegmentLoader_`].on("playlistupdate", loaderChecks[type].reset);
+        this.tech_.on(["seeked", "seeking"], loaderChecks[type].reset);
+      });
+      const setSeekingHandlers = (fn) => {
+        ["main", "audio"].forEach((type) => {
+          pc[`${type}SegmentLoader_`][fn]("appended", this.seekingAppendCheck_);
+        });
+      };
+      this.seekingAppendCheck_ = () => {
+        if (this.fixesBadSeeks_()) {
+          this.consecutiveUpdates = 0;
+          this.lastRecordedTime = this.tech_.currentTime();
+          setSeekingHandlers("off");
+        }
+      };
+      this.clearSeekingAppendCheck_ = () => setSeekingHandlers("off");
+      this.watchForBadSeeking_ = () => {
+        this.clearSeekingAppendCheck_();
+        setSeekingHandlers("on");
+      };
+      this.tech_.on("seeked", this.clearSeekingAppendCheck_);
+      this.tech_.on("seeking", this.watchForBadSeeking_);
+      this.tech_.on("waiting", waitingHandler);
+      this.tech_.on(timerCancelEvents2, cancelTimerHandler);
+      this.tech_.on("canplay", canPlayHandler);
+      this.tech_.one("play", playHandler);
+      this.dispose = () => {
+        this.clearSeekingAppendCheck_();
+        this.logger_("dispose");
+        this.tech_.off("waiting", waitingHandler);
+        this.tech_.off(timerCancelEvents2, cancelTimerHandler);
+        this.tech_.off("canplay", canPlayHandler);
+        this.tech_.off("play", playHandler);
+        this.tech_.off("seeking", this.watchForBadSeeking_);
+        this.tech_.off("seeked", this.clearSeekingAppendCheck_);
+        loaderTypes.forEach((type) => {
+          pc[`${type}SegmentLoader_`].off("appendsdone", loaderChecks[type].updateend);
+          pc[`${type}SegmentLoader_`].off("playlistupdate", loaderChecks[type].reset);
+          this.tech_.off(["seeked", "seeking"], loaderChecks[type].reset);
+        });
+        if (this.checkCurrentTimeTimeout_) {
+          import_window8.default.clearTimeout(this.checkCurrentTimeTimeout_);
+        }
+        this.resetTimeUpdate_();
+      };
+    }
+    /**
+     * Periodically check current time to see if playback stopped
+     *
+     * @private
+     */
+    monitorCurrentTime_() {
+      this.checkCurrentTime_();
+      if (this.checkCurrentTimeTimeout_) {
+        import_window8.default.clearTimeout(this.checkCurrentTimeTimeout_);
+      }
+      this.checkCurrentTimeTimeout_ = import_window8.default.setTimeout(this.monitorCurrentTime_.bind(this), 250);
+    }
+    /**
+     * Reset stalled download stats for a specific type of loader
+     *
+     * @param {string} type
+     *        The segment loader type to check.
+     *
+     * @listens SegmentLoader#playlistupdate
+     * @listens Tech#seeking
+     * @listens Tech#seeked
+     */
+    resetSegmentDownloads_(type) {
+      const loader = this.playlistController_[`${type}SegmentLoader_`];
+      if (this[`${type}StalledDownloads_`] > 0) {
+        this.logger_(`resetting possible stalled download count for ${type} loader`);
+      }
+      this[`${type}StalledDownloads_`] = 0;
+      this[`${type}Buffered_`] = loader.buffered_();
+    }
+    /**
+     * Checks on every segment `appendsdone` to see
+     * if segment appends are making progress. If they are not
+     * and we are still downloading bytes. We exclude the playlist.
+     *
+     * @param {string} type
+     *        The segment loader type to check.
+     *
+     * @listens SegmentLoader#appendsdone
+     */
+    checkSegmentDownloads_(type) {
+      const pc = this.playlistController_;
+      const loader = pc[`${type}SegmentLoader_`];
+      const buffered = loader.buffered_();
+      const isBufferedDifferent = isRangeDifferent2(this[`${type}Buffered_`], buffered);
+      this[`${type}Buffered_`] = buffered;
+      if (isBufferedDifferent) {
+        this.resetSegmentDownloads_(type);
+        return;
+      }
+      this[`${type}StalledDownloads_`]++;
+      this.logger_(`found #${this[`${type}StalledDownloads_`]} ${type} appends that did not increase buffer (possible stalled download)`, {
+        playlistId: loader.playlist_ && loader.playlist_.id,
+        buffered: timeRangesToArray2(buffered)
+      });
+      if (this[`${type}StalledDownloads_`] < 10) {
+        return;
+      }
+      this.logger_(`${type} loader stalled download exclusion`);
+      this.resetSegmentDownloads_(type);
+      this.tech_.trigger({
+        type: "usage",
+        name: `vhs-${type}-download-exclusion`
+      });
+      if (type === "subtitle") {
+        return;
+      }
+      pc.excludePlaylist({
+        error: {
+          message: `Excessive ${type} segment downloading detected.`
+        },
+        playlistExclusionDuration: Infinity
+      });
+    }
+    /**
+     * The purpose of this function is to emulate the "waiting" event on
+     * browsers that do not emit it when they are waiting for more
+     * data to continue playback
+     *
+     * @private
+     */
+    checkCurrentTime_() {
+      if (this.tech_.paused() || this.tech_.seeking()) {
+        return;
+      }
+      const currentTime = this.tech_.currentTime();
+      const buffered = this.tech_.buffered();
+      if (this.lastRecordedTime === currentTime && (!buffered.length || currentTime + SAFE_TIME_DELTA2 >= buffered.end(buffered.length - 1))) {
+        return this.techWaiting_();
+      }
+      if (this.consecutiveUpdates >= 5 && currentTime === this.lastRecordedTime) {
+        this.consecutiveUpdates++;
+        this.waiting_();
+      } else if (currentTime === this.lastRecordedTime) {
+        this.consecutiveUpdates++;
+      } else {
+        this.consecutiveUpdates = 0;
+        this.lastRecordedTime = currentTime;
+      }
+    }
+    /**
+     * Resets the 'timeupdate' mechanism designed to detect that we are stalled
+     *
+     * @private
+     */
+    resetTimeUpdate_() {
+      this.consecutiveUpdates = 0;
+    }
+    /**
+     * Fixes situations where there's a bad seek
+     *
+     * @return {boolean} whether an action was taken to fix the seek
+     * @private
+     */
+    fixesBadSeeks_() {
+      const seeking = this.tech_.seeking();
+      if (!seeking) {
+        return false;
+      }
+      const seekable3 = this.seekable();
+      const currentTime = this.tech_.currentTime();
+      const isAfterSeekableRange = this.afterSeekableWindow_(seekable3, currentTime, this.media(), this.allowSeeksWithinUnsafeLiveWindow);
+      let seekTo;
+      if (isAfterSeekableRange) {
+        const seekableEnd = seekable3.end(seekable3.length - 1);
+        seekTo = seekableEnd;
+      }
+      if (this.beforeSeekableWindow_(seekable3, currentTime)) {
+        const seekableStart = seekable3.start(0);
+        seekTo = seekableStart + // if the playlist is too short and the seekable range is an exact time (can
+        // happen in live with a 3 segment playlist), then don't use a time delta
+        (seekableStart === seekable3.end(0) ? 0 : SAFE_TIME_DELTA2);
+      }
+      if (typeof seekTo !== "undefined") {
+        this.logger_(`Trying to seek outside of seekable at time ${currentTime} with seekable range ${printableRange2(seekable3)}. Seeking to ${seekTo}.`);
+        this.tech_.setCurrentTime(seekTo);
+        return true;
+      }
+      const sourceUpdater = this.playlistController_.sourceUpdater_;
+      const buffered = this.tech_.buffered();
+      const audioBuffered = sourceUpdater.audioBuffer ? sourceUpdater.audioBuffered() : null;
+      const videoBuffered = sourceUpdater.videoBuffer ? sourceUpdater.videoBuffered() : null;
+      const media = this.media();
+      const minAppendedDuration = media.partTargetDuration ? media.partTargetDuration : (media.targetDuration - TIME_FUDGE_FACTOR2) * 2;
+      const bufferedToCheck = [audioBuffered, videoBuffered];
+      for (let i2 = 0; i2 < bufferedToCheck.length; i2++) {
+        if (!bufferedToCheck[i2]) {
+          continue;
+        }
+        const timeAhead = timeAheadOf2(bufferedToCheck[i2], currentTime);
+        if (timeAhead < minAppendedDuration) {
+          return false;
+        }
+      }
+      const nextRange = findNextRange2(buffered, currentTime);
+      if (nextRange.length === 0) {
+        return false;
+      }
+      seekTo = nextRange.start(0) + SAFE_TIME_DELTA2;
+      this.logger_(`Buffered region starts (${nextRange.start(0)})  just beyond seek point (${currentTime}). Seeking to ${seekTo}.`);
+      this.tech_.setCurrentTime(seekTo);
+      return true;
+    }
+    /**
+     * Handler for situations when we determine the player is waiting.
+     *
+     * @private
+     */
+    waiting_() {
+      if (this.techWaiting_()) {
+        return;
+      }
+      const currentTime = this.tech_.currentTime();
+      const buffered = this.tech_.buffered();
+      const currentRange = findRange2(buffered, currentTime);
+      if (currentRange.length && currentTime + 3 <= currentRange.end(0)) {
+        this.resetTimeUpdate_();
+        this.tech_.setCurrentTime(currentTime);
+        this.logger_(`Stopped at ${currentTime} while inside a buffered region [${currentRange.start(0)} -> ${currentRange.end(0)}]. Attempting to resume playback by seeking to the current time.`);
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-unknown-waiting"
+        });
+        return;
+      }
+    }
+    /**
+     * Handler for situations when the tech fires a `waiting` event
+     *
+     * @return {boolean}
+     *         True if an action (or none) was needed to correct the waiting. False if no
+     *         checks passed
+     * @private
+     */
+    techWaiting_() {
+      const seekable3 = this.seekable();
+      const currentTime = this.tech_.currentTime();
+      if (this.tech_.seeking()) {
+        return true;
+      }
+      if (this.beforeSeekableWindow_(seekable3, currentTime)) {
+        const livePoint = seekable3.end(seekable3.length - 1);
+        this.logger_(`Fell out of live window at time ${currentTime}. Seeking to live point (seekable end) ${livePoint}`);
+        this.resetTimeUpdate_();
+        this.tech_.setCurrentTime(livePoint);
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-live-resync"
+        });
+        return true;
+      }
+      const sourceUpdater = this.tech_.vhs.playlistController_.sourceUpdater_;
+      const buffered = this.tech_.buffered();
+      const videoUnderflow = this.videoUnderflow_({
+        audioBuffered: sourceUpdater.audioBuffered(),
+        videoBuffered: sourceUpdater.videoBuffered(),
+        currentTime
+      });
+      if (videoUnderflow) {
+        this.resetTimeUpdate_();
+        this.tech_.setCurrentTime(currentTime);
+        this.tech_.trigger({
+          type: "usage",
+          name: "vhs-video-underflow"
+        });
+        return true;
+      }
+      const nextRange = findNextRange2(buffered, currentTime);
+      if (nextRange.length > 0) {
+        this.logger_(`Stopped at ${currentTime} and seeking to ${nextRange.start(0)}`);
+        this.resetTimeUpdate_();
+        this.skipTheGap_(currentTime);
+        return true;
+      }
+      return false;
+    }
+    afterSeekableWindow_(seekable3, currentTime, playlist, allowSeeksWithinUnsafeLiveWindow = false) {
+      if (!seekable3.length) {
+        return false;
+      }
+      let allowedEnd = seekable3.end(seekable3.length - 1) + SAFE_TIME_DELTA2;
+      const isLive = !playlist.endList;
+      const isLLHLS = typeof playlist.partTargetDuration === "number";
+      if (isLive && (isLLHLS || allowSeeksWithinUnsafeLiveWindow)) {
+        allowedEnd = seekable3.end(seekable3.length - 1) + playlist.targetDuration * 3;
+      }
+      if (currentTime > allowedEnd) {
+        return true;
+      }
+      return false;
+    }
+    beforeSeekableWindow_(seekable3, currentTime) {
+      if (seekable3.length && // can't fall before 0 and 0 seekable start identifies VOD stream
+      seekable3.start(0) > 0 && currentTime < seekable3.start(0) - this.liveRangeSafeTimeDelta) {
+        return true;
+      }
+      return false;
+    }
+    videoUnderflow_({
+      videoBuffered,
+      audioBuffered,
+      currentTime
+    }) {
+      if (!videoBuffered) {
+        return;
+      }
+      let gap;
+      if (videoBuffered.length && audioBuffered.length) {
+        const lastVideoRange = findRange2(videoBuffered, currentTime - 3);
+        const videoRange = findRange2(videoBuffered, currentTime);
+        const audioRange = findRange2(audioBuffered, currentTime);
+        if (audioRange.length && !videoRange.length && lastVideoRange.length) {
+          gap = {
+            start: lastVideoRange.end(0),
+            end: audioRange.end(0)
+          };
+        }
+      } else {
+        const nextRange = findNextRange2(videoBuffered, currentTime);
+        if (!nextRange.length) {
+          gap = this.gapFromVideoUnderflow_(videoBuffered, currentTime);
+        }
+      }
+      if (gap) {
+        this.logger_(`Encountered a gap in video from ${gap.start} to ${gap.end}. Seeking to current time ${currentTime}`);
+        return true;
+      }
+      return false;
+    }
+    /**
+     * Timer callback. If playback still has not proceeded, then we seek
+     * to the start of the next buffered region.
+     *
+     * @private
+     */
+    skipTheGap_(scheduledCurrentTime) {
+      const buffered = this.tech_.buffered();
+      const currentTime = this.tech_.currentTime();
+      const nextRange = findNextRange2(buffered, currentTime);
+      this.resetTimeUpdate_();
+      if (nextRange.length === 0 || currentTime !== scheduledCurrentTime) {
+        return;
+      }
+      this.logger_("skipTheGap_:", "currentTime:", currentTime, "scheduled currentTime:", scheduledCurrentTime, "nextRange start:", nextRange.start(0));
+      this.tech_.setCurrentTime(nextRange.start(0) + TIME_FUDGE_FACTOR2);
+      this.tech_.trigger({
+        type: "usage",
+        name: "vhs-gap-skip"
+      });
+    }
+    gapFromVideoUnderflow_(buffered, currentTime) {
+      const gaps = findGaps2(buffered);
+      for (let i2 = 0; i2 < gaps.length; i2++) {
+        const start = gaps.start(i2);
+        const end = gaps.end(i2);
+        if (currentTime - start < 4 && currentTime - start > 2) {
+          return {
+            start,
+            end
+          };
+        }
+      }
+      return null;
+    }
+  };
+  var defaultOptions2 = {
+    errorInterval: 30,
+    getSource(next) {
+      const tech = this.tech({
+        IWillNotUseThisInPlugins: true
+      });
+      const sourceObj = tech.currentSource_ || this.currentSource();
+      return next(sourceObj);
+    }
+  };
+  var initPlugin2 = function(player, options) {
+    let lastCalled = 0;
+    let seekTo = 0;
+    const localOptions = merge3(defaultOptions2, options);
+    player.ready(() => {
+      player.trigger({
+        type: "usage",
+        name: "vhs-error-reload-initialized"
+      });
+    });
+    const loadedMetadataHandler = function() {
+      if (seekTo) {
+        player.currentTime(seekTo);
+      }
+    };
+    const setSource2 = function(sourceObj) {
+      if (sourceObj === null || sourceObj === void 0) {
+        return;
+      }
+      seekTo = player.duration() !== Infinity && player.currentTime() || 0;
+      player.one("loadedmetadata", loadedMetadataHandler);
+      player.src(sourceObj);
+      player.trigger({
+        type: "usage",
+        name: "vhs-error-reload"
+      });
+      player.play();
+    };
+    const errorHandler = function() {
+      if (Date.now() - lastCalled < localOptions.errorInterval * 1e3) {
+        player.trigger({
+          type: "usage",
+          name: "vhs-error-reload-canceled"
+        });
+        return;
+      }
+      if (!localOptions.getSource || typeof localOptions.getSource !== "function") {
+        videojs.log.error("ERROR: reloadSourceOnError - The option getSource must be a function!");
+        return;
+      }
+      lastCalled = Date.now();
+      return localOptions.getSource.call(player, setSource2);
+    };
+    const cleanupEvents = function() {
+      player.off("loadedmetadata", loadedMetadataHandler);
+      player.off("error", errorHandler);
+      player.off("dispose", cleanupEvents);
+    };
+    const reinitPlugin = function(newOptions) {
+      cleanupEvents();
+      initPlugin2(player, newOptions);
+    };
+    player.on("error", errorHandler);
+    player.on("dispose", cleanupEvents);
+    player.reloadSourceOnError = reinitPlugin;
+  };
+  var reloadSourceOnError2 = function(options) {
+    initPlugin2(this, options);
+  };
+  var version$42 = "3.10.0";
+  var version$32 = "7.0.2";
+  var version$22 = "1.3.0";
+  var version$12 = "7.1.0";
+  var version2 = "4.0.1";
+  var Vhs2 = {
+    PlaylistLoader: PlaylistLoader2,
+    Playlist: Playlist2,
+    utils: utils2,
+    STANDARD_PLAYLIST_SELECTOR: lastBandwidthSelector2,
+    INITIAL_PLAYLIST_SELECTOR: lowestBitrateCompatibleVariantSelector2,
+    lastBandwidthSelector: lastBandwidthSelector2,
+    movingAverageBandwidthSelector: movingAverageBandwidthSelector2,
+    comparePlaylistBandwidth: comparePlaylistBandwidth2,
+    comparePlaylistResolution: comparePlaylistResolution2,
+    xhr: xhrFactory2()
+  };
+  Object.keys(Config2).forEach((prop) => {
+    Object.defineProperty(Vhs2, prop, {
+      get() {
+        videojs.log.warn(`using Vhs.${prop} is UNSAFE be sure you know what you are doing`);
+        return Config2[prop];
+      },
+      set(value) {
+        videojs.log.warn(`using Vhs.${prop} is UNSAFE be sure you know what you are doing`);
+        if (typeof value !== "number" || value < 0) {
+          videojs.log.warn(`value of Vhs.${prop} must be greater than or equal to 0`);
+          return;
+        }
+        Config2[prop] = value;
+      }
+    });
+  });
+  var LOCAL_STORAGE_KEY2 = "videojs-vhs";
+  var handleVhsMediaChange2 = function(qualityLevels2, playlistLoader) {
+    const newPlaylist = playlistLoader.media();
+    let selectedIndex = -1;
+    for (let i2 = 0; i2 < qualityLevels2.length; i2++) {
+      if (qualityLevels2[i2].id === newPlaylist.id) {
+        selectedIndex = i2;
+        break;
+      }
+    }
+    qualityLevels2.selectedIndex_ = selectedIndex;
+    qualityLevels2.trigger({
+      selectedIndex,
+      type: "change"
+    });
+  };
+  var handleVhsLoadedMetadata2 = function(qualityLevels2, vhs) {
+    vhs.representations().forEach((rep) => {
+      qualityLevels2.addQualityLevel(rep);
+    });
+    handleVhsMediaChange2(qualityLevels2, vhs.playlists);
+  };
+  Vhs2.canPlaySource = function() {
+    return videojs.log.warn("VHS is no longer a tech. Please remove it from your player's techOrder.");
+  };
+  var emeKeySystems2 = (keySystemOptions, mainPlaylist, audioPlaylist) => {
+    if (!keySystemOptions) {
+      return keySystemOptions;
+    }
+    let codecs = {};
+    if (mainPlaylist && mainPlaylist.attributes && mainPlaylist.attributes.CODECS) {
+      codecs = unwrapCodecList2(parseCodecs(mainPlaylist.attributes.CODECS));
+    }
+    if (audioPlaylist && audioPlaylist.attributes && audioPlaylist.attributes.CODECS) {
+      codecs.audio = audioPlaylist.attributes.CODECS;
+    }
+    const videoContentType = getMimeForCodec(codecs.video);
+    const audioContentType = getMimeForCodec(codecs.audio);
+    const keySystemContentTypes = {};
+    for (const keySystem in keySystemOptions) {
+      keySystemContentTypes[keySystem] = {};
+      if (audioContentType) {
+        keySystemContentTypes[keySystem].audioContentType = audioContentType;
+      }
+      if (videoContentType) {
+        keySystemContentTypes[keySystem].videoContentType = videoContentType;
+      }
+      if (mainPlaylist.contentProtection && mainPlaylist.contentProtection[keySystem] && mainPlaylist.contentProtection[keySystem].pssh) {
+        keySystemContentTypes[keySystem].pssh = mainPlaylist.contentProtection[keySystem].pssh;
+      }
+      if (typeof keySystemOptions[keySystem] === "string") {
+        keySystemContentTypes[keySystem].url = keySystemOptions[keySystem];
+      }
+    }
+    return merge3(keySystemOptions, keySystemContentTypes);
+  };
+  var getAllPsshKeySystemsOptions2 = (playlists, keySystems) => {
+    return playlists.reduce((keySystemsArr, playlist) => {
+      if (!playlist.contentProtection) {
+        return keySystemsArr;
+      }
+      const keySystemsOptions = keySystems.reduce((keySystemsObj, keySystem) => {
+        const keySystemOptions = playlist.contentProtection[keySystem];
+        if (keySystemOptions && keySystemOptions.pssh) {
+          keySystemsObj[keySystem] = {
+            pssh: keySystemOptions.pssh
+          };
+        }
+        return keySystemsObj;
+      }, {});
+      if (Object.keys(keySystemsOptions).length) {
+        keySystemsArr.push(keySystemsOptions);
+      }
+      return keySystemsArr;
+    }, []);
+  };
+  var waitForKeySessionCreation2 = ({
+    player,
+    sourceKeySystems,
+    audioMedia,
+    mainPlaylists
+  }) => {
+    if (!player.eme.initializeMediaKeys) {
+      return Promise.resolve();
+    }
+    const playlists = audioMedia ? mainPlaylists.concat([audioMedia]) : mainPlaylists;
+    const keySystemsOptionsArr = getAllPsshKeySystemsOptions2(playlists, Object.keys(sourceKeySystems));
+    const initializationFinishedPromises = [];
+    const keySessionCreatedPromises = [];
+    keySystemsOptionsArr.forEach((keySystemsOptions) => {
+      keySessionCreatedPromises.push(new Promise((resolve, reject) => {
+        player.tech_.one("keysessioncreated", resolve);
+      }));
+      initializationFinishedPromises.push(new Promise((resolve, reject) => {
+        player.eme.initializeMediaKeys({
+          keySystems: keySystemsOptions
+        }, (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve();
+        });
+      }));
+    });
+    return Promise.race([
+      // If a session was previously created, these will all finish resolving without
+      // creating a new session, otherwise it will take until the end of all license
+      // requests, which is why the key session check is used (to make setup much faster).
+      Promise.all(initializationFinishedPromises),
+      // Once a single session is created, the browser knows DRM will be used.
+      Promise.race(keySessionCreatedPromises)
+    ]);
+  };
+  var setupEmeOptions2 = ({
+    player,
+    sourceKeySystems,
+    media,
+    audioMedia
+  }) => {
+    const sourceOptions = emeKeySystems2(sourceKeySystems, media, audioMedia);
+    if (!sourceOptions) {
+      return false;
+    }
+    player.currentSource().keySystems = sourceOptions;
+    if (sourceOptions && !player.eme) {
+      videojs.log.warn("DRM encrypted source cannot be decrypted without a DRM plugin");
+      return false;
+    }
+    return true;
+  };
+  var getVhsLocalStorage2 = () => {
+    if (!import_window8.default.localStorage) {
+      return null;
+    }
+    const storedObject = import_window8.default.localStorage.getItem(LOCAL_STORAGE_KEY2);
+    if (!storedObject) {
+      return null;
+    }
+    try {
+      return JSON.parse(storedObject);
+    } catch (e2) {
+      return null;
+    }
+  };
+  var updateVhsLocalStorage2 = (options) => {
+    if (!import_window8.default.localStorage) {
+      return false;
+    }
+    let objectToStore = getVhsLocalStorage2();
+    objectToStore = objectToStore ? merge3(objectToStore, options) : options;
+    try {
+      import_window8.default.localStorage.setItem(LOCAL_STORAGE_KEY2, JSON.stringify(objectToStore));
+    } catch (e2) {
+      return false;
+    }
+    return objectToStore;
+  };
+  var expandDataUri2 = (dataUri) => {
+    if (dataUri.toLowerCase().indexOf("data:application/vnd.videojs.vhs+json,") === 0) {
+      return JSON.parse(dataUri.substring(dataUri.indexOf(",") + 1));
+    }
+    return dataUri;
+  };
+  var addOnRequestHook2 = (xhr, callback) => {
+    if (!xhr._requestCallbackSet) {
+      xhr._requestCallbackSet = /* @__PURE__ */ new Set();
+    }
+    xhr._requestCallbackSet.add(callback);
+  };
+  var addOnResponseHook2 = (xhr, callback) => {
+    if (!xhr._responseCallbackSet) {
+      xhr._responseCallbackSet = /* @__PURE__ */ new Set();
+    }
+    xhr._responseCallbackSet.add(callback);
+  };
+  var removeOnRequestHook2 = (xhr, callback) => {
+    if (!xhr._requestCallbackSet) {
+      return;
+    }
+    xhr._requestCallbackSet.delete(callback);
+    if (!xhr._requestCallbackSet.size) {
+      delete xhr._requestCallbackSet;
+    }
+  };
+  var removeOnResponseHook2 = (xhr, callback) => {
+    if (!xhr._responseCallbackSet) {
+      return;
+    }
+    xhr._responseCallbackSet.delete(callback);
+    if (!xhr._responseCallbackSet.size) {
+      delete xhr._responseCallbackSet;
+    }
+  };
+  Vhs2.supportsNativeHls = function() {
+    if (!import_document2.default || !import_document2.default.createElement) {
+      return false;
+    }
+    const video = import_document2.default.createElement("video");
+    if (!videojs.getTech("Html5").isSupported()) {
+      return false;
+    }
+    const canPlay = [
+      // Apple santioned
+      "application/vnd.apple.mpegurl",
+      // Apple sanctioned for backwards compatibility
+      "audio/mpegurl",
+      // Very common
+      "audio/x-mpegurl",
+      // Very common
+      "application/x-mpegurl",
+      // Included for completeness
+      "video/x-mpegurl",
+      "video/mpegurl",
+      "application/mpegurl"
+    ];
+    return canPlay.some(function(canItPlay) {
+      return /maybe|probably/i.test(video.canPlayType(canItPlay));
+    });
+  }();
+  Vhs2.supportsNativeDash = function() {
+    if (!import_document2.default || !import_document2.default.createElement || !videojs.getTech("Html5").isSupported()) {
+      return false;
+    }
+    return /maybe|probably/i.test(import_document2.default.createElement("video").canPlayType("application/dash+xml"));
+  }();
+  Vhs2.supportsTypeNatively = (type) => {
+    if (type === "hls") {
+      return Vhs2.supportsNativeHls;
+    }
+    if (type === "dash") {
+      return Vhs2.supportsNativeDash;
+    }
+    return false;
+  };
+  Vhs2.isSupported = function() {
+    return videojs.log.warn("VHS is no longer a tech. Please remove it from your player's techOrder.");
+  };
+  Vhs2.xhr.onRequest = function(callback) {
+    addOnRequestHook2(Vhs2.xhr, callback);
+  };
+  Vhs2.xhr.onResponse = function(callback) {
+    addOnResponseHook2(Vhs2.xhr, callback);
+  };
+  Vhs2.xhr.offRequest = function(callback) {
+    removeOnRequestHook2(Vhs2.xhr, callback);
+  };
+  Vhs2.xhr.offResponse = function(callback) {
+    removeOnResponseHook2(Vhs2.xhr, callback);
+  };
+  var Component2 = videojs.getComponent("Component");
+  var VhsHandler2 = class extends Component2 {
+    constructor(source, tech, options) {
+      super(tech, options.vhs);
+      if (typeof options.initialBandwidth === "number") {
+        this.options_.bandwidth = options.initialBandwidth;
+      }
+      this.logger_ = logger2("VhsHandler");
+      if (tech.options_ && tech.options_.playerId) {
+        const _player = videojs.getPlayer(tech.options_.playerId);
+        this.player_ = _player;
+      }
+      this.tech_ = tech;
+      this.source_ = source;
+      this.stats = {};
+      this.ignoreNextSeekingEvent_ = false;
+      this.setOptions_();
+      if (this.options_.overrideNative && tech.overrideNativeAudioTracks && tech.overrideNativeVideoTracks) {
+        tech.overrideNativeAudioTracks(true);
+        tech.overrideNativeVideoTracks(true);
+      } else if (this.options_.overrideNative && (tech.featuresNativeVideoTracks || tech.featuresNativeAudioTracks)) {
+        throw new Error("Overriding native VHS requires emulated tracks. See https://git.io/vMpjB");
+      }
+      this.on(import_document2.default, ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"], (event) => {
+        const fullscreenElement = import_document2.default.fullscreenElement || import_document2.default.webkitFullscreenElement || import_document2.default.mozFullScreenElement || import_document2.default.msFullscreenElement;
+        if (fullscreenElement && fullscreenElement.contains(this.tech_.el())) {
+          this.playlistController_.fastQualityChange_();
+        } else {
+          this.playlistController_.checkABR_();
+        }
+      });
+      this.on(this.tech_, "seeking", function() {
+        if (this.ignoreNextSeekingEvent_) {
+          this.ignoreNextSeekingEvent_ = false;
+          return;
+        }
+        this.setCurrentTime(this.tech_.currentTime());
+      });
+      this.on(this.tech_, "error", function() {
+        if (this.tech_.error() && this.playlistController_) {
+          this.playlistController_.pauseLoading();
+        }
+      });
+      this.on(this.tech_, "play", this.play);
+    }
+    /**
+     * Set VHS options based on options from configuration, as well as partial
+     * options to be passed at a later time.
+     *
+     * @param {Object} options A partial chunk of config options
+     */
+    setOptions_(options = {}) {
+      this.options_ = merge3(this.options_, options);
+      this.options_.withCredentials = this.options_.withCredentials || false;
+      this.options_.limitRenditionByPlayerDimensions = this.options_.limitRenditionByPlayerDimensions === false ? false : true;
+      this.options_.useDevicePixelRatio = this.options_.useDevicePixelRatio || false;
+      this.options_.useBandwidthFromLocalStorage = typeof this.source_.useBandwidthFromLocalStorage !== "undefined" ? this.source_.useBandwidthFromLocalStorage : this.options_.useBandwidthFromLocalStorage || false;
+      this.options_.useForcedSubtitles = this.options_.useForcedSubtitles || false;
+      this.options_.useNetworkInformationApi = this.options_.useNetworkInformationApi || false;
+      this.options_.useDtsForTimestampOffset = this.options_.useDtsForTimestampOffset || false;
+      this.options_.customTagParsers = this.options_.customTagParsers || [];
+      this.options_.customTagMappers = this.options_.customTagMappers || [];
+      this.options_.cacheEncryptionKeys = this.options_.cacheEncryptionKeys || false;
+      this.options_.llhls = this.options_.llhls === false ? false : true;
+      this.options_.bufferBasedABR = this.options_.bufferBasedABR || false;
+      if (typeof this.options_.playlistExclusionDuration !== "number") {
+        this.options_.playlistExclusionDuration = 60;
+      }
+      if (typeof this.options_.bandwidth !== "number") {
+        if (this.options_.useBandwidthFromLocalStorage) {
+          const storedObject = getVhsLocalStorage2();
+          if (storedObject && storedObject.bandwidth) {
+            this.options_.bandwidth = storedObject.bandwidth;
+            this.tech_.trigger({
+              type: "usage",
+              name: "vhs-bandwidth-from-local-storage"
+            });
+          }
+          if (storedObject && storedObject.throughput) {
+            this.options_.throughput = storedObject.throughput;
+            this.tech_.trigger({
+              type: "usage",
+              name: "vhs-throughput-from-local-storage"
+            });
+          }
+        }
+      }
+      if (typeof this.options_.bandwidth !== "number") {
+        this.options_.bandwidth = Config2.INITIAL_BANDWIDTH;
+      }
+      this.options_.enableLowInitialPlaylist = this.options_.enableLowInitialPlaylist && this.options_.bandwidth === Config2.INITIAL_BANDWIDTH;
+      ["withCredentials", "useDevicePixelRatio", "limitRenditionByPlayerDimensions", "bandwidth", "customTagParsers", "customTagMappers", "cacheEncryptionKeys", "playlistSelector", "initialPlaylistSelector", "bufferBasedABR", "liveRangeSafeTimeDelta", "llhls", "useForcedSubtitles", "useNetworkInformationApi", "useDtsForTimestampOffset", "exactManifestTimings", "leastPixelDiffSelector"].forEach((option) => {
+        if (typeof this.source_[option] !== "undefined") {
+          this.options_[option] = this.source_[option];
+        }
+      });
+      this.limitRenditionByPlayerDimensions = this.options_.limitRenditionByPlayerDimensions;
+      this.useDevicePixelRatio = this.options_.useDevicePixelRatio;
+    }
+    // alias for public method to set options
+    setOptions(options = {}) {
+      this.setOptions_(options);
+    }
+    /**
+     * called when player.src gets called, handle a new source
+     *
+     * @param {Object} src the source object to handle
+     */
+    src(src, type) {
+      if (!src) {
+        return;
+      }
+      this.setOptions_();
+      this.options_.src = expandDataUri2(this.source_.src);
+      this.options_.tech = this.tech_;
+      this.options_.externVhs = Vhs2;
+      this.options_.sourceType = simpleTypeFromSourceType(type);
+      this.options_.seekTo = (time) => {
+        this.tech_.setCurrentTime(time);
+      };
+      this.playlistController_ = new PlaylistController2(this.options_);
+      const playbackWatcherOptions = merge3({
+        liveRangeSafeTimeDelta: SAFE_TIME_DELTA2
+      }, this.options_, {
+        seekable: () => this.seekable(),
+        media: () => this.playlistController_.media(),
+        playlistController: this.playlistController_
+      });
+      this.playbackWatcher_ = new PlaybackWatcher2(playbackWatcherOptions);
+      this.playlistController_.on("error", () => {
+        const player = videojs.players[this.tech_.options_.playerId];
+        let error = this.playlistController_.error;
+        if (typeof error === "object" && !error.code) {
+          error.code = 3;
+        } else if (typeof error === "string") {
+          error = {
+            message: error,
+            code: 3
+          };
+        }
+        player.error(error);
+      });
+      const defaultSelector = this.options_.bufferBasedABR ? Vhs2.movingAverageBandwidthSelector(0.55) : Vhs2.STANDARD_PLAYLIST_SELECTOR;
+      this.playlistController_.selectPlaylist = this.selectPlaylist ? this.selectPlaylist.bind(this) : defaultSelector.bind(this);
+      this.playlistController_.selectInitialPlaylist = Vhs2.INITIAL_PLAYLIST_SELECTOR.bind(this);
+      this.playlists = this.playlistController_.mainPlaylistLoader_;
+      this.mediaSource = this.playlistController_.mediaSource;
+      Object.defineProperties(this, {
+        selectPlaylist: {
+          get() {
+            return this.playlistController_.selectPlaylist;
+          },
+          set(selectPlaylist) {
+            this.playlistController_.selectPlaylist = selectPlaylist.bind(this);
+          }
+        },
+        throughput: {
+          get() {
+            return this.playlistController_.mainSegmentLoader_.throughput.rate;
+          },
+          set(throughput) {
+            this.playlistController_.mainSegmentLoader_.throughput.rate = throughput;
+            this.playlistController_.mainSegmentLoader_.throughput.count = 1;
+          }
+        },
+        bandwidth: {
+          get() {
+            let playerBandwidthEst = this.playlistController_.mainSegmentLoader_.bandwidth;
+            const networkInformation = import_window8.default.navigator.connection || import_window8.default.navigator.mozConnection || import_window8.default.navigator.webkitConnection;
+            const tenMbpsAsBitsPerSecond = 1e7;
+            if (this.options_.useNetworkInformationApi && networkInformation) {
+              const networkInfoBandwidthEstBitsPerSec = networkInformation.downlink * 1e3 * 1e3;
+              if (networkInfoBandwidthEstBitsPerSec >= tenMbpsAsBitsPerSecond && playerBandwidthEst >= tenMbpsAsBitsPerSecond) {
+                playerBandwidthEst = Math.max(playerBandwidthEst, networkInfoBandwidthEstBitsPerSec);
+              } else {
+                playerBandwidthEst = networkInfoBandwidthEstBitsPerSec;
+              }
+            }
+            return playerBandwidthEst;
+          },
+          set(bandwidth) {
+            this.playlistController_.mainSegmentLoader_.bandwidth = bandwidth;
+            this.playlistController_.mainSegmentLoader_.throughput = {
+              rate: 0,
+              count: 0
+            };
+          }
+        },
+        /**
+         * `systemBandwidth` is a combination of two serial processes bit-rates. The first
+         * is the network bitrate provided by `bandwidth` and the second is the bitrate of
+         * the entire process after that - decryption, transmuxing, and appending - provided
+         * by `throughput`.
+         *
+         * Since the two process are serial, the overall system bandwidth is given by:
+         *   sysBandwidth = 1 / (1 / bandwidth + 1 / throughput)
+         */
+        systemBandwidth: {
+          get() {
+            const invBandwidth = 1 / (this.bandwidth || 1);
+            let invThroughput;
+            if (this.throughput > 0) {
+              invThroughput = 1 / this.throughput;
+            } else {
+              invThroughput = 0;
+            }
+            const systemBitrate = Math.floor(1 / (invBandwidth + invThroughput));
+            return systemBitrate;
+          },
+          set() {
+            videojs.log.error('The "systemBandwidth" property is read-only');
+          }
+        }
+      });
+      if (this.options_.bandwidth) {
+        this.bandwidth = this.options_.bandwidth;
+      }
+      if (this.options_.throughput) {
+        this.throughput = this.options_.throughput;
+      }
+      Object.defineProperties(this.stats, {
+        bandwidth: {
+          get: () => this.bandwidth || 0,
+          enumerable: true
+        },
+        mediaRequests: {
+          get: () => this.playlistController_.mediaRequests_() || 0,
+          enumerable: true
+        },
+        mediaRequestsAborted: {
+          get: () => this.playlistController_.mediaRequestsAborted_() || 0,
+          enumerable: true
+        },
+        mediaRequestsTimedout: {
+          get: () => this.playlistController_.mediaRequestsTimedout_() || 0,
+          enumerable: true
+        },
+        mediaRequestsErrored: {
+          get: () => this.playlistController_.mediaRequestsErrored_() || 0,
+          enumerable: true
+        },
+        mediaTransferDuration: {
+          get: () => this.playlistController_.mediaTransferDuration_() || 0,
+          enumerable: true
+        },
+        mediaBytesTransferred: {
+          get: () => this.playlistController_.mediaBytesTransferred_() || 0,
+          enumerable: true
+        },
+        mediaSecondsLoaded: {
+          get: () => this.playlistController_.mediaSecondsLoaded_() || 0,
+          enumerable: true
+        },
+        mediaAppends: {
+          get: () => this.playlistController_.mediaAppends_() || 0,
+          enumerable: true
+        },
+        mainAppendsToLoadedData: {
+          get: () => this.playlistController_.mainAppendsToLoadedData_() || 0,
+          enumerable: true
+        },
+        audioAppendsToLoadedData: {
+          get: () => this.playlistController_.audioAppendsToLoadedData_() || 0,
+          enumerable: true
+        },
+        appendsToLoadedData: {
+          get: () => this.playlistController_.appendsToLoadedData_() || 0,
+          enumerable: true
+        },
+        timeToLoadedData: {
+          get: () => this.playlistController_.timeToLoadedData_() || 0,
+          enumerable: true
+        },
+        buffered: {
+          get: () => timeRangesToArray2(this.tech_.buffered()),
+          enumerable: true
+        },
+        currentTime: {
+          get: () => this.tech_.currentTime(),
+          enumerable: true
+        },
+        currentSource: {
+          get: () => this.tech_.currentSource_,
+          enumerable: true
+        },
+        currentTech: {
+          get: () => this.tech_.name_,
+          enumerable: true
+        },
+        duration: {
+          get: () => this.tech_.duration(),
+          enumerable: true
+        },
+        main: {
+          get: () => this.playlists.main,
+          enumerable: true
+        },
+        playerDimensions: {
+          get: () => this.tech_.currentDimensions(),
+          enumerable: true
+        },
+        seekable: {
+          get: () => timeRangesToArray2(this.tech_.seekable()),
+          enumerable: true
+        },
+        timestamp: {
+          get: () => Date.now(),
+          enumerable: true
+        },
+        videoPlaybackQuality: {
+          get: () => this.tech_.getVideoPlaybackQuality(),
+          enumerable: true
+        }
+      });
+      this.tech_.one("canplay", this.playlistController_.setupFirstPlay.bind(this.playlistController_));
+      this.tech_.on("bandwidthupdate", () => {
+        if (this.options_.useBandwidthFromLocalStorage) {
+          updateVhsLocalStorage2({
+            bandwidth: this.bandwidth,
+            throughput: Math.round(this.throughput)
+          });
+        }
+      });
+      this.playlistController_.on("selectedinitialmedia", () => {
+        renditionSelectionMixin2(this);
+      });
+      this.playlistController_.sourceUpdater_.on("createdsourcebuffers", () => {
+        this.setupEme_();
+      });
+      this.on(this.playlistController_, "progress", function() {
+        this.tech_.trigger("progress");
+      });
+      this.on(this.playlistController_, "firstplay", function() {
+        this.ignoreNextSeekingEvent_ = true;
+      });
+      this.setupQualityLevels_();
+      if (!this.tech_.el()) {
+        return;
+      }
+      this.mediaSourceUrl_ = import_window8.default.URL.createObjectURL(this.playlistController_.mediaSource);
+      this.tech_.src(this.mediaSourceUrl_);
+    }
+    createKeySessions_() {
+      const audioPlaylistLoader = this.playlistController_.mediaTypes_.AUDIO.activePlaylistLoader;
+      this.logger_("waiting for EME key session creation");
+      waitForKeySessionCreation2({
+        player: this.player_,
+        sourceKeySystems: this.source_.keySystems,
+        audioMedia: audioPlaylistLoader && audioPlaylistLoader.media(),
+        mainPlaylists: this.playlists.main.playlists
+      }).then(() => {
+        this.logger_("created EME key session");
+        this.playlistController_.sourceUpdater_.initializedEme();
+      }).catch((err) => {
+        this.logger_("error while creating EME key session", err);
+        this.player_.error({
+          message: "Failed to initialize media keys for EME",
+          code: 3
+        });
+      });
+    }
+    handleWaitingForKey_() {
+      this.logger_("waitingforkey fired, attempting to create any new key sessions");
+      this.createKeySessions_();
+    }
+    /**
+     * If necessary and EME is available, sets up EME options and waits for key session
+     * creation.
+     *
+     * This function also updates the source updater so taht it can be used, as for some
+     * browsers, EME must be configured before content is appended (if appending unencrypted
+     * content before encrypted content).
+     */
+    setupEme_() {
+      const audioPlaylistLoader = this.playlistController_.mediaTypes_.AUDIO.activePlaylistLoader;
+      const didSetupEmeOptions = setupEmeOptions2({
+        player: this.player_,
+        sourceKeySystems: this.source_.keySystems,
+        media: this.playlists.media(),
+        audioMedia: audioPlaylistLoader && audioPlaylistLoader.media()
+      });
+      this.player_.tech_.on("keystatuschange", (e2) => {
+        this.playlistController_.updatePlaylistByKeyStatus(e2.keyId, e2.status);
+      });
+      this.handleWaitingForKey_ = this.handleWaitingForKey_.bind(this);
+      this.player_.tech_.on("waitingforkey", this.handleWaitingForKey_);
+      if (!didSetupEmeOptions) {
+        this.playlistController_.sourceUpdater_.initializedEme();
+        return;
+      }
+      this.createKeySessions_();
+    }
+    /**
+     * Initializes the quality levels and sets listeners to update them.
+     *
+     * @method setupQualityLevels_
+     * @private
+     */
+    setupQualityLevels_() {
+      const player = videojs.players[this.tech_.options_.playerId];
+      if (!player || !player.qualityLevels || this.qualityLevels_) {
+        return;
+      }
+      this.qualityLevels_ = player.qualityLevels();
+      this.playlistController_.on("selectedinitialmedia", () => {
+        handleVhsLoadedMetadata2(this.qualityLevels_, this);
+      });
+      this.playlists.on("mediachange", () => {
+        handleVhsMediaChange2(this.qualityLevels_, this.playlists);
+      });
+    }
+    /**
+     * return the version
+     */
+    static version() {
+      return {
+        "@videojs/http-streaming": version$42,
+        "mux.js": version$32,
+        "mpd-parser": version$22,
+        "m3u8-parser": version$12,
+        "aes-decrypter": version2
+      };
+    }
+    /**
+     * return the version
+     */
+    version() {
+      return this.constructor.version();
+    }
+    canChangeType() {
+      return SourceUpdater2.canChangeType();
+    }
+    /**
+     * Begin playing the video.
+     */
+    play() {
+      this.playlistController_.play();
+    }
+    /**
+     * a wrapper around the function in PlaylistController
+     */
+    setCurrentTime(currentTime) {
+      this.playlistController_.setCurrentTime(currentTime);
+    }
+    /**
+     * a wrapper around the function in PlaylistController
+     */
+    duration() {
+      return this.playlistController_.duration();
+    }
+    /**
+     * a wrapper around the function in PlaylistController
+     */
+    seekable() {
+      return this.playlistController_.seekable();
+    }
+    /**
+     * Abort all outstanding work and cleanup.
+     */
+    dispose() {
+      if (this.playbackWatcher_) {
+        this.playbackWatcher_.dispose();
+      }
+      if (this.playlistController_) {
+        this.playlistController_.dispose();
+      }
+      if (this.qualityLevels_) {
+        this.qualityLevels_.dispose();
+      }
+      if (this.tech_ && this.tech_.vhs) {
+        delete this.tech_.vhs;
+      }
+      if (this.mediaSourceUrl_ && import_window8.default.URL.revokeObjectURL) {
+        import_window8.default.URL.revokeObjectURL(this.mediaSourceUrl_);
+        this.mediaSourceUrl_ = null;
+      }
+      if (this.tech_) {
+        this.tech_.off("waitingforkey", this.handleWaitingForKey_);
+      }
+      super.dispose();
+    }
+    convertToProgramTime(time, callback) {
+      return getProgramTime2({
+        playlist: this.playlistController_.media(),
+        time,
+        callback
+      });
+    }
+    // the player must be playing before calling this
+    seekToProgramTime(programTime, callback, pauseAfterSeek = true, retryCount = 2) {
+      return seekToProgramTime2({
+        programTime,
+        playlist: this.playlistController_.media(),
+        retryCount,
+        pauseAfterSeek,
+        seekTo: this.options_.seekTo,
+        tech: this.options_.tech,
+        callback
+      });
+    }
+    /**
+     * Adds the onRequest, onResponse, offRequest and offResponse functions
+     * to the VhsHandler xhr Object.
+     */
+    setupXhrHooks_() {
+      this.xhr.onRequest = (callback) => {
+        addOnRequestHook2(this.xhr, callback);
+      };
+      this.xhr.onResponse = (callback) => {
+        addOnResponseHook2(this.xhr, callback);
+      };
+      this.xhr.offRequest = (callback) => {
+        removeOnRequestHook2(this.xhr, callback);
+      };
+      this.xhr.offResponse = (callback) => {
+        removeOnResponseHook2(this.xhr, callback);
+      };
+      this.player_.trigger("xhr-hooks-ready");
+    }
+  };
+  var VhsSourceHandler2 = {
+    name: "videojs-http-streaming",
+    VERSION: version$42,
+    canHandleSource(srcObj, options = {}) {
+      const localOptions = merge3(videojs.options, options);
+      return VhsSourceHandler2.canPlayType(srcObj.type, localOptions);
+    },
+    handleSource(source, tech, options = {}) {
+      const localOptions = merge3(videojs.options, options);
+      tech.vhs = new VhsHandler2(source, tech, localOptions);
+      tech.vhs.xhr = xhrFactory2();
+      tech.vhs.setupXhrHooks_();
+      tech.vhs.src(source.src, source.type);
+      return tech.vhs;
+    },
+    canPlayType(type, options) {
+      const simpleType = simpleTypeFromSourceType(type);
+      if (!simpleType) {
+        return "";
+      }
+      const overrideNative = VhsSourceHandler2.getOverrideNative(options);
+      const supportsTypeNatively = Vhs2.supportsTypeNatively(simpleType);
+      const canUseMsePlayback = !supportsTypeNatively || overrideNative;
+      return canUseMsePlayback ? "maybe" : "";
+    },
+    getOverrideNative(options = {}) {
+      const {
+        vhs = {}
+      } = options;
+      const defaultOverrideNative = !(videojs.browser.IS_ANY_SAFARI || videojs.browser.IS_IOS);
+      const {
+        overrideNative = defaultOverrideNative
+      } = vhs;
+      return overrideNative;
+    }
+  };
+  var supportsNativeMediaSources2 = () => {
+    return browserSupportsCodec("avc1.4d400d,mp4a.40.2");
+  };
+  if (supportsNativeMediaSources2()) {
+    videojs.getTech("Html5").registerSourceHandler(VhsSourceHandler2, 0);
+  }
+  videojs.VhsHandler = VhsHandler2;
+  videojs.VhsSourceHandler = VhsSourceHandler2;
+  videojs.Vhs = Vhs2;
+  if (!videojs.use) {
+    videojs.registerComponent("Vhs", Vhs2);
+  }
+  videojs.options.vhs = videojs.options.vhs || {};
+  if (!videojs.getPlugin || !videojs.getPlugin("reloadSourceOnError")) {
+    videojs.registerPlugin("reloadSourceOnError", reloadSourceOnError2);
+  }
 })();
 /*! Bundled license information:
 
@@ -51138,6 +70373,11 @@ video.js/dist/video.es.js:
    * <https://github.com/mozilla/vtt.js/blob/main/LICENSE>
    *)
   (*! @name videojs-contrib-quality-levels @version 4.0.0 @license Apache-2.0 *)
+  (*! @name @videojs/http-streaming @version 3.10.0 @license Apache-2.0 *)
+  (*! @name pkcs7 @version 1.0.4 @license Apache-2.0 *)
+  (*! @name aes-decrypter @version 4.0.1 @license Apache-2.0 *)
+
+@videojs/http-streaming/dist/videojs-http-streaming.es.js:
   (*! @name @videojs/http-streaming @version 3.10.0 @license Apache-2.0 *)
   (*! @name pkcs7 @version 1.0.4 @license Apache-2.0 *)
   (*! @name aes-decrypter @version 4.0.1 @license Apache-2.0 *)
