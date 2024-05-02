@@ -12,6 +12,7 @@ type Clip struct {
 	ObjectName   string    `json:"object_name,omitempty" bson:"object_name"`
 	FriendlyName string    `json:"friendly_name,omitempty" bson:"friendly_name"`
 	GameName     string    `json:"game_name,omitempty" bson:"game_name"`
+	Ready        bool      `json:"ready,omitempty" bson:"ready,omitempty"`
 	CreatedAt    time.Time `json:"created_at" bson:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at" bson:"updated_at"`
 }

@@ -1,40 +1,56 @@
 package components
 
+import "github.com/gin-gonic/gin"
 
 templ Header() {
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>Homie Clips</title>
-		<link href="/assets/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet"></link>
- 		<script src="/assets/bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
-		<script src="/assets/js/htmx.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 		<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-		<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+        <link href="/assets/index.css" rel="stylesheet"/>
+		<link href="/assets/output.css" rel="stylesheet"/>
 	</head>
 }
 
-templ NavBar() {
-	<nav class="navbar bg-body-tertiary">
-		<div class="container-fluid">
-			<a class="navbar-brand">HomieClips</a>
-			<form class="d-flex align-self-center" role="search">
-				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"></input>
-				<button class="btn btn-outline-success" type="submit">Search</button>
-			</form>
-		</div>
-	</nav>
+templ NavBar(gctx *gin.Context) {
+    <nav class="bg-base-100 navbar">
+        <div class="flex-1">
+            <a href="/" class="btn btn-ghost text-xl">Homie Clips</a>
+        </div>
+          <div class="flex-none gap-2">
+            <div class="form-control">
+              <input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto" />
+            </div>
+            @User(getUserProfile(gctx.Copy()))
+          </div>
+    </nav>
 }
 
-templ LoginPage() {
-	@Layout(Login())
+templ Page(contents templ.Component) {
+    <!doctype html>
+	<html data-theme="dark" lang="en">
+	    @Header()
+		<body id="contents" class="bg-base-100 w-full h-full">
+		    <main class="w-full h-full">
+                @NavBar()
+                <div class="w-full h-fit">
+                    @contents
+                </div>
+		    </main>
+			<script src="/assets/index.js"></script>
+		</body>
+	</html>
 }
 
-templ Layout(contents templ.Component) {
-	<html data-bs-theme="dark" lang="">
+templ PageWithoutNav(contents templ.Component) {
+    <!doctype html>
+	<html data-theme="dark" lang="en">
 		@Header()
-		<body id="contents">
+		<body id="contents" class="bg-base-100">
 			@contents
+        <script src="/assets/index.js"></script>
 		</body>
 	</html>
 }

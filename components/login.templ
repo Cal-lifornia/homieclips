@@ -1,8 +1,23 @@
 package components
 
-templ Login() {
+templ ProfilePage(loggedIn bool) {
     <div>
-        <h3>Login Test</h3>
-        <a href="/login">SignIn</a>
+        if loggedIn {
+            <a href="/signin"><button type="button" id="btn-logout" onclick="Cookies.remove('auth-session')">Logout</button></a>
+        } else {
+            <div class="hero min-h-screen bg-base-200">
+              <div class="hero-content text-center">
+                <div class="max-w-md">
+                  <h1 class="text-5xl font-bold">Welcome to Homie Clips</h1>
+                  <p class="py-6">
+                    This is a clip storage and streaming site for my friends and I.
+                    If you are here by accident, you should leave as I have locked down the sign in.
+                    Otherwise hit Login.
+                  </p>
+                  <button class="btn btn-primary"><a href="/login">Login</a></button>
+                </div>
+              </div>
+            </div>
+        }
     </div>
 }

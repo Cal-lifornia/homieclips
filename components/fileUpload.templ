@@ -1,0 +1,20 @@
+package components
+
+templ UploadForm(profile Profile) {
+    <form id="clip_upload_form" hx-encoding="multipart/form-data" hx-post="/api/upload">
+        <div class="mb-3">
+            <label for="friendly_name" class="form-label">Clip Name</label>
+            <input type="text" class="form-control" id="friendly_name" aria-describedby="friendly_nameHelp"/>
+            <div id="friendly_nameHelp" class="form-text">Name of the uploaded clip</div>
+        </div>
+        <div class="mb-3">
+            <label for="game_name" class="form-label">Game Name</label>
+            <input type="text" class="form-control" id="game_name" aria-describedby="game_nameHelp"/>
+            <div id="game_nameHelp" class="form-text">Name of the game the clip is from</div>
+        </div>
+        <div class="mb-3">
+            <input type="file" id="file"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+}
