@@ -9,3 +9,22 @@ templ Clip(clip db.Clip) {
         <a href={templ.URL("/stream/" + clip.ObjectName)}>{clip.FriendlyName}</a>
     </li>
 }
+
+templ Video(clipURL string) {
+    <div class="w-fit h-fit" id="video-stream">
+        <video
+            id="my-video"
+            class="video-js"
+            data-setup='{}'
+            controls
+            fluid="true"
+            preload="auto"
+            >
+            <source src={ clipURL } type="application/x-mpegURL"/>
+        </video>
+        <script src="/assets/index.js">
+            let player = videojs("my-video");
+            player.play()
+        </script>
+    </div>
+}

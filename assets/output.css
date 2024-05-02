@@ -1787,6 +1787,19 @@ html {
   display: contents;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
+.h-fit {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.h-full {
+  height: 100%;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1801,6 +1814,15 @@ html {
 
 .w-52 {
   width: 13rem;
+}
+
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .max-w-md {

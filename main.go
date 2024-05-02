@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/Cal-lifornia/homieclips/app"
 	db "github.com/Cal-lifornia/homieclips/db/models"
 	"github.com/Cal-lifornia/homieclips/util"
-	"log"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -35,7 +36,7 @@ func main() {
 
 	mainApp := app.NewServer(config, models)
 
-	err = mainApp.Start("localhost:8080")
+	err = mainApp.Start(":8080")
 	if err != nil {
 		return
 	}

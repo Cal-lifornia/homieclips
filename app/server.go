@@ -51,6 +51,7 @@ func (server *Server) SetupRouter() {
 
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("auth-session", store))
+
 	baseUrl := router.Group("/")
 
 	baseUrl.GET("/login", server.auth.Login)
