@@ -19,5 +19,5 @@ func (frontend *Frontend) userPage(ctx *gin.Context) {
 		log.Println("ran into error unmarshaling profile: ", err)
 		ctx.JSON(http.StatusFailedDependency, util.ErrorResponse(err))
 	}
-	ctx.HTML(http.StatusOK, "", components.Page(components.User(result)))
+	ctx.HTML(http.StatusOK, "", components.User(result))
 }

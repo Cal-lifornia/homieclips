@@ -41,5 +41,5 @@ func (auth *Authenticator) Callback(ctx *gin.Context) {
 	}
 
 	// Redirect to logged in page.
-	ctx.Redirect(http.StatusTemporaryRedirect, "/user")
+	ctx.Redirect(http.StatusTemporaryRedirect, "/")
 }

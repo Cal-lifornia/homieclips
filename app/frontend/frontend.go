@@ -36,7 +36,7 @@ func Init(router *gin.Engine, models *db.Models, cloudFrontURL string) {
 			return true
 		}
 
-		ctx.HTML(http.StatusOK, "", components.Page(components.Login(signedOut())))
+		ctx.HTML(http.StatusOK, "", components.PageWithoutNav(components.ProfilePage(signedOut())))
 	})
 
 	frontend.createAuthRoutes(routerGroup)

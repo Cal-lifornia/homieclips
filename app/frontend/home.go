@@ -16,11 +16,12 @@ func (frontend *Frontend) createAuthRoutes(rg *gin.RouterGroup) {
 }
 
 func (frontend *Frontend) homePage(ctx *gin.Context) {
+
 	clips, err := frontend.models.GetClips()
 	if err != nil {
-		ctx.HTML(http.StatusFailedDependency, "", components.Page(components.Error(err)))
+		ctx.HTML(http.StatusFailedDependency, "", components.Error(err))
 		return
 	}
 
-	ctx.HTML(http.StatusOK, "", components.Page(components.Home(clips)))
+	ctx.HTML(http.StatusOK, "", components.Page(components.Home(clips), ctx.Copy()))
 }

@@ -10,7 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-func Login(loggedIn bool) templ.Component {
+func ProfilePage(loggedIn bool) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -33,7 +33,7 @@ func Login(loggedIn bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h3>Login Test</h3><a href=\"/login\">SignIn</a>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"hero min-h-screen bg-base-200\"><div class=\"hero-content text-center\"><div class=\"max-w-md\"><h1 class=\"text-5xl font-bold\">Welcome to Homie Clips</h1><p class=\"py-6\">This is a clip storage and streaming site for my friends and I. If you are here by accident, you should leave as I have locked down the sign in. Otherwise hit Login.</p><button class=\"btn btn-primary\"><a href=\"/login\">Login</a></button></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
