@@ -28,13 +28,13 @@ templ NavBar(gctx *gin.Context) {
     </nav>
 }
 
-templ Page(contents templ.Component) {
+templ Page(contents templ.Component, gctx *gin.Context) {
     <!doctype html>
 	<html data-theme="dark" lang="en">
 	    @Header()
 		<body id="contents" class="bg-base-100 w-full h-full">
 		    <main class="w-full h-full">
-                @NavBar()
+                @NavBar(gctx)
                 <div class="w-full h-fit">
                     @contents
                 </div>

@@ -3,3 +3,6 @@ app.env
 .DS_STORE
 node_modules/
 .env
+output.css
+index.css
+index.js
