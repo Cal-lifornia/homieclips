@@ -1,6 +1,7 @@
 package api
 
 import (
+	"mime/multipart"
 	"net/http"
 	"time"
 
@@ -19,34 +20,55 @@ func (api *Api) createUploadRoute(group *gin.RouterGroup) {
 }
 
 type uploadResponse struct {
-	UploadComplete bool `json:"upload_complete,omitempty"`
+	PresignPutUrl string `json:"presign_put_url"`
 }
 
 type uploadFileForm struct {
-	FriendlyName string `json:"friendly_name" bson:"friendly_name" form:"friendly_name" binding:"required"`
-	GameName     string `json:"game_name" bson:"game_name" form:"game_name" binding:"required"`
+	ObjectName   string                `json:"object_name" bson:"object_name" form:"object_name" binding:"required"`
+	FriendlyName string                `json:"friendly_name" bson:"friendly_name" form:"friendly_name" binding:"required"`
+	GameName     string                `json:"game_name" bson:"game_name" form:"game_name" binding:"required"`
+	File         *multipart.FileHeader `form:"uploaded_file" binding:"required"`
 }
 
 func (api *Api) uploadRecording(ctx *gin.Context) {
-	var response = uploadResponse{
-		UploadComplete: false,
-	}
-
 	var form uploadFileForm
 
 	err := ctx.ShouldBind(&form)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		return
 	}
 
-	objectName, err := uuid.NewV7()
+	file, err := form.File.Open()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		return
+	}
+
+	defer file.Close()
+
+	buffer := make([]byte, 512)
+
+	_, err = file.Read(buffer)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		return
+	}
+
+	contentType := http.DetectContentType(buffer)
+	if contentType != "video/mp4" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect video type, must be an MP4"})
+		return
+	}
+
+	presignPutUrl, err := api.putPresignURL(form.ObjectName)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
 		return
 	}
 
 	recording := db.Clip{
-		ObjectName:   objectName.String(),
+		ObjectName:   form.ObjectName,
 		FriendlyName: form.FriendlyName,
 		GameName:     form.GameName,
 		Ready:        false,
@@ -54,7 +76,7 @@ func (api *Api) uploadRecording(ctx *gin.Context) {
 		UpdatedAt:    time.Now(),
 	}
 
-	upload := db.Upload{ObjectName: objectName.String(), Ready: false, CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	upload := db.Upload{ObjectName: form.ObjectName, Ready: false, CreatedAt: time.Now(), UpdatedAt: time.Now()}
 
 	_, err = api.models.CreateClip(recording)
 	if err != nil {
@@ -68,5 +90,18 @@ func (api *Api) uploadRecording(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, uploadResponse{PresignPutUrl: presignPutUrl})
+}
+
+type objectNameResponse struct {
+	ObjectName string `json:"object_name"`
+}
+
+func (api *Api) generateObjectName(ctx *gin.Context) {
+	objectName, err := uuid.NewV7()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, util.ErrorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, objectNameResponse{ObjectName: objectName.String()})
 }

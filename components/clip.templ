@@ -2,28 +2,39 @@ package components
 
 import  (
     db "github.com/Cal-lifornia/homieclips/db/models"
+    "fmt"
 )
 
 templ Clip(clip db.Clip) {
-    <li class="p-3 bg-black">
-        <a href={templ.URL("/stream/" + clip.ObjectName)}>{clip.FriendlyName}</a>
-    </li>
+    <card class="card w-96 bg-base-200 shadow-xl">
+        <figure><a href={templ.URL("/stream/" + clip.ObjectName)}><img
+            src={fmt.Sprintf("https://homieclips.s3.ap-southeast-2.amazonaws.com/stream/%s/%s_thumbnail.png", clip.ObjectName,clip.ObjectName)}
+            alt={fmt.Sprintf("%s Thumbnail", clip.FriendlyName)}
+        /></a></figure>
+        <div class="card-body">
+            <a href={templ.URL("/stream/" + clip.ObjectName)}><h2><strong>{clip.FriendlyName}</strong></h2></a>
+            <p>{clip.UploadedBy}</p>
+        </div>
+    </card>
 }
 
 templ Video(clipURL string) {
-    <div class="w-fit h-fit" id="video-stream">
+    <div class="w-full h-full" id="video-stream">
         <video
             id="my-video"
-            class="video-js"
+            class="video-js vjs-16-9"
             data-setup='{}'
             controls
-            fluid="true"
             preload="auto"
             >
             <source src={ clipURL } type="application/x-mpegURL"/>
         </video>
         <script src="/assets/index.js">
             let player = videojs("my-video");
+            player.hlsQualitySelector({
+                       displayCurrentQuality: true,
+            });
+            player.fill(true)
             player.play()
         </script>
     </div>

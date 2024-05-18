@@ -3,11 +3,9 @@ package components
 import "github.com/Cal-lifornia/homieclips/db/models"
 
 templ Home(clips []db.Clip) {
-    <div id="clips" class="w-full h-full">
-        <ul class="w-full h-full">
+    <div id="clips" class="w-full h-full p-3 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 md:gap-2">
         for _, clip := range clips {
             @Clip(clip)
         }
-        </ul>
     </div>
 }
