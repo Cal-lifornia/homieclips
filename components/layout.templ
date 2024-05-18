@@ -15,16 +15,18 @@ templ Header() {
 }
 
 templ NavBar(gctx *gin.Context) {
-    <nav class="bg-base-100 navbar">
+    <nav class="bg-base-200 navbar">
         <div class="flex-1">
             <a href="/" class="btn btn-ghost text-xl">Homie Clips</a>
         </div>
-          <div class="flex-none gap-2">
+        <div class="flex-none gap-2">
+            <a href="/upload-page">Upload</a>
+            @UploadForm()
             <div class="form-control">
               <input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto" />
             </div>
             @User(getUserProfile(gctx.Copy()))
-          </div>
+        </div>
     </nav>
 }
 
@@ -35,7 +37,7 @@ templ Page(contents templ.Component, gctx *gin.Context) {
 		<body id="contents" class="bg-base-100 w-full h-full">
 		    <main class="w-full h-full">
                 @NavBar(gctx)
-                <div class="w-full h-fit">
+                <div class="w-full h-full">
                     @contents
                 </div>
 		    </main>
@@ -51,6 +53,7 @@ templ PageWithoutNav(contents templ.Component) {
 		<body id="contents" class="bg-base-100">
 			@contents
         <script src="/assets/index.js"></script>
+        <!-- <script src="/assets/js/upload.js"></script> -->
 		</body>
 	</html>
 }

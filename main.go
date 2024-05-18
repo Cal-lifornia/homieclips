@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"log"
+	"os"
 	"time"
 
 	"github.com/Cal-lifornia/homieclips/app"
@@ -40,4 +43,18 @@ func main() {
 	if err != nil {
 		return
 	}
+}
+
+func init() {
+	environment := os.Getenv("ENVIRONMENT")
+	var loggerConfig zap.Config
+	if environment == "docker" {
+		loggerConfig = zap.NewProductionConfig()
+	} else {
+		loggerConfig = zap.NewDevelopmentConfig()
+	}
+
+	loggerConfig.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	logger, _ := loggerConfig.Build()
+	zap.ReplaceGlobals(logger)
 }

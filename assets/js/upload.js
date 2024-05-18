@@ -1,45 +1,4 @@
-import 'htmx.org'
-import videojs from "video.js";
-import "videojs-hls-quality-selector"
-import "./post.config"
-import "video.js/dist/video-js.css"
-import "@videojs/http-streaming"
-import {v4 as uuidv4} from "uuid"
-
-import "@uppy/core"
-import Uppy from "@uppy/core";
-import AwsS3 from "@uppy/aws-s3";
-import FileInput from '@uppy/file-input';
-import ProgressBar from "@uppy/progress-bar";
-import StatusBar from "@uppy/status-bar";
-
-import '@uppy/core/dist/style.min.css';
-import '@uppy/file-input/dist/style.css';
-import '@uppy/progress-bar/dist/style.min.css';
-import '@uppy/status-bar/dist/style.min.css';
-
-
-
-var uppy = new Uppy()
-    .use(AwsS3, {
-        async getUploadParameters(file) {
-            const response = await fetch("/api/upload", {
-                method: "POST",
-                body: formData
-            });
-            return {
-                method: "PUT",
-                url: response.data.url
-            }
-        }
-    })
-    .use(FileInput, { target: '#uppy-file-input' })
-    .use(ProgressBar, { target: '#progress-bar' })
-    .use(StatusBar, { target: '#status-bar' });
-
-
-
-
+import {v4 as uuidv4} from "/assets/index";
 
 
 (function(window, document, undefined) {
@@ -54,23 +13,25 @@ var uppy = new Uppy()
         const uploadForm = document.getElementById("#uploadForm")
         console.log(uuidv4())
 
-        uploadForm.
+        uploadForm.onsubmit =  async (e) => {
+            await e.preventDefault()
+            console.log(formData.values())
+            const formData = new FormData(uploadForm);
+            const clip = e.target.elements.file.files[0]
+            await fileHandle(clip, formData)
+            return false
+        };
 
     }
 
 })(window, document, undefined);
 
-async function submitHandler(event) {
-    event.preventDefault()
 
-    const formData = new FormData(event.target)
-    const clip = e.target.elements.file.files[0]
-    await fileHandle(clip, formData)
-    return false
-}
 
 async function fileHandle(clip, formData) {
-    const objectName = uuidv4();
+    //const objectName = uuidv4();
+
+    const objectName = "018ea927-be9b-7a28-b6dd-b1a188b28c07"
 
     formData.append("object_name", objectName)
 
@@ -108,7 +69,7 @@ async function fileHandle(clip, formData) {
     await postClip()
      */
 }
-/*
+
 function uploadFile(
     file: File,
     presignedUploadUrl: string,
@@ -143,4 +104,3 @@ function uploadFile(
         }
     });
 }
- */

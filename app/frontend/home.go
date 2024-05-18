@@ -8,11 +8,12 @@ import (
 )
 
 func (frontend *Frontend) createAuthRoutes(rg *gin.RouterGroup) {
-	auth := rg.Group("")
+	auth := rg.Group("", authenticator.IsAuthenticated())
 
-	auth.GET("", authenticator.IsAuthenticated(), frontend.homePage)
-	auth.GET("/user", authenticator.IsAuthenticated(), frontend.userPage)
-	auth.GET("/stream/:object_name", authenticator.IsAuthenticated(), frontend.getVideo)
+	auth.GET("", frontend.homePage)
+	auth.GET("/user", frontend.userPage)
+	auth.GET("/stream/:object_name", frontend.getVideo)
+	auth.GET("/upload-page", frontend.uploadPage)
 }
 
 func (frontend *Frontend) homePage(ctx *gin.Context) {
@@ -24,4 +25,8 @@ func (frontend *Frontend) homePage(ctx *gin.Context) {
 	}
 
 	ctx.HTML(http.StatusOK, "", components.Page(components.Home(clips), ctx.Copy()))
+}
+
+func (frontend *Frontend) uploadPage(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "", components.Page(components.UploadPage(), ctx.Copy()))
 }
